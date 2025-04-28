@@ -8,6 +8,8 @@ namespace dotnet_api.DTOs
         public int StockQuantity { get; set; }
         public decimal UnitPrice { get; set; }
         public string Status { get; set; }
+        public string? Specification { get; set; }
+        public string? Note { get; set; }
         public int MaterialTypeID { get; set; }
 
     }

@@ -31,7 +31,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Register other services
+///////////////////////////
 builder.Services.AddScoped<IConstructionService, ConstructionService>();
+builder.Services.AddScoped<IConstructionItemService, ConstructionItemService>();
+builder.Services.AddScoped<IConstructionPlanService, ConstructionPlanService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+
+
 builder.Services.AddScoped<WeatherPredictionService>();
 
 

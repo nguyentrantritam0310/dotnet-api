@@ -4,6 +4,7 @@ namespace dotnet_api.DTOs
     {
         public int ID { get; set; }
         public int ConstructionStatusID { get; set; }
+        public int WorkSubTypeVariantID { get; set; }
         public int ConstructionID { get; set; }
         public int UnitOfMeasurementID { get; set; }
         public string ConstructionItemName { get; set; }

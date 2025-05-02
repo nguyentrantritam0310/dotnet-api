@@ -362,4 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-dotnet-api/MachineLearning/rf_model_7days.joblib
+/dotnet-api/MachineLearning/*.joblib

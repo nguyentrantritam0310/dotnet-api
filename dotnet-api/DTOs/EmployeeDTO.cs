@@ -1,3 +1,5 @@
+using dotnet_api.Data.Enums;
+
 namespace dotnet_api.DTOs
 {
     public class EmployeeDTO
@@ -8,7 +10,7 @@ namespace dotnet_api.DTOs
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Status { get; set; }
+        public EmployeeStatusEnum Status { get; set; }
 
     }
 }

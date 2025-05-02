@@ -4,14 +4,12 @@ using dotnet_api.Mapping;
 using System.Reflection;
 using dotnet_api.Data;
 using Microsoft.EntityFrameworkCore;
-using Python.Runtime;
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using dotnet_api.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// 🔥 Khởi tạo Python runtime tại đây
-//PythonEngine.Initialize();
-//AppDomain.CurrentDomain.ProcessExit += (_, __) => PythonEngine.Shutdown();
 
 // Add services to the container.
 
@@ -61,6 +59,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

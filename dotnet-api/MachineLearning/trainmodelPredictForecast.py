@@ -1,71 +1,120 @@
 import pandas as pd
-from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_absolute_error
+import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+import json
+from datetime import timedelta
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+import requests
 import joblib
 
-def load_data(file_path):
-    return pd.read_csv(file_path, index_col="DATE", header=0, delimiter=",", encoding="utf-8")
+# Gọi Open-Meteo
+url = "https://archive-api.open-meteo.com/v1/archive"
+params = {
+    "latitude": 13.782,  # Quy Nhơn
+    "longitude": 109.219,
+    "start_date": "2022-01-01",
+    "end_date": "2025-04-28",
+    "daily": "temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,precipitation_hours,windspeed_10m_max,windgusts_10m_max,winddirection_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration,sunshine_duration",
+    "timezone": "auto"
+}
 
-def data_preprocessing(weather):
-     # xóa dòng dữ liệu rỗng
-    weather.dropna(how='all', inplace=True)
-    # xóa các dòng bị trùng
-    weather.drop_duplicates(inplace=True)
-    weather['PRCP'].fillna(0,inplace=True)
-    weather['TMAX'].fillna(weather['TMAX'].median(),inplace=True)
-    weather['TMIN'].fillna(weather['TMIN'].median(),inplace=True)
-    weather['TMAX_ATTRIBUTES'].fillna(',,S',inplace=True)
-    weather['TMIN_ATTRIBUTES'].fillna(',,S',inplace=True)
-    weather['PRCP_ATTRIBUTES'].fillna(',,S',inplace=True)
-    return weather
+response = requests.get(url, params=params)
+data = response.json()
+df = pd.DataFrame({
+    "date": data["daily"]["time"],
+    "tmax": data["daily"]["temperature_2m_max"],
+    "tmin": data["daily"]["temperature_2m_min"],
+    "prcp": data["daily"]["precipitation_sum"],
+    "apparent_tmax": data["daily"]["apparent_temperature_max"],
+    "apparent_tmin": data["daily"]["apparent_temperature_min"],
+    "rain_sum": data["daily"]["rain_sum"],
+    "precip_hours": data["daily"]["precipitation_hours"],
+    "wind_speed_max": data["daily"]["windspeed_10m_max"],
+    "wind_gusts_max": data["daily"]["windgusts_10m_max"],
+    "wind_dir_dominant": data["daily"]["winddirection_10m_dominant"],
+    "radiation_sum": data["daily"]["shortwave_radiation_sum"],
+    "evapo_et0": data["daily"]["et0_fao_evapotranspiration"],
+    "sunshine_duration": data["daily"]["sunshine_duration"]
+})
 
-def create_predictors(predictors, core_weather, reg):
-    train = core_weather.loc[:'2022-12-31']
-    test = core_weather.loc['2023-01-01':]
-    reg.fit(train[predictors], train['target'])
-    predictions = reg.predict(test[predictors])
-    error = mean_absolute_error(test['target'], predictions)
-    combined = pd.concat([test["target"], pd.Series(predictions, index=test.index)], axis=1)
-    combined.columns = ['Actual', 'Predicted']
-    return error, combined
+df['date'] = pd.to_datetime(df['date'], errors='coerce')
+df = df.sort_values('date').reset_index(drop=True)
 
-def save_model(model, model_path='ridge_model.pkl'):
-    # Lưu mô hình
-    joblib.dump(model, model_path)
-    print(f"Model has been saved to {model_path}")
+# Tạo đặc trưng thời gian
+# (có thể giúp mô hình học được tính mùa vụ)
+df['dayofyear'] = df['date'].dt.dayofyear
+df['month'] = df['date'].dt.month
+df['year'] = df['date'].dt.year
+df['dayofweek'] = df['date'].dt.dayofweek
 
-# Main function
-def main():
-    # Đường dẫn file dữ liệu
-    file_path = 'localweather.csv'
+# Danh sách đầy đủ các feature
+df['wind_dir_sin'] = np.sin(np.deg2rad(df['wind_dir_dominant']))
+df['wind_dir_cos'] = np.cos(np.deg2rad(df['wind_dir_dominant']))
+feature_cols = [
+    "tmax", "tmin", "prcp",
+    "apparent_tmax", "apparent_tmin",
+    "rain_sum", "precip_hours",
+    "wind_speed_max", "wind_gusts_max", "wind_dir_sin", "wind_dir_cos",
+    "radiation_sum", "evapo_et0", "sunshine_duration",
+    "dayofyear", "month", "year", "dayofweek"
+]
 
-    # Đọc dữ liệu
-    weather = load_data(file_path)
-    # Làm sạch dữ liệu
-    data_preprocessing(weather)
+target_cols = ["tmax", "tmin", "prcp",
+    "apparent_tmax", "apparent_tmin",
+    "rain_sum", "precip_hours",
+    "wind_speed_max", "wind_gusts_max", "wind_dir_sin", "wind_dir_cos",
+    "radiation_sum", "evapo_et0", "sunshine_duration"]
 
-    # Lấy dữ liệu cần thiết cho mô hình
-    core_weather = weather[['PRCP', 'TAVG', 'TMAX', 'TMIN']].copy()
-    core_weather.columns = ['Rainfall', 'Average Temperature', 'Max Temperature', 'Min Temperature']
-    core_weather.index = pd.to_datetime(core_weather.index, format='%Y-%m-%d')
+# Convert hết sang số
+df[feature_cols] = df[feature_cols].apply(pd.to_numeric, errors="coerce")
 
-    # Thêm cột "target" cho giá trị cần dự báo (nhiệt độ tối đa)
-    core_weather["target"] = core_weather.shift(-1)["Max Temperature"]
-    core_weather = core_weather.iloc[: -1, :].copy()
-    reg = Ridge(alpha=0.1)
-    predictors = ['Rainfall', 'Average Temperature', 'Max Temperature', 'Min Temperature']
-    
-    # Huấn luyện mô hình Ridge
-    error, combined = create_predictors(predictors, core_weather, reg)
+# Tạo dữ liệu dạng sliding window (dùng 7 ngày gần nhất để dự báo ngày tiếp theo)
+window = 7
+features = []
+targets = []
+dates = []
+for i in range(window, len(df)):
+    # Lấy 7 ngày trước làm feature
+    feat = df.iloc[i-window:i][feature_cols].values.flatten()
+    features.append(feat)
+    # Target là giá trị ngày tiếp theo
+    targets.append(df.iloc[i][target_cols].values)
+    dates.append(df.iloc[i]['date'])
 
-    # In ra lỗi và kết quả dự báo
-    print(f"Mean Absolute Error: {error}")
-    print("Combined actual and predicted values:")
-    print(combined.head())
+X = np.array(features)
+y = np.array(targets)
 
-    # Lưu mô hình và scaler
-    save_model(reg)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
 
-if __name__ == "__main__":
-    main()
+# Train/test split (dùng gần hết để train, 7 ngày cuối để test)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, shuffle=False)
+
+# Huấn luyện mô hình
+rf = MultiOutputRegressor(RandomForestRegressor(n_estimators=100, random_state=42))
+rf.fit(X_train, y_train)
+
+# Đánh giá mô hình trên tập test
+pred_test = rf.predict(X_test)
+r2 = r2_score(y_test, pred_test)
+accuracy = round(r2 * 100, 2)
+
+mse = mean_squared_error(y_test, pred_test)
+rmse = np.sqrt(mse)
+mae = mean_absolute_error(y_test, pred_test)
+# MAPE (Mean Absolute Percentage Error)
+def mean_absolute_percentage_error(y_true, y_pred):
+    y_true, y_pred = np.array(y_true), np.array(y_pred)
+    # Tránh chia cho 0
+    mask = y_true != 0
+    return np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100 if np.any(mask) else np.nan
+mape = mean_absolute_percentage_error(y_test, pred_test)
+
+
+joblib.dump((rf), "rf_model_7days.joblib")
+joblib.dump(scaler, "scaler.pkl")
+

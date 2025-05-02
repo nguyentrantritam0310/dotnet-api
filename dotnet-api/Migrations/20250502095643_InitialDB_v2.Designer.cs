@@ -12,8 +12,8 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250427085824_InitialDB")]
-    partial class InitialDB
+    [Migration("20250502095643_InitialDB_v2")]
+    partial class InitialDB_v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

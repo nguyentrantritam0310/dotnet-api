@@ -6,19 +6,20 @@ namespace dotnet_api.Services
 {
     public class WeatherPredictionService
     {
-        public string PredictWeather7Days()
+        public string PredictWeather7Days(double lat, double lng)
         {
             try
             {
                 var psi = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = "../dotnet-api/MachineLearning/predict_rf_7days.py",
+                    Arguments = $"../dotnet-api/MachineLearning/predict_rf_7days.py {lat} {lng}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
+
                 using (var process = Process.Start(psi))
                 {
                     if (process == null)
@@ -27,10 +28,22 @@ namespace dotnet_api.Services
                     string result = process.StandardOutput.ReadToEnd();
                     string error = process.StandardError.ReadToEnd();
                     process.WaitForExit();
-                    if (!string.IsNullOrEmpty(error)) {
+
+                    if (process.ExitCode != 0)
+                    {
+                        return $"Python error (Exit code: {process.ExitCode}): {error}";
+                    }
+
+                    if (!string.IsNullOrEmpty(error))
+                    {
                         return $"Python error: {error}";
                     }
-                    Console.WriteLine("Python result: " + result);
+
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        return "No data returned from Python script";
+                    }
+
                     return result;
                 }
             }

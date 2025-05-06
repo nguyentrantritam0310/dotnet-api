@@ -12,8 +12,8 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250502095643_InitialDB_v2")]
-    partial class InitialDB_v2
+    [Migration("20250506145306_FixRole")]
+    partial class FixRole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,10 +25,584 @@ namespace dotnet_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "technician",
+                            NormalizedName = "TECHNICIAN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            Name = "director",
+                            NormalizedName = "DIRECTOR"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            Name = "employee",
+                            NormalizedName = "EMPLOYEE"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "admin-id",
+                            RoleId = "3"
+                        },
+                        new
+                        {
+                            UserId = "manager1-id",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "manager2-id",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "manager3-id",
+                            RoleId = "2"
+                        },
+                        new
+                        {
+                            UserId = "tech1-id",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "tech2-id",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "tech3-id",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "worker1-id",
+                            RoleId = "4"
+                        },
+                        new
+                        {
+                            UserId = "worker2-id",
+                            RoleId = "4"
+                        },
+                        new
+                        {
+                            UserId = "worker3-id",
+                            RoleId = "4"
+                        },
+                        new
+                        {
+                            UserId = "worker4-id",
+                            RoleId = "4"
+                        },
+                        new
+                        {
+                            UserId = "worker5-id",
+                            RoleId = "4"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RoleID");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "admin-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "46286cf3-2f94-4f71-a987-8d58e07a4116",
+                            Email = "giamdoc@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Phạm",
+                            LastName = "Văn Đốc",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "GIAMDOC@COMPANY.COM",
+                            NormalizedUserName = "GIAMDOC@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==",
+                            Phone = "0901234567",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 3,
+                            SecurityStamp = "427bafc5-bab1-42e5-a5d2-5974daf31890",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "giamdoc@company.com"
+                        },
+                        new
+                        {
+                            Id = "manager1-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "bdf1c048-a759-4d6f-824c-ebd0e90d2ed5",
+                            Email = "chihuy1@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Nguyễn",
+                            LastName = "Chỉ Huy",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "CHIHUY1@COMPANY.COM",
+                            NormalizedUserName = "CHIHUY1@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==",
+                            Phone = "0912345678",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 2,
+                            SecurityStamp = "227cd1d8-ed74-4f96-9851-ee15b48f8cf2",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "chihuy1@company.com"
+                        },
+                        new
+                        {
+                            Id = "manager2-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "952aa589-71f8-4994-aace-baa6e5657a9f",
+                            Email = "chihuy2@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Trần",
+                            LastName = "Công Trình",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "CHIHUY2@COMPANY.COM",
+                            NormalizedUserName = "CHIHUY2@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==",
+                            Phone = "0923456789",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 2,
+                            SecurityStamp = "f6ab69f9-8a13-4414-81bd-77603126dc4d",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "chihuy2@company.com"
+                        },
+                        new
+                        {
+                            Id = "manager3-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b95d22af-16ef-40b6-91d8-21bf6cc0b9ea",
+                            Email = "chihuy3@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Lê",
+                            LastName = "Xây Dựng",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "CHIHUY3@COMPANY.COM",
+                            NormalizedUserName = "CHIHUY3@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==",
+                            Phone = "0934567890",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 2,
+                            SecurityStamp = "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "chihuy3@company.com"
+                        },
+                        new
+                        {
+                            Id = "tech1-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "81b91094-8e07-473e-8b34-cd0a4e99936f",
+                            Email = "kythuat1@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Hoàng",
+                            LastName = "Kỹ Thuật",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "KYTHUAT1@COMPANY.COM",
+                            NormalizedUserName = "KYTHUAT1@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
+                            Phone = "0945678901",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 1,
+                            SecurityStamp = "6ffe7424-9000-41e1-871b-e744671266a6",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "kythuat1@company.com"
+                        },
+                        new
+                        {
+                            Id = "tech2-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "3c4bff1e-5fe6-45ff-aa79-73ef7d6f7af0",
+                            Email = "kythuat2@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Phan",
+                            LastName = "Thiết Kế",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "KYTHUAT2@COMPANY.COM",
+                            NormalizedUserName = "KYTHUAT2@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
+                            Phone = "0956789012",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 1,
+                            SecurityStamp = "18d4d1bc-78ea-445f-a362-d544e9ea1a9d",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "kythuat2@company.com"
+                        },
+                        new
+                        {
+                            Id = "tech3-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "08fb0b8c-36d0-4d61-9c83-2ad7f4c052fb",
+                            Email = "kythuat3@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Vũ",
+                            LastName = "Vận Hành",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "KYTHUAT3@COMPANY.COM",
+                            NormalizedUserName = "KYTHUAT3@COMPANY.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
+                            Phone = "0967890123",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 1,
+                            SecurityStamp = "5f694007-36b9-4dbe-8a38-196c05e82cb2",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "kythuat3@company.com"
+                        },
+                        new
+                        {
+                            Id = "worker1-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "dde92e25-13cf-4405-92cb-4ffa4dc2a0fe",
+                            Email = "tho1@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Đinh",
+                            LastName = "Văn Thợ",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THO1@COMPANY.COM",
+                            NormalizedUserName = "THO1@COMPANY.COM",
+                            Phone = "0978901234",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 4,
+                            SecurityStamp = "2180abeb-5218-4df0-b695-2be63b8b8cd1",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "tho1@company.com"
+                        },
+                        new
+                        {
+                            Id = "worker2-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "2f1894aa-22fa-426a-9e49-2c25f3769dcc",
+                            Email = "tho2@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Mai",
+                            LastName = "Thị Hàn",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THO2@COMPANY.COM",
+                            NormalizedUserName = "THO2@COMPANY.COM",
+                            Phone = "0989012345",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 4,
+                            SecurityStamp = "eba6051e-c6ac-4847-baca-1f886c385128",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "tho2@company.com"
+                        },
+                        new
+                        {
+                            Id = "worker3-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "0d996bd3-a5d0-4290-ad71-2cc7673b615f",
+                            Email = "tho3@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Lý",
+                            LastName = "Văn Xây",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THO3@COMPANY.COM",
+                            NormalizedUserName = "THO3@COMPANY.COM",
+                            Phone = "0990123456",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 4,
+                            SecurityStamp = "4933e54c-c4fd-4875-9508-edc952ae52e3",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "tho3@company.com"
+                        },
+                        new
+                        {
+                            Id = "worker4-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "933f9e74-3c86-4961-a94a-2b47438bfb99",
+                            Email = "tho4@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Trịnh",
+                            LastName = "Công Mộc",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THO4@COMPANY.COM",
+                            NormalizedUserName = "THO4@COMPANY.COM",
+                            Phone = "0911223344",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 4,
+                            SecurityStamp = "f9757b33-c60a-4995-b62f-d0c899b42c68",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "tho4@company.com"
+                        },
+                        new
+                        {
+                            Id = "worker5-id",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "fb084648-8cbd-47c2-adc3-d73f125e34f4",
+                            Email = "tho5@company.com",
+                            EmailConfirmed = true,
+                            FirstName = "Võ",
+                            LastName = "Thị Sơn",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THO5@COMPANY.COM",
+                            NormalizedUserName = "THO5@COMPANY.COM",
+                            Phone = "0922334455",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleID = 4,
+                            SecurityStamp = "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d",
+                            Status = "Active",
+                            TwoFactorEnabled = false,
+                            UserName = "tho5@company.com"
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Attendance", b =>
                 {
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ConstructionTaskID")
                         .HasColumnType("int");
@@ -50,14 +624,14 @@ namespace dotnet_api.Migrations
                     b.HasData(
                         new
                         {
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ConstructionTaskID = 1,
                             AttendanceDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "có mặt"
                         },
                         new
                         {
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ConstructionTaskID = 2,
                             AttendanceDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "vắng mặt"
@@ -1031,14 +1605,18 @@ namespace dotnet_api.Migrations
                     b.Property<DateTime?>("ActualCompletionDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ConstructionID")
+                        .HasColumnType("int");
+
                     b.Property<int>("ConstructionItemID")
                         .HasColumnType("int");
 
                     b.Property<int>("ConstructionStatusID")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExpectedCompletionDate")
                         .HasColumnType("datetime2");
@@ -1061,9 +1639,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 1,
                             ActualCompletionDate = new DateTime(2021, 4, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 1,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1071,9 +1650,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 2,
                             ActualCompletionDate = new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 1,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 26, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1081,9 +1661,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 3,
                             ActualCompletionDate = new DateTime(2021, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 2,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1091,9 +1672,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 4,
                             ActualCompletionDate = new DateTime(2021, 6, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 2,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1101,9 +1683,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 5,
                             ActualCompletionDate = new DateTime(2021, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 3,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1111,9 +1694,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 6,
                             ActualCompletionDate = new DateTime(2021, 8, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 4,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1121,9 +1705,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 7,
                             ActualCompletionDate = new DateTime(2021, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 4,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1131,9 +1716,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 8,
                             ActualCompletionDate = new DateTime(2021, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 5,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1141,9 +1727,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 9,
                             ActualCompletionDate = new DateTime(2021, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 6,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1151,9 +1738,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 10,
                             ActualCompletionDate = new DateTime(2021, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 6,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 26, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1161,9 +1749,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 11,
                             ActualCompletionDate = new DateTime(2021, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 7,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1171,9 +1760,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 12,
                             ActualCompletionDate = new DateTime(2021, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 8,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1181,9 +1771,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 13,
                             ActualCompletionDate = new DateTime(2021, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 9,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1191,9 +1782,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 14,
                             ActualCompletionDate = new DateTime(2022, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 10,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1201,9 +1793,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 15,
                             ActualCompletionDate = new DateTime(2021, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 11,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1211,9 +1804,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 16,
                             ActualCompletionDate = new DateTime(2021, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 11,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1221,9 +1815,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 17,
                             ActualCompletionDate = new DateTime(2021, 3, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 12,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1231,9 +1826,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 18,
                             ActualCompletionDate = new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 12,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1241,9 +1837,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 19,
                             ActualCompletionDate = new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 13,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1251,9 +1848,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 20,
                             ActualCompletionDate = new DateTime(2021, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 13,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1261,9 +1859,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 21,
                             ActualCompletionDate = new DateTime(2021, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 14,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1271,9 +1870,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 22,
                             ActualCompletionDate = new DateTime(2021, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 14,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1281,9 +1881,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 23,
                             ActualCompletionDate = new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 15,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1291,9 +1892,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 24,
                             ActualCompletionDate = new DateTime(2021, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 15,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1301,9 +1903,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 25,
                             ActualCompletionDate = new DateTime(2021, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 16,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1311,9 +1914,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 26,
                             ActualCompletionDate = new DateTime(2021, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 17,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1321,9 +1925,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 27,
                             ActualCompletionDate = new DateTime(2021, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 17,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1331,9 +1936,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 28,
                             ActualCompletionDate = new DateTime(2021, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 18,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1341,9 +1947,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 29,
                             ActualCompletionDate = new DateTime(2021, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 19,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1351,99 +1958,110 @@ namespace dotnet_api.Migrations
                         {
                             ID = 30,
                             ActualCompletionDate = new DateTime(2021, 12, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 20,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 31,
+                            ConstructionID = 0,
                             ConstructionItemID = 21,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 32,
+                            ConstructionID = 0,
                             ConstructionItemID = 22,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 33,
+                            ConstructionID = 0,
                             ConstructionItemID = 23,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 34,
+                            ConstructionID = 0,
                             ConstructionItemID = 24,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 35,
+                            ConstructionID = 0,
                             ConstructionItemID = 25,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 36,
+                            ConstructionID = 0,
                             ConstructionItemID = 26,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 37,
+                            ConstructionID = 0,
                             ConstructionItemID = 27,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 38,
+                            ConstructionID = 0,
                             ConstructionItemID = 28,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 39,
+                            ConstructionID = 0,
                             ConstructionItemID = 29,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 40,
+                            ConstructionID = 0,
                             ConstructionItemID = 30,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1451,9 +2069,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 41,
                             ActualCompletionDate = new DateTime(2021, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 31,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1461,9 +2080,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 42,
                             ActualCompletionDate = new DateTime(2021, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 31,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1471,9 +2091,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 43,
                             ActualCompletionDate = new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 32,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1481,81 +2102,90 @@ namespace dotnet_api.Migrations
                         {
                             ID = 44,
                             ActualCompletionDate = new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 32,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 45,
+                            ConstructionID = 0,
                             ConstructionItemID = 33,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 46,
+                            ConstructionID = 0,
                             ConstructionItemID = 33,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 47,
+                            ConstructionID = 0,
                             ConstructionItemID = 34,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 48,
+                            ConstructionID = 0,
                             ConstructionItemID = 35,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 49,
+                            ConstructionID = 0,
                             ConstructionItemID = 35,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 50,
+                            ConstructionID = 0,
                             ConstructionItemID = 36,
                             ConstructionStatusID = 2,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 51,
+                            ConstructionID = 0,
                             ConstructionItemID = 37,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 52,
+                            ConstructionID = 0,
                             ConstructionItemID = 38,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1563,9 +2193,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 53,
                             ActualCompletionDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 39,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1573,9 +2204,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 54,
                             ActualCompletionDate = new DateTime(2022, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 39,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1583,9 +2215,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 55,
                             ActualCompletionDate = new DateTime(2022, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 40,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1593,9 +2226,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 56,
                             ActualCompletionDate = new DateTime(2022, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 40,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1603,9 +2237,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 57,
                             ActualCompletionDate = new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 41,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1613,9 +2248,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 58,
                             ActualCompletionDate = new DateTime(2022, 9, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 42,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1623,9 +2259,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 59,
                             ActualCompletionDate = new DateTime(2022, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 42,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1633,9 +2270,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 60,
                             ActualCompletionDate = new DateTime(2022, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 43,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1643,9 +2281,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 61,
                             ActualCompletionDate = new DateTime(2022, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 43,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1653,9 +2292,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 62,
                             ActualCompletionDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 44,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1663,9 +2303,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 63,
                             ActualCompletionDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 44,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2023, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1673,9 +2314,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 64,
                             ActualCompletionDate = new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 45,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1683,9 +2325,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 65,
                             ActualCompletionDate = new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 45,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 9, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1693,9 +2336,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 66,
                             ActualCompletionDate = new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 46,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1703,54 +2347,60 @@ namespace dotnet_api.Migrations
                         {
                             ID = 67,
                             ActualCompletionDate = new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 46,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 68,
+                            ConstructionID = 0,
                             ConstructionItemID = 47,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 69,
+                            ConstructionID = 0,
                             ConstructionItemID = 47,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 70,
+                            ConstructionID = 0,
                             ConstructionItemID = 48,
                             ConstructionStatusID = 4,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 71,
+                            ConstructionID = 0,
                             ConstructionItemID = 49,
                             ConstructionStatusID = 1,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2022, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 72,
+                            ConstructionID = 0,
                             ConstructionItemID = 50,
                             ConstructionStatusID = 1,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2022, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1758,9 +2408,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 73,
                             ActualCompletionDate = new DateTime(2020, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 51,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2020, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1768,9 +2419,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 74,
                             ActualCompletionDate = new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 51,
                             ConstructionStatusID = 3,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1778,9 +2430,10 @@ namespace dotnet_api.Migrations
                         {
                             ID = 75,
                             ActualCompletionDate = new DateTime(2020, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 52,
                             ConstructionStatusID = 3,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2020, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -1788,63 +2441,70 @@ namespace dotnet_api.Migrations
                         {
                             ID = 76,
                             ActualCompletionDate = new DateTime(2020, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ConstructionID = 0,
                             ConstructionItemID = 52,
                             ConstructionStatusID = 3,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 77,
+                            ConstructionID = 0,
                             ConstructionItemID = 53,
                             ConstructionStatusID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 78,
+                            ConstructionID = 0,
                             ConstructionItemID = 53,
                             ConstructionStatusID = 2,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 79,
+                            ConstructionID = 0,
                             ConstructionItemID = 54,
                             ConstructionStatusID = 4,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 80,
+                            ConstructionID = 0,
                             ConstructionItemID = 55,
                             ConstructionStatusID = 1,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExpectedCompletionDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 81,
+                            ConstructionID = 0,
                             ConstructionItemID = 55,
                             ConstructionStatusID = 1,
-                            EmployeeID = 4,
+                            EmployeeID = "manager3-id",
                             ExpectedCompletionDate = new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 82,
+                            ConstructionID = 0,
                             ConstructionItemID = 56,
                             ConstructionStatusID = 1,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExpectedCompletionDate = new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -1881,12 +2541,12 @@ namespace dotnet_api.Migrations
                         new
                         {
                             ID = 3,
-                            Name = "Completed"
+                            Name = "Paused"
                         },
                         new
                         {
                             ID = 4,
-                            Name = "Paused"
+                            Name = "Completed"
                         },
                         new
                         {
@@ -3381,12 +4041,12 @@ namespace dotnet_api.Migrations
                         new
                         {
                             ID = 1,
-                            ConstructionTypeName = "RoadBridge"
+                            ConstructionTypeName = "House"
                         },
                         new
                         {
                             ID = 2,
-                            ConstructionTypeName = "House"
+                            ConstructionTypeName = "RoadBridge"
                         },
                         new
                         {
@@ -3397,240 +4057,6 @@ namespace dotnet_api.Migrations
                         {
                             ID = 4,
                             ConstructionTypeName = "Irrigation"
-                        });
-                });
-
-            modelBuilder.Entity("dotnet_api.Data.Entities.Employee", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<int>("RoleID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("RoleID");
-
-                    b.ToTable("Employees", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Email = "giamdoc@company.com",
-                            Name = "Phạm Văn Đốc",
-                            Password = "giamdoc@123",
-                            Phone = "0901234567",
-                            RoleID = 3,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Email = "chihuy1@company.com",
-                            Name = "Nguyễn Chỉ Huy",
-                            Password = "chihuy@123",
-                            Phone = "0912345678",
-                            RoleID = 2,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Email = "chihuy2@company.com",
-                            Name = "Trần Công Trình",
-                            Password = "chihuy@123",
-                            Phone = "0923456789",
-                            RoleID = 2,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 4,
-                            Email = "chihuy3@company.com",
-                            Name = "Lê Xây Dựng",
-                            Password = "chihuy@123",
-                            Phone = "0934567890",
-                            RoleID = 2,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 5,
-                            Email = "kythuat1@company.com",
-                            Name = "Hoàng Kỹ Thuật",
-                            Password = "kythuat@123",
-                            Phone = "0945678901",
-                            RoleID = 1,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 6,
-                            Email = "kythuat2@company.com",
-                            Name = "Phan Thiết Kế",
-                            Password = "kythuat@123",
-                            Phone = "0956789012",
-                            RoleID = 1,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 7,
-                            Email = "kythuat3@company.com",
-                            Name = "Vũ Vận Hành",
-                            Password = "kythuat@123",
-                            Phone = "0967890123",
-                            RoleID = 1,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 8,
-                            Email = "tho1@company.com",
-                            Name = "Đinh Văn Thợ",
-                            Password = "tho@123",
-                            Phone = "0978901234",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 9,
-                            Email = "tho2@company.com",
-                            Name = "Mai Thị Hàn",
-                            Password = "tho@123",
-                            Phone = "0989012345",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 10,
-                            Email = "tho3@company.com",
-                            Name = "Lý Văn Xây",
-                            Password = "tho@123",
-                            Phone = "0990123456",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 11,
-                            Email = "tho4@company.com",
-                            Name = "Trịnh Công Mộc",
-                            Password = "tho@123",
-                            Phone = "0911223344",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 12,
-                            Email = "tho5@company.com",
-                            Name = "Võ Thị Điện",
-                            Password = "tho@123",
-                            Phone = "0912334455",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 13,
-                            Email = "tho6@company.com",
-                            Name = "Châu Văn Sơn",
-                            Password = "tho@123",
-                            Phone = "0913445566",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 14,
-                            Email = "tho7@company.com",
-                            Name = "Hồ Thị Nước",
-                            Password = "tho@123",
-                            Phone = "0914556677",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 15,
-                            Email = "tho8@company.com",
-                            Name = "Phùng Văn Trát",
-                            Password = "tho@123",
-                            Phone = "0915667788",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 16,
-                            Email = "tho9@company.com",
-                            Name = "Đỗ Thị Lát",
-                            Password = "tho@123",
-                            Phone = "0916778899",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 17,
-                            Email = "tho10@company.com",
-                            Name = "Bùi Văn Lợp",
-                            Password = "tho@123",
-                            Phone = "0917889900",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 18,
-                            Email = "tho11@company.com",
-                            Name = "Dương Thị Chát",
-                            Password = "tho@123",
-                            Phone = "0918990011",
-                            RoleID = 4,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            ID = 19,
-                            Email = "tho12@company.com",
-                            Name = "Kim Văn Khoan",
-                            Password = "tho@123",
-                            Phone = "0919001122",
-                            RoleID = 4,
-                            Status = "Active"
                         });
                 });
 
@@ -3645,8 +4071,9 @@ namespace dotnet_api.Migrations
                     b.Property<int>("ConstructionPlanID")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ExportDate")
                         .HasColumnType("datetime2");
@@ -3664,14 +4091,14 @@ namespace dotnet_api.Migrations
                         {
                             ID = 1,
                             ConstructionPlanID = 1,
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             ExportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 2,
                             ConstructionPlanID = 2,
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             ExportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -3684,8 +4111,9 @@ namespace dotnet_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ImportDate")
                         .HasColumnType("datetime2");
@@ -3700,13 +4128,13 @@ namespace dotnet_api.Migrations
                         new
                         {
                             ID = 1,
-                            EmployeeID = 5,
+                            EmployeeID = "manager3-id",
                             ImportDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             ID = 2,
-                            EmployeeID = 6,
+                            EmployeeID = "manager3-id",
                             ImportDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -4732,8 +5160,9 @@ namespace dotnet_api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Level")
                         .IsRequired()
@@ -4767,7 +5196,7 @@ namespace dotnet_api.Migrations
                             ID = 1,
                             ConstructionID = 1,
                             Content = "Báo cáo tiến độ ngày 1",
-                            EmployeeID = 2,
+                            EmployeeID = "manager1-id",
                             Level = "Cao",
                             ProblemType = "Chậm tiến độ",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -4778,7 +5207,7 @@ namespace dotnet_api.Migrations
                             ID = 2,
                             ConstructionID = 2,
                             Content = "Báo cáo tiến độ ngày 2",
-                            EmployeeID = 3,
+                            EmployeeID = "manager2-id",
                             Level = "Thấp",
                             ProblemType = "Thiếu vật liệu",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -6127,6 +6556,68 @@ namespace dotnet_api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Attendance", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.ConstructionTask", "ConstructionTask")
@@ -6135,7 +6626,7 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.Employee", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("Attendances")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -6205,19 +6696,19 @@ namespace dotnet_api.Migrations
                     b.HasOne("dotnet_api.Data.Entities.ConstructionItem", "ConstructionItem")
                         .WithMany("ConstructionPlans")
                         .HasForeignKey("ConstructionItemID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("dotnet_api.Data.Entities.ConstructionStatus", "ConstructionStatus")
                         .WithMany("ConstructionPlans")
                         .HasForeignKey("ConstructionStatusID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.Employee", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("ConstructionPlans")
                         .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ConstructionItem");
@@ -6265,17 +6756,6 @@ namespace dotnet_api.Migrations
                     b.Navigation("WorkSubTypeVariant");
                 });
 
-            modelBuilder.Entity("dotnet_api.Data.Entities.Employee", b =>
-                {
-                    b.HasOne("dotnet_api.Data.Entities.Role", "Role")
-                        .WithMany("Employees")
-                        .HasForeignKey("RoleID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("dotnet_api.Data.Entities.ExportOrder", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.ConstructionPlan", "ConstructionPlan")
@@ -6284,7 +6764,7 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.Employee", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("ExportOrders")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -6297,7 +6777,7 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrder", b =>
                 {
-                    b.HasOne("dotnet_api.Data.Entities.Employee", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("ImportOrders")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -6374,7 +6854,7 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.Material_ExportOrder", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.ExportOrder", "ExportOrder")
-                        .WithMany("Material_ExportOrder")
+                        .WithMany("Material_ExportOrders")
                         .HasForeignKey("ExportOrderID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -6398,7 +6878,7 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.Employee", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("Reports")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -6483,6 +6963,19 @@ namespace dotnet_api.Migrations
                     b.Navigation("WorkSubTypeVariant");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("Attendances");
+
+                    b.Navigation("ConstructionPlans");
+
+                    b.Navigation("ExportOrders");
+
+                    b.Navigation("ImportOrders");
+
+                    b.Navigation("Reports");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Construction", b =>
                 {
                     b.Navigation("ConstructionItems");
@@ -6527,22 +7020,9 @@ namespace dotnet_api.Migrations
                     b.Navigation("Constructions");
                 });
 
-            modelBuilder.Entity("dotnet_api.Data.Entities.Employee", b =>
-                {
-                    b.Navigation("Attendances");
-
-                    b.Navigation("ConstructionPlans");
-
-                    b.Navigation("ExportOrders");
-
-                    b.Navigation("ImportOrders");
-
-                    b.Navigation("Reports");
-                });
-
             modelBuilder.Entity("dotnet_api.Data.Entities.ExportOrder", b =>
                 {
-                    b.Navigation("Material_ExportOrder");
+                    b.Navigation("Material_ExportOrders");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrder", b =>
@@ -6573,7 +7053,7 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Role", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.UnitofMeasurement", b =>

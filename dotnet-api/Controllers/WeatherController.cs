@@ -19,12 +19,12 @@ namespace dotnet_api.Controllers
         }
 
         [HttpGet("predict")]
-        public ActionResult<JObject> Predict()
+        public ActionResult<JObject> Predict([FromQuery] double lat, [FromQuery] double lng)
         {
             try
             {
-                // Call the weather prediction service
-                var result = _predictionService.PredictWeather7Days();
+                // Call the weather prediction service with coordinates
+                var result = _predictionService.PredictWeather7Days(lat, lng);
 
                 // Kiểm tra nếu kết quả trả về là rỗng hoặc không hợp lệ
                 if (string.IsNullOrEmpty(result))
@@ -32,46 +32,19 @@ namespace dotnet_api.Controllers
                     return BadRequest("No data returned from the prediction service.");
                 }
 
-                // In ra kết quả để kiểm tra
-                Console.WriteLine("Raw Python result: " + result);
-
-                // Cố gắng phân tích kết quả là JSON
-                try
+                // Parse JSON thành Dictionary
+                var options = new JsonSerializerOptions
                 {
-                    // var jsonObject = JObject.Parse(result);
-                    // System.Console.WriteLine("Accuracy: " + jsonObject["accuracy"]);
-                    // return Ok(jsonObject);
+                    PropertyNameCaseInsensitive = true
+                };
+                var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(result, options);
 
-                    // Parse JSON thành dynamic
-                    // dynamic jsonObject = JsonSerializer.Deserialize<dynamic>(result);
-
-                    // // Truy cập giá trị
-                    // Console.WriteLine("Accuracy: " + jsonObject["accuracy"]);
-
-                    // return Ok(jsonObject);
-
-                    // Parse JSON thành Dictionary
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(result, options);
-
-
-            return Ok(dict);
-
-                }
-                catch (Exception parseEx)
-                {
-                    return StatusCode(500, $"Error parsing Python result: {parseEx.Message}");
-                }
+                return Ok(dict);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Server error: {ex.Message}");
             }
-
         }
     }
-
 }

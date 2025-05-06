@@ -31,7 +31,7 @@ namespace dotnet_api.Services
             var constructionPlan = await _context.ConstructionPlans
                 .Include(c => c.Employee)
                 .Include(c => c.ConstructionItem)
-
+                .ThenInclude(ci => ci.Construction)
                 .Include(c => c.ConstructionStatus)
                 .FirstOrDefaultAsync(c => c.ID == id);
 
@@ -43,7 +43,7 @@ namespace dotnet_api.Services
             var constructionsPlan = await _context.ConstructionPlans
                 .Include(c => c.Employee)
                 .Include(c => c.ConstructionItem)
-
+                .ThenInclude(ci => ci.Construction)
                 .Include(c => c.ConstructionStatus)
                 .ToListAsync();
 

@@ -31,6 +31,7 @@ namespace dotnet_api.Services
             var construction = await _context.Constructions
                 .Include(c => c.ConstructionType)
                 .Include(c => c.ConstructionStatus)
+                .Include(c => c.ConstructionItems)
                 .FirstOrDefaultAsync(c => c.ID == id);
 
             return construction == null ? null : _mapper.Map<ConstructionDTO>(construction);

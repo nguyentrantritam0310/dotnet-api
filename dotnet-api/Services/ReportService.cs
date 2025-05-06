@@ -43,7 +43,8 @@ namespace dotnet_api.Services
             var Reports = await _context.Reports
                 .Include(c => c.Construction)
                 .Include(c => c.Employee)
-                //.Include(c => c.ReportType)
+                .Include(c => c.ReportAttachments)
+                .Include(c => c.ReportStatusLogs)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<ReportDTO>>(Reports);

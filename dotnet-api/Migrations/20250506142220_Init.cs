@@ -8,11 +8,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace dotnet_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDB_v2 : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "ConstructionStatuses",
                 columns: table => new
@@ -94,6 +108,27 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Constructions",
                 columns: table => new
                 {
@@ -127,27 +162,41 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employees",
+                name: "AspNetUsers",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RoleID = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.ID);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employees_Roles_RoleID",
+                        name: "FK_AspNetUsers_Roles_RoleID",
                         column: x => x.RoleID,
                         principalTable: "Roles",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -223,22 +272,107 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImportOrders",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ImportDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ImportOrders", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_ImportOrders_Employees_EmployeeID",
+                        name: "FK_ImportOrders_AspNetUsers_EmployeeID",
                         column: x => x.EmployeeID,
-                        principalTable: "Employees",
-                        principalColumn: "ID",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -248,7 +382,7 @@ namespace dotnet_api.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ConstructionID = table.Column<int>(type: "int", nullable: false),
                     ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReportType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -260,15 +394,15 @@ namespace dotnet_api.Migrations
                 {
                     table.PrimaryKey("PK_Reports", x => x.ID);
                     table.ForeignKey(
+                        name: "FK_Reports_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Reports_Constructions_ConstructionID",
                         column: x => x.ConstructionID,
                         principalTable: "Constructions",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reports_Employees_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employees",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -465,8 +599,9 @@ namespace dotnet_api.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ConstructionID = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ConstructionStatusID = table.Column<int>(type: "int", nullable: false),
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
                     ConstructionItemID = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpectedCompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -476,23 +611,20 @@ namespace dotnet_api.Migrations
                 {
                     table.PrimaryKey("PK_ConstructionPlans", x => x.ID);
                     table.ForeignKey(
+                        name: "FK_ConstructionPlans_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_ConstructionPlans_ConstructionItems_ConstructionItemID",
                         column: x => x.ConstructionItemID,
                         principalTable: "ConstructionItems",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ConstructionPlans_ConstructionStatuses_ConstructionStatusID",
                         column: x => x.ConstructionStatusID,
                         principalTable: "ConstructionStatuses",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ConstructionPlans_Employees_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employees",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -528,7 +660,7 @@ namespace dotnet_api.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ConstructionPlanID = table.Column<int>(type: "int", nullable: false),
                     ExportDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -536,15 +668,15 @@ namespace dotnet_api.Migrations
                 {
                     table.PrimaryKey("PK_ExportOrders", x => x.ID);
                     table.ForeignKey(
+                        name: "FK_ExportOrders_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ExportOrders_ConstructionPlans_ConstructionPlanID",
                         column: x => x.ConstructionPlanID,
                         principalTable: "ConstructionPlans",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ExportOrders_Employees_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employees",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -586,7 +718,7 @@ namespace dotnet_api.Migrations
                 name: "Attendances",
                 columns: table => new
                 {
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ConstructionTaskID = table.Column<int>(type: "int", nullable: false),
                     AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
@@ -595,15 +727,15 @@ namespace dotnet_api.Migrations
                 {
                     table.PrimaryKey("PK_Attendances", x => new { x.EmployeeID, x.ConstructionTaskID });
                     table.ForeignKey(
+                        name: "FK_Attendances_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Attendances_ConstructionTasks_ConstructionTaskID",
                         column: x => x.ConstructionTaskID,
                         principalTable: "ConstructionTasks",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Attendances_Employees_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employees",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -634,14 +766,25 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "1", null, "Nhân viên kỹ thuật", "TECHNICIAN" },
+                    { "2", null, "Chỉ huy công trình", "MANAGER" },
+                    { "3", null, "Giám đốc", "DIRECTOR" },
+                    { "4", null, "Thợ", "EMPLOYEE" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "ConstructionStatuses",
                 columns: new[] { "ID", "Name" },
                 values: new object[,]
                 {
                     { 1, "Pending" },
                     { 2, "InProgress" },
-                    { 3, "Completed" },
-                    { 4, "Paused" },
+                    { 3, "Paused" },
+                    { 4, "Completed" },
                     { 5, "Cancelled" }
                 });
 
@@ -650,8 +793,8 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ID", "ConstructionTypeName" },
                 values: new object[,]
                 {
-                    { 1, "RoadBridge" },
-                    { 2, "House" },
+                    { 1, "House" },
+                    { 2, "RoadBridge" },
                     { 3, "Industrial" },
                     { 4, "Irrigation" }
                 });
@@ -715,6 +858,25 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Phone", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "RoleID", "SecurityStamp", "Status", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "admin-id", 0, "982500d2-2f0e-4219-9557-a2554e37857d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
+                    { "manager1-id", 0, "e906e55c-ce2d-4706-aed9-05d384a322df", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
+                    { "manager2-id", 0, "191fef48-8919-4926-bfe6-3632af4085d0", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
+                    { "manager3-id", 0, "1bcfcafd-a081-49b9-8506-a483e61686f9", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
+                    { "tech1-id", 0, "058a1a21-dcde-4585-8c22-e5f0d4daf60d", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
+                    { "tech2-id", 0, "a83b4b45-df54-4945-b10d-029d164e6eaa", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
+                    { "tech3-id", 0, "26222823-978e-4f2e-9b43-8cbce4c0937a", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
+                    { "worker1-id", 0, "5e30df18-037c-424a-8dff-b092b2992d6e", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
+                    { "worker2-id", 0, "5ae37276-88c6-4ef1-9c48-e18ad0078e22", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
+                    { "worker3-id", 0, "582f3ff5-6c30-46bc-8c52-2e7e74affe51", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
+                    { "worker4-id", 0, "52e44a16-f6a3-44ca-a92a-d17d79540405", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
+                    { "worker5-id", 0, "08bddce8-aa22-4a10-b9cf-ad3dc6a27d4a", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Constructions",
                 columns: new[] { "ID", "ActualCompletionDate", "ConstructionName", "ConstructionStatusID", "ConstructionTypeID", "DesignBlueprint", "ExpectedCompletionDate", "Location", "StartDate", "TotalArea" },
                 values: new object[,]
@@ -726,32 +888,6 @@ namespace dotnet_api.Migrations
                     { 5, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đường tránh QL1A - Phù Mỹ", 3, 1, "Design_PhuyMy.pdf", new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định", new DateTime(2021, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f },
                     { 6, null, "Nhà máy sản xuất thép An Phát", 4, 2, "Design_NhaMayThep.pdf", new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định", new DateTime(2020, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 8000f },
                     { 7, null, "Đập thủy lợi Phú Tài", 5, 3, "Design_ThuyLoiPhuTai.pdf", new DateTime(2022, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định", new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Employees",
-                columns: new[] { "ID", "Email", "Name", "Password", "Phone", "RoleID", "Status" },
-                values: new object[,]
-                {
-                    { 1, "giamdoc@company.com", "Phạm Văn Đốc", "giamdoc@123", "0901234567", 3, "Active" },
-                    { 2, "chihuy1@company.com", "Nguyễn Chỉ Huy", "chihuy@123", "0912345678", 2, "Active" },
-                    { 3, "chihuy2@company.com", "Trần Công Trình", "chihuy@123", "0923456789", 2, "Active" },
-                    { 4, "chihuy3@company.com", "Lê Xây Dựng", "chihuy@123", "0934567890", 2, "Active" },
-                    { 5, "kythuat1@company.com", "Hoàng Kỹ Thuật", "kythuat@123", "0945678901", 1, "Active" },
-                    { 6, "kythuat2@company.com", "Phan Thiết Kế", "kythuat@123", "0956789012", 1, "Active" },
-                    { 7, "kythuat3@company.com", "Vũ Vận Hành", "kythuat@123", "0967890123", 1, "Active" },
-                    { 8, "tho1@company.com", "Đinh Văn Thợ", "tho@123", "0978901234", 4, "Active" },
-                    { 9, "tho2@company.com", "Mai Thị Hàn", "tho@123", "0989012345", 4, "Active" },
-                    { 10, "tho3@company.com", "Lý Văn Xây", "tho@123", "0990123456", 4, "Active" },
-                    { 11, "tho4@company.com", "Trịnh Công Mộc", "tho@123", "0911223344", 4, "Active" },
-                    { 12, "tho5@company.com", "Võ Thị Điện", "tho@123", "0912334455", 4, "Active" },
-                    { 13, "tho6@company.com", "Châu Văn Sơn", "tho@123", "0913445566", 4, "Active" },
-                    { 14, "tho7@company.com", "Hồ Thị Nước", "tho@123", "0914556677", 4, "Active" },
-                    { 15, "tho8@company.com", "Phùng Văn Trát", "tho@123", "0915667788", 4, "Active" },
-                    { 16, "tho9@company.com", "Đỗ Thị Lát", "tho@123", "0916778899", 4, "Active" },
-                    { 17, "tho10@company.com", "Bùi Văn Lợp", "tho@123", "0917889900", 4, "Active" },
-                    { 18, "tho11@company.com", "Dương Thị Chát", "tho@123", "0918990011", 4, "Active" },
-                    { 19, "tho12@company.com", "Kim Văn Khoan", "tho@123", "0919001122", 4, "Active" }
                 });
 
             migrationBuilder.InsertData(
@@ -877,8 +1013,8 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ID", "EmployeeID", "ImportDate" },
                 values: new object[,]
                 {
-                    { 1, 5, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 6, new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, "manager3-id", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "manager3-id", new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -886,8 +1022,8 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ID", "ConstructionID", "Content", "EmployeeID", "Level", "ProblemType", "ReportDate", "ReportType" },
                 values: new object[,]
                 {
-                    { 1, 1, "Báo cáo tiến độ ngày 1", 2, "Cao", "Chậm tiến độ", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 2, 2, "Báo cáo tiến độ ngày 2", 3, "Thấp", "Thiếu vật liệu", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" }
+                    { 1, 1, "Báo cáo tiến độ ngày 1", "manager1-id", "Cao", "Chậm tiến độ", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 2, 2, "Báo cáo tiến độ ngày 2", "manager2-id", "Thấp", "Thiếu vật liệu", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" }
                 });
 
             migrationBuilder.InsertData(
@@ -1177,91 +1313,91 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.InsertData(
                 table: "ConstructionPlans",
-                columns: new[] { "ID", "ActualCompletionDate", "ConstructionItemID", "ConstructionStatusID", "EmployeeID", "ExpectedCompletionDate", "StartDate" },
+                columns: new[] { "ID", "ActualCompletionDate", "ConstructionID", "ConstructionItemID", "ConstructionStatusID", "EmployeeID", "ExpectedCompletionDate", "StartDate" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2021, 4, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 3, 2, new DateTime(2021, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 3, 2, new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new DateTime(2021, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3, 3, new DateTime(2021, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new DateTime(2021, 6, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 3, 3, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new DateTime(2021, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, 3, 4, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, new DateTime(2021, 8, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 3, 4, new DateTime(2021, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 7, new DateTime(2021, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 3, 2, new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 8, new DateTime(2021, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, 3, 3, new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 9, new DateTime(2021, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, 3, 4, new DateTime(2021, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 10, new DateTime(2021, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, 3, 2, new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 11, new DateTime(2021, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, 3, 3, new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 12, new DateTime(2021, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 8, 3, 4, new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 13, new DateTime(2021, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 9, 3, 3, new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 14, new DateTime(2022, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 10, 3, 2, new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 15, new DateTime(2021, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), 11, 3, 2, new DateTime(2021, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 16, new DateTime(2021, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 11, 3, 3, new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 17, new DateTime(2021, 3, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 12, 3, 4, new DateTime(2021, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 18, new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 12, 3, 2, new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 19, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 13, 3, 3, new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 20, new DateTime(2021, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 13, 3, 4, new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 21, new DateTime(2021, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 14, 3, 2, new DateTime(2021, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 22, new DateTime(2021, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), 14, 3, 3, new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 23, new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 15, 3, 4, new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 24, new DateTime(2021, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 15, 3, 2, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 25, new DateTime(2021, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 16, 3, 3, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 26, new DateTime(2021, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 17, 3, 4, new DateTime(2021, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 27, new DateTime(2021, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 17, 3, 2, new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 28, new DateTime(2021, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 18, 3, 3, new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 29, new DateTime(2021, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 19, 3, 4, new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 30, new DateTime(2021, 12, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 20, 3, 2, new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 31, null, 21, 2, 2, new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 32, null, 22, 2, 3, new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 33, null, 23, 2, 4, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 34, null, 24, 2, 2, new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 35, null, 25, 2, 3, new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 36, null, 26, 2, 4, new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 37, null, 27, 2, 2, new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 38, null, 28, 2, 3, new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 39, null, 29, 2, 4, new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 40, null, 30, 2, 2, new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 41, new DateTime(2021, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 31, 3, 2, new DateTime(2021, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 42, new DateTime(2021, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 31, 3, 3, new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 43, new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 32, 3, 4, new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 44, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 32, 3, 2, new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 45, null, 33, 2, 3, new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 46, null, 33, 2, 4, new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 47, null, 34, 2, 2, new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 48, null, 35, 2, 3, new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 49, null, 35, 2, 4, new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 50, null, 36, 2, 2, new DateTime(2022, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 51, null, 37, 2, 3, new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 52, null, 38, 2, 4, new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 53, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 39, 3, 2, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 54, new DateTime(2022, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 39, 3, 3, new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 55, new DateTime(2022, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 40, 3, 4, new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 56, new DateTime(2022, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 40, 3, 2, new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 57, new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 41, 3, 3, new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 58, new DateTime(2022, 9, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 42, 3, 4, new DateTime(2022, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 59, new DateTime(2022, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 42, 3, 2, new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 60, new DateTime(2022, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 43, 3, 3, new DateTime(2022, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 61, new DateTime(2022, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 43, 3, 4, new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 62, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 44, 3, 2, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 63, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 44, 3, 3, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 64, new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 45, 3, 2, new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 65, new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 45, 3, 3, new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 9, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 66, new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 46, 3, 4, new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 67, new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 46, 3, 2, new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 68, null, 47, 2, 3, new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 69, null, 47, 2, 4, new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 70, null, 48, 4, 2, new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 71, null, 49, 1, 3, new DateTime(2022, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 72, null, 50, 1, 4, new DateTime(2022, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 73, new DateTime(2020, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 51, 3, 2, new DateTime(2020, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 74, new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 51, 3, 3, new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 75, new DateTime(2020, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 52, 3, 4, new DateTime(2020, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 76, new DateTime(2020, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 52, 3, 2, new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 77, null, 53, 2, 3, new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 78, null, 53, 2, 4, new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 79, null, 54, 4, 2, new DateTime(2021, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 80, null, 55, 1, 3, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 81, null, 55, 1, 4, new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 82, null, 56, 1, 2, new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, new DateTime(2021, 4, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 1, 3, "manager1-id", new DateTime(2021, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 1, 3, "manager1-id", new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, new DateTime(2021, 6, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 2, 3, "manager2-id", new DateTime(2021, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, new DateTime(2021, 6, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 2, 3, "manager2-id", new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, new DateTime(2021, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 3, 3, "manager3-id", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, new DateTime(2021, 8, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 4, 3, "manager3-id", new DateTime(2021, 8, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7, new DateTime(2021, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 4, 3, "manager1-id", new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8, new DateTime(2021, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 5, 3, "manager2-id", new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 9, new DateTime(2021, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 6, 3, "manager3-id", new DateTime(2021, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 10, new DateTime(2021, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 6, 3, "manager1-id", new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 11, new DateTime(2021, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 7, 3, "manager2-id", new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 12, new DateTime(2021, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 8, 3, "manager3-id", new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 13, new DateTime(2021, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 9, 3, "manager2-id", new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 14, new DateTime(2022, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 10, 3, "manager1-id", new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 15, new DateTime(2021, 2, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 11, 3, "manager1-id", new DateTime(2021, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 16, new DateTime(2021, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 11, 3, "manager2-id", new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 17, new DateTime(2021, 3, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 12, 3, "manager3-id", new DateTime(2021, 3, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 18, new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 12, 3, "manager1-id", new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 19, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 13, 3, "manager2-id", new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 20, new DateTime(2021, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 13, 3, "manager3-id", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 21, new DateTime(2021, 7, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 14, 3, "manager1-id", new DateTime(2021, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 22, new DateTime(2021, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 14, 3, "manager2-id", new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 23, new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 15, 3, "manager3-id", new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 24, new DateTime(2021, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 15, 3, "manager1-id", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 25, new DateTime(2021, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 16, 3, "manager2-id", new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 26, new DateTime(2021, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 17, 3, "manager3-id", new DateTime(2021, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 27, new DateTime(2021, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 17, 3, "manager1-id", new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 28, new DateTime(2021, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 18, 3, "manager2-id", new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 29, new DateTime(2021, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 19, 3, "manager3-id", new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 30, new DateTime(2021, 12, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 20, 3, "manager1-id", new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 31, null, 0, 21, 2, "manager1-id", new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 32, null, 0, 22, 2, "manager2-id", new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 33, null, 0, 23, 2, "manager3-id", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 34, null, 0, 24, 2, "manager1-id", new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 35, null, 0, 25, 2, "manager2-id", new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 36, null, 0, 26, 2, "manager3-id", new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 37, null, 0, 27, 2, "manager1-id", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 38, null, 0, 28, 2, "manager2-id", new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 39, null, 0, 29, 2, "manager3-id", new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 40, null, 0, 30, 2, "manager1-id", new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 41, new DateTime(2021, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 31, 3, "manager1-id", new DateTime(2021, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 42, new DateTime(2021, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 31, 3, "manager2-id", new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 43, new DateTime(2021, 8, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 32, 3, "manager3-id", new DateTime(2021, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 44, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 32, 3, "manager1-id", new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 45, null, 0, 33, 2, "manager2-id", new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 46, null, 0, 33, 2, "manager3-id", new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 47, null, 0, 34, 2, "manager1-id", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 48, null, 0, 35, 2, "manager2-id", new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 49, null, 0, 35, 2, "manager3-id", new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 50, null, 0, 36, 2, "manager1-id", new DateTime(2022, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 51, null, 0, 37, 2, "manager2-id", new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 52, null, 0, 38, 2, "manager3-id", new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 53, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 39, 3, "manager1-id", new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 54, new DateTime(2022, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 39, 3, "manager2-id", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 55, new DateTime(2022, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 40, 3, "manager3-id", new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 56, new DateTime(2022, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 40, 3, "manager1-id", new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 57, new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 41, 3, "manager2-id", new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 58, new DateTime(2022, 9, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 42, 3, "manager3-id", new DateTime(2022, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 59, new DateTime(2022, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 42, 3, "manager1-id", new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 60, new DateTime(2022, 11, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 43, 3, "manager2-id", new DateTime(2022, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 61, new DateTime(2022, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 43, 3, "manager3-id", new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 62, new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 44, 3, "manager1-id", new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 63, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 44, 3, "manager2-id", new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 64, new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 45, 3, "manager1-id", new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 65, new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 45, 3, "manager2-id", new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 9, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 66, new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 46, 3, "manager3-id", new DateTime(2020, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 67, new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 46, 3, "manager1-id", new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 68, null, 0, 47, 2, "manager2-id", new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 69, null, 0, 47, 2, "manager3-id", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 70, null, 0, 48, 4, "manager1-id", new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 71, null, 0, 49, 1, "manager2-id", new DateTime(2022, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 72, null, 0, 50, 1, "manager3-id", new DateTime(2022, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 73, new DateTime(2020, 4, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 51, 3, "manager1-id", new DateTime(2020, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 74, new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 51, 3, "manager2-id", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 75, new DateTime(2020, 6, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 52, 3, "manager3-id", new DateTime(2020, 6, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 76, new DateTime(2020, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, 52, 3, "manager1-id", new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 77, null, 0, 53, 2, "manager2-id", new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 78, null, 0, 53, 2, "manager3-id", new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 79, null, 0, 54, 4, "manager1-id", new DateTime(2021, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 80, null, 0, 55, 1, "manager2-id", new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 81, null, 0, 55, 1, "manager3-id", new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 82, null, 0, 56, 1, "manager1-id", new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -1443,8 +1579,8 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ID", "ConstructionPlanID", "EmployeeID", "ExportDate" },
                 values: new object[,]
                 {
-                    { 1, 1, 2, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 2, 3, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 1, "manager1-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 2, "manager2-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -1463,8 +1599,8 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ConstructionTaskID", "EmployeeID", "AttendanceDate", "Status" },
                 values: new object[,]
                 {
-                    { 1, 3, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "có mặt" },
-                    { 2, 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "vắng mặt" }
+                    { 1, "manager2-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "có mặt" },
+                    { 2, "manager2-id", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "vắng mặt" }
                 });
 
             migrationBuilder.InsertData(
@@ -1476,6 +1612,50 @@ namespace dotnet_api.Migrations
                     { 1, 2, 10 },
                     { 2, 3, 15 }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_RoleID",
+                table: "AspNetUsers",
+                column: "RoleID");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attendances_ConstructionTaskID",
@@ -1546,11 +1726,6 @@ namespace dotnet_api.Migrations
                 name: "IX_ConstructionTemplateItems_WorkSubTypeVarientID",
                 table: "ConstructionTemplateItems",
                 column: "WorkSubTypeVarientID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_RoleID",
-                table: "Employees",
-                column: "RoleID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExportOrders_ConstructionPlanID",
@@ -1642,6 +1817,21 @@ namespace dotnet_api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
                 name: "Attendances");
 
             migrationBuilder.DropTable(
@@ -1664,6 +1854,9 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "WorkSubTypeVariant_WorkAttributes");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "ConstructionTasks");
@@ -1690,10 +1883,13 @@ namespace dotnet_api.Migrations
                 name: "MaterialTypes");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "ConstructionItems");
 
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Constructions");
@@ -1703,9 +1899,6 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "WorkSubTypeVariants");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "ConstructionStatuses");

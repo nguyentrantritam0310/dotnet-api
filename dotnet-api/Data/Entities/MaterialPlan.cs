@@ -11,9 +11,6 @@ namespace dotnet_api.Data.Entities
         // Navigation properties
         public Material Material { get; set; }
         public ImportOrder ImportOrder { get; set; }
-
         public ConstructionPlan ConstructionPlan { get; set; }
-
-
     }
 }

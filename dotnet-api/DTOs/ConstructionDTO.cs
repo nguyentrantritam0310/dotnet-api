@@ -12,5 +12,8 @@ namespace dotnet_api.DTOs
         public DateTime ExpectedCompletionDate { get; set; }
         public DateTime ActualCompletionDate { get; set; }
         public string DesignBlueprint { get; set; }
+        public string StatusName { get; set; }
+
+        public List<ConstructionItemDTO> ConstructionItems { get; set; }
     }
 }

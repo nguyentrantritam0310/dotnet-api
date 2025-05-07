@@ -10,7 +10,7 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("MaterialNorms");
 
-            builder.HasKey(x => new { x.MaterialID, x.WorkSubTypeVariantID });
+            builder.HasKey(x => new { x.MaterialID, x.WorkSubTypeVariantID});
 
             builder.Property(x => x.Quantity)
                 .IsRequired();

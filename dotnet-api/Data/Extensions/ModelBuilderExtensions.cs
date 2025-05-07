@@ -1,989 +1,1071 @@
 ﻿using dotnet_api.Data.Entities;
 using dotnet_api.Data.Enums;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
 
 namespace dotnet_api.Data.Extensions
 {
-   public static class ModelBuilderExtensions
-   {
-       public static void Seed(this ModelBuilder modelBuilder)
-       {
-           // Chuyển enum -> string trong DB
-           modelBuilder.Entity<MaterialType>()
-               .Property(m => m.MaterialTypeName)
-               .HasConversion<string>();
+    public static class ModelBuilderExtensions
+    {
+        public static void Seed(this ModelBuilder modelBuilder)
+        {
+            // Configure enum conversions
+            modelBuilder.Entity<MaterialType>()
+                .Property(m => m.MaterialTypeName)
+                .HasConversion<string>();
 
-           modelBuilder.Entity<ConstructionStatus>()
-               .Property(m => m.Name)
-               .HasConversion<string>();
+            modelBuilder.Entity<ConstructionStatus>()
+                .Property(m => m.Name)
+                .HasConversion<string>();
 
-           modelBuilder.Entity<ReportStatusLog>()
-               .Property(m => m.Status)
-               .HasConversion<string>();
+            modelBuilder.Entity<ReportStatusLog>()
+                .Property(m => m.Status)
+                .HasConversion<string>();
 
-           modelBuilder.Entity<MaterialPlan>()
-               .Property(m => m.Status)
-               .HasConversion<string>();
+            modelBuilder.Entity<MaterialPlan>()
+                .Property(m => m.Status)
+                .HasConversion<string>();
 
-           modelBuilder.Entity<ConstructionType>()
-               .Property(m => m.ConstructionTypeName)
-               .HasConversion<string>();
+            modelBuilder.Entity<ConstructionType>()
+                .Property(m => m.ConstructionTypeName)
+                .HasConversion<string>();
 
-           modelBuilder.Entity<Employee>()
-               .Property(m => m.Status)
-               .HasConversion<string>();
+            modelBuilder.Entity<ApplicationUser>()
+                .Property(m => m.Status)
+                .HasConversion<string>();
 
-           // Seed data for Role
-           modelBuilder.Entity<Role>().HasData(
-               new Role { ID = 1, RoleName = "Nhân viên kỹ thuật" },
-               new Role { ID = 2, RoleName = "Chỉ huy công trình" },
-               new Role { ID = 3, RoleName = "Giám đốc" },
-               new Role { ID = 4, RoleName = "Thợ" }
-           );
-
-           // Seed data for Employee
-           modelBuilder.Entity<Employee>().HasData(
-               // 1 Giám đốc (RoleID = 3)
-               new Employee
-               {
-                   ID = 1,
-                   RoleID = 3,
-                   Name = "Phạm Văn Đốc",
-                   Phone = "0901234567",
-                   Email = "giamdoc@company.com",
-                   Password = "giamdoc@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-
-               // 3 Chỉ huy công trình (RoleID = 2)
-               new Employee
-               {
-                   ID = 2,
-                   RoleID = 2,
-                   Name = "Nguyễn Chỉ Huy",
-                   Phone = "0912345678",
-                   Email = "chihuy1@company.com",
-                   Password = "chihuy@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 3,
-                   RoleID = 2,
-                   Name = "Trần Công Trình",
-                   Phone = "0923456789",
-                   Email = "chihuy2@company.com",
-                   Password = "chihuy@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 4,
-                   RoleID = 2,
-                   Name = "Lê Xây Dựng",
-                   Phone = "0934567890",
-                   Email = "chihuy3@company.com",
-                   Password = "chihuy@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-
-               // 3 Nhân viên kỹ thuật (RoleID = 1)
-               new Employee
-               {
-                   ID = 5,
-                   RoleID = 1,
-                   Name = "Hoàng Kỹ Thuật",
-                   Phone = "0945678901",
-                   Email = "kythuat1@company.com",
-                   Password = "kythuat@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 6,
-                   RoleID = 1,
-                   Name = "Phan Thiết Kế",
-                   Phone = "0956789012",
-                   Email = "kythuat2@company.com",
-                   Password = "kythuat@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 7,
-                   RoleID = 1,
-                   Name = "Vũ Vận Hành",
-                   Phone = "0967890123",
-                   Email = "kythuat3@company.com",
-                   Password = "kythuat@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-
-               // 12 Thợ (RoleID = 4)
-               new Employee
-               {
-                   ID = 8,
-                   RoleID = 4,
-                   Name = "Đinh Văn Thợ",
-                   Phone = "0978901234",
-                   Email = "tho1@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 9,
-                   RoleID = 4,
-                   Name = "Mai Thị Hàn",
-                   Phone = "0989012345",
-                   Email = "tho2@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 10,
-                   RoleID = 4,
-                   Name = "Lý Văn Xây",
-                   Phone = "0990123456",
-                   Email = "tho3@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 11,
-                   RoleID = 4,
-                   Name = "Trịnh Công Mộc",
-                   Phone = "0911223344",
-                   Email = "tho4@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 12,
-                   RoleID = 4,
-                   Name = "Võ Thị Điện",
-                   Phone = "0912334455",
-                   Email = "tho5@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 13,
-                   RoleID = 4,
-                   Name = "Châu Văn Sơn",
-                   Phone = "0913445566",
-                   Email = "tho6@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 14,
-                   RoleID = 4,
-                   Name = "Hồ Thị Nước",
-                   Phone = "0914556677",
-                   Email = "tho7@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 15,
-                   RoleID = 4,
-                   Name = "Phùng Văn Trát",
-                   Phone = "0915667788",
-                   Email = "tho8@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 16,
-                   RoleID = 4,
-                   Name = "Đỗ Thị Lát",
-                   Phone = "0916778899",
-                   Email = "tho9@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 17,
-                   RoleID = 4,
-                   Name = "Bùi Văn Lợp",
-                   Phone = "0917889900",
-                   Email = "tho10@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 18,
-                   RoleID = 4,
-                   Name = "Dương Thị Chát",
-                   Phone = "0918990011",
-                   Email = "tho11@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               },
-               new Employee
-               {
-                   ID = 19,
-                   RoleID = 4,
-                   Name = "Kim Văn Khoan",
-                   Phone = "0919001122",
-                   Email = "tho12@company.com",
-                   Password = "tho@123",
-                   Status = EmployeeStatusEnum.Active
-               }
-           );
-
-           // Seed data for ConstructionType
-           modelBuilder.Entity<ConstructionType>().HasData(
-               new ConstructionType { ID = 1, ConstructionTypeName = ConstructionTypeEnum.RoadBridge },
-               new ConstructionType { ID = 2, ConstructionTypeName = ConstructionTypeEnum.House },
-               new ConstructionType { ID = 3, ConstructionTypeName = ConstructionTypeEnum.Industrial },
-               new ConstructionType { ID = 4, ConstructionTypeName = ConstructionTypeEnum.Irrigation }
-           );
-
-           // Seed data for MaterialType
-           modelBuilder.Entity<MaterialType>().HasData(
-               new MaterialType { ID = 1, MaterialTypeName = MaterialTypeEnum.BasicBuildingMaterial },
-               new MaterialType { ID = 2, MaterialTypeName = MaterialTypeEnum.FinishingMaterial },
-               new MaterialType { ID = 3, MaterialTypeName = MaterialTypeEnum.ElectricalWaterSystem },
-               new MaterialType { ID = 4, MaterialTypeName = MaterialTypeEnum.MechanicalStructure },
-               new MaterialType { ID = 5, MaterialTypeName = MaterialTypeEnum.SupportingMaterial }
-           );
-
-           // Seed data for UnitofMeasurement
-           modelBuilder.Entity<UnitofMeasurement>().HasData(
-           // Chiều dài
-           new UnitofMeasurement { ID = 1, UnitName = "mét", ShortName = "m", Category = "Chiều dài" },
-           new UnitofMeasurement { ID = 2, UnitName = "centimet", ShortName = "cm", Category = "Chiều dài" },
-           new UnitofMeasurement { ID = 3, UnitName = "kilomet", ShortName = "km", Category = "Chiều dài" },
-
-           // Khối lượng
-           new UnitofMeasurement { ID = 4, UnitName = "kilogram", ShortName = "kg", Category = "Khối lượng" },
-           new UnitofMeasurement { ID = 5, UnitName = "tấn", ShortName = "t", Category = "Khối lượng" },
-
-           // Thể tích
-           new UnitofMeasurement { ID = 6, UnitName = "mét khối", ShortName = "m³", Category = "Thể tích" },
-           new UnitofMeasurement { ID = 7, UnitName = "lít", ShortName = "l", Category = "Thể tích" },
-
-           // Diện tích
-           new UnitofMeasurement { ID = 8, UnitName = "mét vuông", ShortName = "m²", Category = "Diện tích" },
-           new UnitofMeasurement { ID = 9, UnitName = "hecta", ShortName = "ha", Category = "Diện tích" },
-
-           // Vật liệu xây dựng
-           new UnitofMeasurement { ID = 10, UnitName = "bao", ShortName = "bao", Category = "Vật liệu" },
-           new UnitofMeasurement { ID = 11, UnitName = "thanh", ShortName = "thanh", Category = "Vật liệu" },
-           new UnitofMeasurement { ID = 12, UnitName = "viên", ShortName = "viên", Category = "Vật liệu" },
-           new UnitofMeasurement { ID = 13, UnitName = "cái", ShortName = "cái", Category = "Vật liệu" },
-           new UnitofMeasurement { ID = 14, UnitName = "bộ", ShortName = "bộ", Category = "Vật liệu" } // Thêm đơn vị "bộ"
-           );
-
-           // Seed data for Material
-           modelBuilder.Entity<Material>().HasData(
-                // 1. Vật liệu xây dựng cơ bản
-                new Material
-                {
-                    ID = 1,
-                    MaterialName = "Xi măng Portland PC40",
-                    UnitOfMeasurementID = 2, // Bao
-                    StockQuantity = 500,
-                    UnitPrice = 90000,
-                    Specification = "Mác PCB40, độ dẻo cao, thời gian đông kết 3-4 giờ",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho bê tông móng, cột, dầm"
-                },
-                new Material
-                {
-                    ID = 2,
-                    MaterialName = "Xi măng trắng",
-                    UnitOfMeasurementID = 2, // Bao
-                    StockQuantity = 120,
-                    UnitPrice = 140000,
-                    Specification = "Độ trắng >85%, cường độ 35MPa",
-                    Status = "Còn ít",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho ốp lát, trang trí"
-                },
-                new Material
-                {
-                    ID = 3,
-                    MaterialName = "Cát vàng xây dựng",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 300,
-                    UnitPrice = 450000,
-                    Specification = "Module độ lớn 2.0-3.3, cỡ hạt 0.5-2mm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Không lẫn tạp chất, độ sạch >95%"
-                },
-                new Material
-                {
-                    ID = 4,
-                    MaterialName = "Cát mịn xây tô",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 120,
-                    UnitPrice = 350000,
-                    Specification = "Module độ lớn 1.5-2.0, cỡ hạt 0.15-0.5mm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho công tác xây, trát tường"
-                },
-                new Material
-                {
-                    ID = 5,
-                    MaterialName = "Đá 1x2",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 300,
-                    UnitPrice = 320000,
-                    Specification = "Kích thước 10x20mm, cường độ >100MPa",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho bê tông móng, cọc"
-                },
-                new Material
-                {
-                    ID = 6,
-                    MaterialName = "Đá mi sàng",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 200,
-                    UnitPrice = 280000,
-                    Specification = "Kích thước 0-5mm, độ ẩm <2%",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng làm lớp nền, san lấp"
-                },
-                new Material
-                {
-                    ID = 7,
-                    MaterialName = "Gạch ống 4 lỗ",
-                    UnitOfMeasurementID = 3, // Viên
-                    StockQuantity = 50000,
-                    UnitPrice = 2000,
-                    Specification = "Cường độ M75, độ hút nước <16%",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng xây tường bao"
-                },
-                new Material
-                {
-                    ID = 8,
-                    MaterialName = "Gạch ba banh",
-                    UnitOfMeasurementID = 3, // Viên
-                    StockQuantity = 30000,
-                    UnitPrice = 8500,
-                    Specification = "Cường độ M100, khối lượng 14kg/viên",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng xây tường chịu lực"
-                },
-                new Material
-                {
-                    ID = 9,
-                    MaterialName = "Thép phi 6",
-                    UnitOfMeasurementID = 1, // Kg
-                    StockQuantity = 3000,
-                    UnitPrice = 25000,
-                    Specification = "Giới hạn chảy 295MPa, độ dãn dài >18%",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng làm thép đai, gia cố"
-                },
-                new Material
-                {
-                    ID = 10,
-                    MaterialName = "Thép phi 14",
-                    UnitOfMeasurementID = 1, // Kg
-                    StockQuantity = 5000,
-                    UnitPrice = 22000,
-                    Specification = "Giới hạn chảy 400MPa, chiều dài 11.7m/cây",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 1,
-                    Note = "Dùng làm thép dầm, cột"
-                },
-                new Material
-                {
-                    ID = 11,
-                    MaterialName = "Bê tông thương phẩm 30MPa",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 0,
-                    UnitPrice = 1650000,
-                    Specification = "Cấp phối PC40-Đá 1x2-Cát vàng, độ sụt 10±2cm",
-                    Status = "Đặt hàng trước 24h",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho sàn, dầm, cột"
-                },
-                new Material
-                {
-                    ID = 12,
-                    MaterialName = "Bê tông thương phẩm 40MPa",
-                    UnitOfMeasurementID = 4, // m3
-                    StockQuantity = 0,
-                    UnitPrice = 1850000,
-                    Specification = "Cấp phối PC50-Đá 1x2-Cát vàng, độ sụt 8±2cm",
-                    Status = "Đặt hàng trước 24h",
-                    MaterialTypeID = 1,
-                    Note = "Dùng cho móng nhà cao tầng"
-                },
-                // 2. Vật tư hoàn thiện
-                new Material
-                {
-                    ID = 13,
-                    MaterialName = "Sơn lót nội thất cao cấp",
-                    UnitOfMeasurementID = 9, // Thùng 18L
-                    StockQuantity = 50,
-                    UnitPrice = 1350000,
-                    Specification = "Độ phủ 8-10m²/lít (2 lớp), thời gian khô 2h",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Dùng cho bề mặt bê tông, tường gạch"
-                },
-                new Material
-                {
-                    ID = 14,
-                    MaterialName = "Sơn hoàn thiện ngoại thất",
-                    UnitOfMeasurementID = 9, // Thùng 18L
-                    StockQuantity = 45,
-                    UnitPrice = 1950000,
-                    Specification = "Độ phủ 4-5m²/lít, chống UV, chống rêu mốc",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Dùng cho sơn ngoại thất"
-                },
-                new Material
-                {
-                    ID = 15,
-                    MaterialName = "Gạch ceramic 60x60",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 500,
-                    UnitPrice = 350000,
-                    Specification = "Độ hút nước <3%, độ dày 9mm, chống trơn",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Dùng lát sàn phòng khách"
-                },
-                new Material
-                {
-                    ID = 16,
-                    MaterialName = "Đá granite đen Phú Yên",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 70,
-                    UnitPrice = 1400000,
-                    Specification = "Độ dày 20mm, khả năng chịu lực >200MPa",
-                    Status = "Nhập theo đơn đặt",
-                    MaterialTypeID = 2,
-                    Note = "Dùng lát mặt tiền, cầu thang"
-                },
-                new Material
-                {
-                    ID = 17,
-                    MaterialName = "Keo dán gạch cao cấp",
-                    UnitOfMeasurementID = 2, // Bao
-                    StockQuantity = 200,
-                    UnitPrice = 170000,
-                    Specification = "Độ bám dính >1.5MPa, thời gian chỉnh sửa 20 phút",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Dùng cho gạch lớn >60cm"
-                },
-                new Material
-                {
-                    ID = 18,
-                    MaterialName = "Keo chà ron",
-                    UnitOfMeasurementID = 2, // Bao
-                    StockQuantity = 300,
-                    UnitPrice = 120000,
-                    Specification = "Độ trắng >85%, cường độ 45MPa",
-                    Status = "Còn ít",
-                    MaterialTypeID = 2,
-                    Note = "Dùng chà ron gạch men"
-                },
-                new Material
-                {
-                    ID = 19,
-                    MaterialName = "Màng chống thấm Sika",
-                    UnitOfMeasurementID = 10, // Cuộn
-                    StockQuantity = 50,
-                    UnitPrice = 1350000,
-                    Specification = "Độ dày 3mm, kháng UV 2000h",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Dán bằng đèn khò"
-                },
-                new Material
-                {
-                    ID = 20,
-                    MaterialName = "Sơn chống thấm Kova CT-11A",
-                    UnitOfMeasurementID = 9, // Thùng 18L
-                    StockQuantity = 35,
-                    UnitPrice = 1820000,
-                    Specification = "Độ phủ 1.5-2m²/lít, chịu được áp lực nước 3 bar",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 2,
-                    Note = "Phun 2 lớp cách nhau 6h"
-                },
-            // 3. Vật tư điện nước
-                new Material
-                {
-                    ID = 21,
-                    MaterialName = "Ống PPR 32mm",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 2000,
-                    UnitPrice = 42000,
-                    Specification = "Áp lực làm việc 2.0MPa, chịu nhiệt 95°C",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Dùng cho hệ thống nước nóng lạnh"
-                },
-                new Material
-                {
-                    ID = 22,
-                    MaterialName = "Ống thoát nước PVC 90mm",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 1500,
-                    UnitPrice = 65000,
-                    Specification = "Áp lực 10bar, chống tia UV, đường kính ngoài 90mm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Dùng cho thoát nước thải"
-                },
-                new Material
-                {
-                    ID = 23,
-                    MaterialName = "Dây điện đơn 2.5mm² - Daphaco",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 5000,
-                    UnitPrice = 8000,
-                    Specification = "Tiết diện 2.5mm², vỏ PVC chống cháy",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Dây đơn lõi đồng, dùng cho đèn"
-                },
-                new Material
-                {
-                    ID = 24,
-                    MaterialName = "Dây điện đơn 2.5mm² - Daphaco (dây nguội)",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 4000,
-                    UnitPrice = 8000,
-                    Specification = "Tiết diện 2.5mm², vỏ PVC chống cháy",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Dây đơn lõi đồng, dùng cho ổ cắm"
-                },
-                new Material
-                {
-                    ID = 25,
-                    MaterialName = "Dây điện đơn 3.5mm² - Daphaco",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 3000,
-                    UnitPrice = 12000,
-                    Specification = "Tiết diện 3.5mm², vỏ PVC chống cháy",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Dây đơn lõi đồng, dùng cho điều hòa"
-                },
-                new Material
-                {
-                    ID = 26,
-                    MaterialName = "Atomat 1 pha 40A",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 150,
-                    UnitPrice = 98000,
-                    Specification = "Dòng cắt 40A, điện áp 230V, tiêu chuẩn IEC 60898",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Lắp tủ điện chính"
-                },
-                new Material
-                {
-                    ID = 27,
-                    MaterialName = "Bóng đèn LED bulb 9W",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 300,
-                    UnitPrice = 48000,
-                    Specification = "Công suất 9W (~60W đèn sợi đốt), nhiệt độ màu 4000K",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Tuổi thọ 25,000 giờ"
-                },
-                new Material
-                {
-                    ID = 28,
-                    MaterialName = "Đèn LED pha 50W",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 50,
-                    UnitPrice = 350000,
-                    Specification = "IP67, quang thông 5000lm, góc chiếu 120°",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Chống nước, chống bụi"
-                },
-                new Material
-                {
-                    ID = 29,
-                    MaterialName = "Máy bơm nước Pentax",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 10,
-                    UnitPrice = 3500000,
-                    Specification = "Lưu lượng 2.4m³/h, cột áp 32m, điện 1 pha 220V",
-                    Status = "Đặt hàng trước",
-                    MaterialTypeID = 3,
-                    Note = "Bơm tăng áp cho biệt thự"
-                },
-                new Material
-                {
-                    ID = 30,
-                    MaterialName = "Bình nóng lạnh Ariston",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 15,
-                    UnitPrice = 3200000,
-                    Specification = "Công suất 2500W, chống giật ELCB, inox 304",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 3,
-                    Note = "Lắp phòng tắm gia đình"
-                },
-            // 4. Vật tư cơ khí, kết cấu
-                new Material
-                {
-                    ID = 31,
-                    MaterialName = "Cốp pha nhôm định hình",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 2000,
-                    UnitPrice = 950000,
-                    Specification = "Độ dày 4mm, tải trọng 60kN/m², nhôm hợp kim 6061",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Tái sử dụng 200 lần, chống dính"
-                },
-                new Material
-                {
-                    ID = 32,
-                    MaterialName = "Giàn giáo khung 1.7m x 1.2m",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 250,
-                    UnitPrice = 1450000,
-                    Specification = "Thép Q235, tải trọng 4.5 tấn/khung, mạ kẽm nhúng nóng",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Kèm chéo giằng và mâm đứng"
-                },
-                new Material
-                {
-                    ID = 33,
-                    MaterialName = "Bulong neo M16x150mm",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 2000,
-                    UnitPrice = 18000,
-                    Specification = "Cấp bền 8.8, mạ kẽm điện phân, đầu hexagon",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Dùng neo cột thép vào móng"
-                },
-                new Material
-                {
-                    ID = 34,
-                    MaterialName = "Vít khoan đuôi chuồn 12mm",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 15000,
-                    UnitPrice = 1200,
-                    Specification = "Thép carbon, phủ lớp zinc 15µm, 100 cái/hộp",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Bắt tôn vào xà gồ"
-                },
-                new Material
-                {
-                    ID = 35,
-                    MaterialName = "Kính cường lực 10mm",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 100,
-                    UnitPrice = 480000,
-                    Specification = "Độ dày 10±0.2mm, chịu lực 90MPa, an toàn khi vỡ",
-                    Status = "Cắt theo yêu cầu",
-                    MaterialTypeID = 4,
-                    Note = "Thời gian gia công 3-5 ngày"
-                },
-                new Material
-                {
-                    ID = 36,
-                    MaterialName = "Tấm inox 304 đánh bóng",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 45,
-                    UnitPrice = 850000,
-                    Specification = "Độ dày 1.5mm, kích thước 1.2x2.4m, bề mặt No.4",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Dùng làm lan can, bếp công nghiệp"
-                },
-                new Material
-                {
-                    ID = 37,
-                    MaterialName = "Dây thép buộc 1.1mm",
-                    UnitOfMeasurementID = 1, // Kg
-                    StockQuantity = 500,
-                    UnitPrice = 32000,
-                    Specification = "Kẽm mạ đồng, độ bền kéo 400-500N/mm²",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Buộc thép, cốt thép"
-                },
-                new Material
-                {
-                    ID = 38,
-                    MaterialName = "Thanh nhôm hộp 50x100mm",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 300,
-                    UnitPrice = 180000,
-                    Specification = "Hợp kim 6063-T5, dài 6m/cây, tải trọng 150kg/m",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 4,
-                    Note = "Dựng vách ngăn, mặt dựng"
-                },
-                // 5. Vật tư phụ, an toàn
-                new Material
-                {
-                    ID = 39,
-                    MaterialName = "Mũ bảo hộ lao động",
-                    UnitOfMeasurementID = 3, // Chiếc
-                    StockQuantity = 200,
-                    UnitPrice = 65000,
-                    Specification = "Nhựa HDPE, chịu lực 5kg, quai cài 4 điểm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Màu vàng, in logo công ty"
-                },
-                new Material
-                {
-                    ID = 40,
-                    MaterialName = "Giày bảo hộ lao động",
-                    UnitOfMeasurementID = 7, // Đôi
-                    StockQuantity = 50,
-                    UnitPrice = 320000,
-                    Specification = "Mũi thép chịu lực 200J, đế chống trượt SR",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Size 38-44, chống đinh đâm"
-                },
-                new Material
-                {
-                    ID = 41,
-                    MaterialName = "Keo silicone trung tính",
-                    UnitOfMeasurementID = 12, // Tuýp
-                    StockQuantity = 200,
-                    UnitPrice = 75000,
-                    Specification = "Độ giãn dài 400%, lực bám dính 1.5MPa",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Dán khe co giãn, chịu UV tốt"
-                },
-                new Material
-                {
-                    ID = 42,
-                    MaterialName = "Băng keo hai mặt 50mm",
-                    UnitOfMeasurementID = 3, // Cuộn
-                    StockQuantity = 100,
-                    UnitPrice = 28000,
-                    Specification = "Lực kéo 40N/10mm, chịu nhiệt 80°C",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Dán bạt, che phủ bề mặt"
-                },
-                new Material
-                {
-                    ID = 43,
-                    MaterialName = "Dây thừng PP 12mm",
-                    UnitOfMeasurementID = 5, // Mét
-                    StockQuantity = 1000,
-                    UnitPrice = 9000,
-                    Specification = "Chịu lực 150kg, kháng UV, chống mục",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Buộc vật liệu, giàn giáo"
-                },
-                new Material
-                {
-                    ID = 44,
-                    MaterialName = "Lưới an toàn HDPE",
-                    UnitOfMeasurementID = 11, // m2
-                    StockQuantity = 1000,
-                    UnitPrice = 15000,
-                    Specification = "Chỉ PE, mắt lưới 15mm, chống tia UV 95%",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Che chắn an toàn, chống rơi vãi"
-                },
-                new Material
-                {
-                    ID = 45,
-                    MaterialName = "Thùng rác công trình 120 lít",
-                    UnitOfMeasurementID = 3, // Cái
-                    StockQuantity = 30,
-                    UnitPrice = 550000,
-                    Specification = "Nhựa HDPE, bánh xe đẩy 360°, nắp kín",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Màu xanh lá, có nắp đậy"
-                },
-                new Material
-                {
-                    ID = 46,
-                    MaterialName = "Biển báo an toàn công trình",
-                    UnitOfMeasurementID = 3, // Cái
-                    StockQuantity = 50,
-                    UnitPrice = 120000,
-                    Specification = "Nhựa PVC dày 3mm, kích thước 30x40cm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5,
-                    Note = "Theo tiêu chuẩn ISO 7010"
-                },
-                new Material // Thêm Que hàn
-                {
-                    ID = 47,
-                    MaterialName = "Que hàn điện YAWATA-50",
-                    UnitOfMeasurementID = 1, // Kg
-                    StockQuantity = 500,
-                    UnitPrice = 48000,
-                    Specification = "Điện cực thép cacbon E6013, Φ3.2mm",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5, // Vật tư phụ trợ
-                    Note = "Dùng cho hàn kết cấu thép"
-                },
-                new Material // Thêm Răng cào
-                {
-                    ID = 48,
-                    MaterialName = "Răng cào máy đào",
-                    UnitOfMeasurementID = 3, // Cái
-                    StockQuantity = 100,
-                    UnitPrice = 650000,
-                    Specification = "Hợp kim thép chịu mài mòn cao",
-                    Status = "Còn hàng",
-                    MaterialTypeID = 5, // Vật tư phụ trợ
-                    Note = "Phụ tùng cho máy cào bóc"
-                }
+            // Seed data for Role
+            modelBuilder.Entity<Role>().HasData(
+                new Role { ID = 1, RoleName = "Nhân viên kỹ thuật" },
+                new Role { ID = 2, RoleName = "Chỉ huy công trình" },
+                new Role { ID = 3, RoleName = "Giám đốc" },
+                new Role { ID = 4, RoleName = "Thợ" }
             );
 
-           // Seed data for ConstructionStatus
-           modelBuilder.Entity<ConstructionStatus>().HasData(
-               new ConstructionStatus { ID= 1, Name = ConstructionStatusEnum.Pending },
-               new ConstructionStatus { ID=2, Name = ConstructionStatusEnum.InProgress },
-               new ConstructionStatus { ID=3, Name = ConstructionStatusEnum.Completed },
-               new ConstructionStatus { ID=4, Name = ConstructionStatusEnum.Paused },
-               new ConstructionStatus { ID=5, Name = ConstructionStatusEnum.Cancelled }
-           );
+            // Seed Identity Roles
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = "1", Name = "technician", NormalizedName = "TECHNICIAN" },
+                new IdentityRole { Id = "2", Name = "manager", NormalizedName = "MANAGER" },
+                new IdentityRole { Id = "3", Name = "director", NormalizedName = "DIRECTOR" },
+                new IdentityRole { Id = "4", Name = "employee", NormalizedName = "EMPLOYEE" }
+            );
 
-           // Seed data for Construction
-           modelBuilder.Entity<Construction>().HasData(
-               // Các công trình loại Dân dụng (Nhà ở)
-               new Construction
-               {
-                   ID = 1,
-                   ConstructionTypeID = 4, // Residential (Nhà ở)
-                   ConstructionStatusID = 3, // Completed
-                   ConstructionName = "Khu chung cư An Hòa Garden",
-                   Location = "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định",
-                   TotalArea = 1500.5f,
-                   StartDate = new DateTime(2021, 04, 10),
-                   ExpectedCompletionDate = new DateTime(2023, 01, 01),
-                   ActualCompletionDate = new DateTime(2023, 01, 01),  // Đã hoàn thành
-                   DesignBlueprint = "Design_AnHoa.pdf"
-               },
-               new Construction
-               {
-                   ID = 2,
-                   ConstructionTypeID = 4, // Residential (Nhà ở)
-                   ConstructionStatusID = 3, // Completed
-                   ConstructionName = "Nhà ở dân dụng Phù Mỹ",
-                   Location = "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định",
-                   TotalArea = 2500.0f,
-                   StartDate = new DateTime(2021, 02, 20),
-                   ExpectedCompletionDate = new DateTime(2023, 06, 15),
-                   ActualCompletionDate = new DateTime(2023, 06, 10),  // Đã hoàn thành
-                   DesignBlueprint = "Design_PhuyMy.pdf"
-               },
-               new Construction
-               {
-                   ID = 3,
-                   ConstructionTypeID = 4, // Residential (Nhà ở)
-                   ConstructionStatusID = 2, // Pending
-                   ConstructionName = "Nhà ở dân dụng An Nhơn",
-                   Location = "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định",
-                   TotalArea = 1800.0f,
-                   StartDate = new DateTime(2021, 05, 01),
-                   ExpectedCompletionDate = new DateTime(2023, 03, 01),
-                   ActualCompletionDate = null,  // Chưa hoàn thành
-                   DesignBlueprint = "Design_BinhDinh.pdf"
-               },
+            // Seed Application Users
+            var hasher = new PasswordHasher<ApplicationUser>();
 
-               // Công trình loại Cầu đường
-               new Construction
-               {
-                   ID = 4,
-                   ConstructionTypeID = 1, // RoadBridge
-                   ConstructionStatusID = 2, // InProgress
-                   ConstructionName = "Cầu An Hòa",
-                   Location = "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định",
-                   TotalArea = 1500.5f,
-                   StartDate = new DateTime(2021, 04, 10),
-                   ExpectedCompletionDate = new DateTime(2023, 01, 01),
-                   ActualCompletionDate = null,  // Chưa hoàn thành
-                   DesignBlueprint = "Design_AnHoa.pdf"
-               },
+            // Admin user
+            var adminUser = new ApplicationUser
+            {
+                Id = "admin-id",
+                UserName = "giamdoc@company.com",
+                NormalizedUserName = "GIAMDOC@COMPANY.COM",
+                Email = "giamdoc@company.com",
+                NormalizedEmail = "GIAMDOC@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Phạm",
+                LastName = "Văn Đốc",
+                RoleID = 3,
+                Phone = "0901234567",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("427bafc5-bab1-42e5-a5d2-5974daf31890").ToString()
+            };
+            //giamdoc@123
+            adminUser.PasswordHash = "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==";
 
-               new Construction
-               {
-                   ID = 5,
-                   ConstructionTypeID = 1, // RoadBridge
-                   ConstructionStatusID = 3, // Completed
-                   ConstructionName = "Đường tránh QL1A - Phù Mỹ",
-                   Location = "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định",
-                   TotalArea = 2500.0f,
-                   StartDate = new DateTime(2021, 02, 20),
-                   ExpectedCompletionDate = new DateTime(2023, 06, 15),
-                   ActualCompletionDate = new DateTime(2023, 06, 10),  // Đã hoàn thành
-                   DesignBlueprint = "Design_PhuyMy.pdf"
-               },
+            // Add static DateTime values for RefreshTokenExpiryTime
+            adminUser.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
 
-               // Công trình loại Công nghiệp
-               new Construction
-               {
-                   ID = 6,
-                   ConstructionTypeID = 2, // Industrial
-                   ConstructionStatusID = 4, // Paused
-                   ConstructionName = "Nhà máy sản xuất thép An Phát",
-                   Location = "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định",
-                   TotalArea = 8000.0f,
-                   StartDate = new DateTime(2020, 07, 15),
-                   ExpectedCompletionDate = new DateTime(2022, 05, 20),
-                   ActualCompletionDate = null,  // Chưa hoàn thành
-                   DesignBlueprint = "Design_NhaMayThep.pdf"
-               },
+            // Manager users
+            var manager1User = new ApplicationUser
+            {
+                Id = "manager1-id",
+                UserName = "chihuy1@company.com",
+                NormalizedUserName = "CHIHUY1@COMPANY.COM",
+                Email = "chihuy1@company.com",
+                NormalizedEmail = "CHIHUY1@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Nguyễn",
+                LastName = "Chỉ Huy",
+                RoleID = 2,
+                Phone = "0912345678",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("227cd1d8-ed74-4f96-9851-ee15b48f8cf2").ToString()
+            };
+            manager1User.PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==";
 
-               // Công trình loại Thủy lợi
-               new Construction
-               {
-                   ID = 7,
-                   ConstructionTypeID = 3, // Irrigation
-                   ConstructionStatusID = 5, // Cancelled
-                   ConstructionName = "Đập thủy lợi Phú Tài",
-                   Location = "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định",
-                   TotalArea = 2000.0f,
-                   StartDate = new DateTime(2020, 03, 10),
-                   ExpectedCompletionDate = new DateTime(2022, 12, 25),
-                   ActualCompletionDate = null,  // Đã hủy
-                   DesignBlueprint = "Design_ThuyLoiPhuTai.pdf"
-               }
-           );
+            // Add static DateTime values for RefreshTokenExpiryTime
+            manager1User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            var manager2User = new ApplicationUser
+            {
+                Id = "manager2-id",
+                UserName = "chihuy2@company.com",
+                NormalizedUserName = "CHIHUY2@COMPANY.COM",
+                Email = "chihuy2@company.com",
+                NormalizedEmail = "CHIHUY2@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Trần",
+                LastName = "Công Trình",
+                RoleID = 2,
+                Phone = "0923456789",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("f6ab69f9-8a13-4414-81bd-77603126dc4d").ToString()
+            };
+
+            manager2User.PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==";
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            manager2User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            var manager3User = new ApplicationUser
+            {
+                Id = "manager3-id",
+                UserName = "chihuy3@company.com",
+                NormalizedUserName = "CHIHUY3@COMPANY.COM",
+                Email = "chihuy3@company.com",
+                NormalizedEmail = "CHIHUY3@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Lê",
+                LastName = "Xây Dựng",
+                RoleID = 2,
+                Phone = "0934567890",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e").ToString()
+            };
+            manager3User.PasswordHash = "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==";
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            manager3User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            // Technical staff users
+            var tech1User = new ApplicationUser
+            {
+                Id = "tech1-id",
+                UserName = "kythuat1@company.com",
+                NormalizedUserName = "KYTHUAT1@COMPANY.COM",
+                Email = "kythuat1@company.com",
+                NormalizedEmail = "KYTHUAT1@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Hoàng",
+                LastName = "Kỹ Thuật",
+                RoleID = 1,
+                Phone = "0945678901",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("6ffe7424-9000-41e1-871b-e744671266a6").ToString()
+            };
+            tech1User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            tech1User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            var tech2User = new ApplicationUser
+            {
+                Id = "tech2-id",
+                UserName = "kythuat2@company.com",
+                NormalizedUserName = "KYTHUAT2@COMPANY.COM",
+                Email = "kythuat2@company.com",
+                NormalizedEmail = "KYTHUAT2@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Phan",
+                LastName = "Thiết Kế",
+                RoleID = 1,
+                Phone = "0956789012",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("18d4d1bc-78ea-445f-a362-d544e9ea1a9d").ToString()
+            };
+            tech2User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            tech2User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            var tech3User = new ApplicationUser
+            {
+                Id = "tech3-id",
+                UserName = "kythuat3@company.com",
+                NormalizedUserName = "KYTHUAT3@COMPANY.COM",
+                Email = "kythuat3@company.com",
+                NormalizedEmail = "KYTHUAT3@COMPANY.COM",
+                EmailConfirmed = true,
+                FirstName = "Vũ",
+                LastName = "Vận Hành",
+                RoleID = 1,
+                Phone = "0967890123",
+                Status = EmployeeStatusEnum.Active,
+                SecurityStamp = Guid.Parse("5f694007-36b9-4dbe-8a38-196c05e82cb2").ToString()
+            };
+            tech3User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            tech3User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+            // Worker users
+            var workers = new List<ApplicationUser>
+            {
+                new ApplicationUser
+                {
+                    Id = "worker1-id",
+                    UserName = "tho1@company.com",
+                    NormalizedUserName = "THO1@COMPANY.COM",
+                    Email = "tho1@company.com",
+                    NormalizedEmail = "THO1@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Đinh",
+                    LastName = "Văn Thợ",
+                    RoleID = 4,
+                    Phone = "0978901234",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("2180abeb-5218-4df0-b695-2be63b8b8cd1").ToString()
+                },
+                new ApplicationUser
+                {
+                    Id = "worker2-id",
+                    UserName = "tho2@company.com",
+                    NormalizedUserName = "THO2@COMPANY.COM",
+                    Email = "tho2@company.com",
+                    NormalizedEmail = "THO2@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Mai",
+                    LastName = "Thị Hàn",
+                    RoleID = 4,
+                    Phone = "0989012345",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("eba6051e-c6ac-4847-baca-1f886c385128").ToString()
+                },
+                new ApplicationUser
+                {
+                    Id = "worker3-id",
+                    UserName = "tho3@company.com",
+                    NormalizedUserName = "THO3@COMPANY.COM",
+                    Email = "tho3@company.com",
+                    NormalizedEmail = "THO3@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Lý",
+                    LastName = "Văn Xây",
+                    RoleID = 4,
+                    Phone = "0990123456",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("4933e54c-c4fd-4875-9508-edc952ae52e3").ToString()
+                },
+                new ApplicationUser
+                {
+                    Id = "worker4-id",
+                    UserName = "tho4@company.com",
+                    NormalizedUserName = "THO4@COMPANY.COM",
+                    Email = "tho4@company.com",
+                    NormalizedEmail = "THO4@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Trịnh",
+                    LastName = "Công Mộc",
+                    RoleID = 4,
+                    Phone = "0911223344",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("f9757b33-c60a-4995-b62f-d0c899b42c68").ToString()
+                },
+                new ApplicationUser
+                {
+                    Id = "worker5-id",
+                    UserName = "tho5@company.com",
+                    NormalizedUserName = "THO5@COMPANY.COM",
+                    Email = "tho5@company.com",
+                    NormalizedEmail = "THO5@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Võ",
+                    LastName = "Thị Sơn",
+                    RoleID = 4,
+                    Phone = "0922334455",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d").ToString()
+                }
+            };
+
+            // Add static DateTime values for RefreshTokenExpiryTime
+            foreach (var worker in workers)
+            {
+                worker.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+            }
+
+            // Add all users to the database
+            modelBuilder.Entity<ApplicationUser>().HasData(
+                adminUser,
+                manager1User,
+                manager2User,
+                manager3User,
+                tech1User,
+                tech2User,
+                tech3User
+            );
+
+            modelBuilder.Entity<ApplicationUser>().HasData(workers);
+
+            // Gán Role cho User qua IdentityUserRole
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                // Giám đốc
+                new IdentityUserRole<string> { UserId = "admin-id", RoleId = "3" },
+
+                // Chỉ huy công trình
+                new IdentityUserRole<string> { UserId = "manager1-id", RoleId = "2" },
+                new IdentityUserRole<string> { UserId = "manager2-id", RoleId = "2" },
+                new IdentityUserRole<string> { UserId = "manager3-id", RoleId = "2" },
+
+                // Nhân viên kỹ thuật
+                new IdentityUserRole<string> { UserId = "tech1-id", RoleId = "1" },
+                new IdentityUserRole<string> { UserId = "tech2-id", RoleId = "1" },
+                new IdentityUserRole<string> { UserId = "tech3-id", RoleId = "1" },
+
+                // Thợ
+                new IdentityUserRole<string> { UserId = "worker1-id", RoleId = "4" },
+                new IdentityUserRole<string> { UserId = "worker2-id", RoleId = "4" },
+                new IdentityUserRole<string> { UserId = "worker3-id", RoleId = "4" },
+                new IdentityUserRole<string> { UserId = "worker4-id", RoleId = "4" },
+                new IdentityUserRole<string> { UserId = "worker5-id", RoleId = "4" }
+
+
+                );
+
+            // Seed data for ConstructionType
+            modelBuilder.Entity<ConstructionType>().HasData(
+                new ConstructionType { ID = 1, ConstructionTypeName = ConstructionTypeEnum.House },
+                new ConstructionType { ID = 2, ConstructionTypeName = ConstructionTypeEnum.RoadBridge },
+                new ConstructionType { ID = 3, ConstructionTypeName = ConstructionTypeEnum.Industrial },
+                new ConstructionType { ID = 4, ConstructionTypeName = ConstructionTypeEnum.Irrigation }
+            );
+
+            // Seed data for MaterialType
+            modelBuilder.Entity<MaterialType>().HasData(
+                new MaterialType { ID = 1, MaterialTypeName = MaterialTypeEnum.BasicBuildingMaterial },
+                new MaterialType { ID = 2, MaterialTypeName = MaterialTypeEnum.FinishingMaterial },
+                new MaterialType { ID = 3, MaterialTypeName = MaterialTypeEnum.ElectricalWaterSystem },
+                new MaterialType { ID = 4, MaterialTypeName = MaterialTypeEnum.MechanicalStructure },
+                new MaterialType { ID = 5, MaterialTypeName = MaterialTypeEnum.SupportingMaterial }
+            );
+
+            // Seed data for ConstructionStatus
+            modelBuilder.Entity<ConstructionStatus>().HasData(
+                new ConstructionStatus { ID = 1, Name = ConstructionStatusEnum.Pending },
+                new ConstructionStatus { ID = 2, Name = ConstructionStatusEnum.InProgress },
+                new ConstructionStatus { ID = 3, Name = ConstructionStatusEnum.Paused },
+                new ConstructionStatus { ID = 4, Name = ConstructionStatusEnum.Completed },
+                new ConstructionStatus { ID = 5, Name = ConstructionStatusEnum.Cancelled }
+            );
+
+            // Seed data for UnitofMeasurement
+            modelBuilder.Entity<UnitofMeasurement>().HasData(
+            // Chiều dài
+            new UnitofMeasurement { ID = 1, UnitName = "mét", ShortName = "m", Category = "Chiều dài" },
+            new UnitofMeasurement { ID = 2, UnitName = "centimet", ShortName = "cm", Category = "Chiều dài" },
+            new UnitofMeasurement { ID = 3, UnitName = "kilomet", ShortName = "km", Category = "Chiều dài" },
+
+            // Khối lượng
+            new UnitofMeasurement { ID = 4, UnitName = "kilogram", ShortName = "kg", Category = "Khối lượng" },
+            new UnitofMeasurement { ID = 5, UnitName = "tấn", ShortName = "t", Category = "Khối lượng" },
+
+            // Thể tích
+            new UnitofMeasurement { ID = 6, UnitName = "mét khối", ShortName = "m³", Category = "Thể tích" },
+            new UnitofMeasurement { ID = 7, UnitName = "lít", ShortName = "l", Category = "Thể tích" },
+
+            // Diện tích
+            new UnitofMeasurement { ID = 8, UnitName = "mét vuông", ShortName = "m²", Category = "Diện tích" },
+            new UnitofMeasurement { ID = 9, UnitName = "hecta", ShortName = "ha", Category = "Diện tích" },
+
+            // Vật liệu xây dựng
+            new UnitofMeasurement { ID = 10, UnitName = "bao", ShortName = "bao", Category = "Vật liệu" },
+            new UnitofMeasurement { ID = 11, UnitName = "thanh", ShortName = "thanh", Category = "Vật liệu" },
+            new UnitofMeasurement { ID = 12, UnitName = "viên", ShortName = "viên", Category = "Vật liệu" },
+            new UnitofMeasurement { ID = 13, UnitName = "cái", ShortName = "cái", Category = "Vật liệu" },
+            new UnitofMeasurement { ID = 14, UnitName = "bộ", ShortName = "bộ", Category = "Vật liệu" } // Thêm đơn vị "bộ"
+            );
+
+            // Seed data for Material
+            modelBuilder.Entity<Material>().HasData(
+                 // 1. Vật liệu xây dựng cơ bản
+                 new Material
+                 {
+                     ID = 1,
+                     MaterialName = "Xi măng Portland PC40",
+                     UnitOfMeasurementID = 2, // Bao
+                     StockQuantity = 500,
+                     UnitPrice = 90000,
+                     Specification = "Mác PCB40, độ dẻo cao, thời gian đông kết 3-4 giờ",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho bê tông móng, cột, dầm"
+                 },
+                 new Material
+                 {
+                     ID = 2,
+                     MaterialName = "Xi măng trắng",
+                     UnitOfMeasurementID = 2, // Bao
+                     StockQuantity = 120,
+                     UnitPrice = 140000,
+                     Specification = "Độ trắng >85%, cường độ 35MPa",
+                     Status = "Còn ít",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho ốp lát, trang trí"
+                 },
+                 new Material
+                 {
+                     ID = 3,
+                     MaterialName = "Cát vàng xây dựng",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 300,
+                     UnitPrice = 450000,
+                     Specification = "Module độ lớn 2.0-3.3, cỡ hạt 0.5-2mm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Không lẫn tạp chất, độ sạch >95%"
+                 },
+                 new Material
+                 {
+                     ID = 4,
+                     MaterialName = "Cát mịn xây tô",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 120,
+                     UnitPrice = 350000,
+                     Specification = "Module độ lớn 1.5-2.0, cỡ hạt 0.15-0.5mm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho công tác xây, trát tường"
+                 },
+                 new Material
+                 {
+                     ID = 5,
+                     MaterialName = "Đá 1x2",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 300,
+                     UnitPrice = 320000,
+                     Specification = "Kích thước 10x20mm, cường độ >100MPa",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho bê tông móng, cọc"
+                 },
+                 new Material
+                 {
+                     ID = 6,
+                     MaterialName = "Đá mi sàng",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 200,
+                     UnitPrice = 280000,
+                     Specification = "Kích thước 0-5mm, độ ẩm <2%",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng làm lớp nền, san lấp"
+                 },
+                 new Material
+                 {
+                     ID = 7,
+                     MaterialName = "Gạch ống 4 lỗ",
+                     UnitOfMeasurementID = 3, // Viên
+                     StockQuantity = 50000,
+                     UnitPrice = 2000,
+                     Specification = "Cường độ M75, độ hút nước <16%",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng xây tường bao"
+                 },
+                 new Material
+                 {
+                     ID = 8,
+                     MaterialName = "Gạch ba banh",
+                     UnitOfMeasurementID = 3, // Viên
+                     StockQuantity = 30000,
+                     UnitPrice = 8500,
+                     Specification = "Cường độ M100, khối lượng 14kg/viên",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng xây tường chịu lực"
+                 },
+                 new Material
+                 {
+                     ID = 9,
+                     MaterialName = "Thép phi 6",
+                     UnitOfMeasurementID = 1, // Kg
+                     StockQuantity = 3000,
+                     UnitPrice = 25000,
+                     Specification = "Giới hạn chảy 295MPa, độ dãn dài >18%",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng làm thép đai, gia cố"
+                 },
+                 new Material
+                 {
+                     ID = 10,
+                     MaterialName = "Thép phi 14",
+                     UnitOfMeasurementID = 1, // Kg
+                     StockQuantity = 5000,
+                     UnitPrice = 22000,
+                     Specification = "Giới hạn chảy 400MPa, chiều dài 11.7m/cây",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 1,
+                     Note = "Dùng làm thép dầm, cột"
+                 },
+                 new Material
+                 {
+                     ID = 11,
+                     MaterialName = "Bê tông thương phẩm 30MPa",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 0,
+                     UnitPrice = 1650000,
+                     Specification = "Cấp phối PC40-Đá 1x2-Cát vàng, độ sụt 10±2cm",
+                     Status = "Đặt hàng trước 24h",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho sàn, dầm, cột"
+                 },
+                 new Material
+                 {
+                     ID = 12,
+                     MaterialName = "Bê tông thương phẩm 40MPa",
+                     UnitOfMeasurementID = 4, // m3
+                     StockQuantity = 0,
+                     UnitPrice = 1850000,
+                     Specification = "Cấp phối PC50-Đá 1x2-Cát vàng, độ sụt 8±2cm",
+                     Status = "Đặt hàng trước 24h",
+                     MaterialTypeID = 1,
+                     Note = "Dùng cho móng nhà cao tầng"
+                 },
+                 // 2. Vật tư hoàn thiện
+                 new Material
+                 {
+                     ID = 13,
+                     MaterialName = "Sơn lót nội thất cao cấp",
+                     UnitOfMeasurementID = 9, // Thùng 18L
+                     StockQuantity = 50,
+                     UnitPrice = 1350000,
+                     Specification = "Độ phủ 8-10m²/lít (2 lớp), thời gian khô 2h",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Dùng cho bề mặt bê tông, tường gạch"
+                 },
+                 new Material
+                 {
+                     ID = 14,
+                     MaterialName = "Sơn hoàn thiện ngoại thất",
+                     UnitOfMeasurementID = 9, // Thùng 18L
+                     StockQuantity = 45,
+                     UnitPrice = 1950000,
+                     Specification = "Độ phủ 4-5m²/lít, chống UV, chống rêu mốc",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Dùng cho sơn ngoại thất"
+                 },
+                 new Material
+                 {
+                     ID = 15,
+                     MaterialName = "Gạch ceramic 60x60",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 500,
+                     UnitPrice = 350000,
+                     Specification = "Độ hút nước <3%, độ dày 9mm, chống trơn",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Dùng lát sàn phòng khách"
+                 },
+                 new Material
+                 {
+                     ID = 16,
+                     MaterialName = "Đá granite đen Phú Yên",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 70,
+                     UnitPrice = 1400000,
+                     Specification = "Độ dày 20mm, khả năng chịu lực >200MPa",
+                     Status = "Nhập theo đơn đặt",
+                     MaterialTypeID = 2,
+                     Note = "Dùng lát mặt tiền, cầu thang"
+                 },
+                 new Material
+                 {
+                     ID = 17,
+                     MaterialName = "Keo dán gạch cao cấp",
+                     UnitOfMeasurementID = 2, // Bao
+                     StockQuantity = 200,
+                     UnitPrice = 170000,
+                     Specification = "Độ bám dính >1.5MPa, thời gian chỉnh sửa 20 phút",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Dùng cho gạch lớn >60cm"
+                 },
+                 new Material
+                 {
+                     ID = 18,
+                     MaterialName = "Keo chà ron",
+                     UnitOfMeasurementID = 2, // Bao
+                     StockQuantity = 300,
+                     UnitPrice = 120000,
+                     Specification = "Độ trắng >85%, cường độ 45MPa",
+                     Status = "Còn ít",
+                     MaterialTypeID = 2,
+                     Note = "Dùng chà ron gạch men"
+                 },
+                 new Material
+                 {
+                     ID = 19,
+                     MaterialName = "Màng chống thấm Sika",
+                     UnitOfMeasurementID = 10, // Cuộn
+                     StockQuantity = 50,
+                     UnitPrice = 1350000,
+                     Specification = "Độ dày 3mm, kháng UV 2000h",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Dán bằng đèn khò"
+                 },
+                 new Material
+                 {
+                     ID = 20,
+                     MaterialName = "Sơn chống thấm Kova CT-11A",
+                     UnitOfMeasurementID = 9, // Thùng 18L
+                     StockQuantity = 35,
+                     UnitPrice = 1820000,
+                     Specification = "Độ phủ 1.5-2m²/lít, chịu được áp lực nước 3 bar",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 2,
+                     Note = "Phun 2 lớp cách nhau 6h"
+                 },
+                 // 3. Vật tư điện nước
+                 new Material
+                 {
+                     ID = 21,
+                     MaterialName = "Ống PPR 32mm",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 2000,
+                     UnitPrice = 42000,
+                     Specification = "Áp lực làm việc 2.0MPa, chịu nhiệt 95°C",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Dùng cho hệ thống nước nóng lạnh"
+                 },
+                 new Material
+                 {
+                     ID = 22,
+                     MaterialName = "Ống thoát nước PVC 90mm",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 1500,
+                     UnitPrice = 65000,
+                     Specification = "Áp lực 10bar, chống tia UV, đường kính ngoài 90mm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Dùng cho thoát nước thải"
+                 },
+                 new Material
+                 {
+                     ID = 23,
+                     MaterialName = "Dây điện đơn 2.5mm² - Daphaco",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 5000,
+                     UnitPrice = 8000,
+                     Specification = "Tiết diện 2.5mm², vỏ PVC chống cháy",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Dây đơn lõi đồng, dùng cho đèn"
+                 },
+                 new Material
+                 {
+                     ID = 24,
+                     MaterialName = "Dây điện đơn 2.5mm² - Daphaco (dây nguội)",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 4000,
+                     UnitPrice = 8000,
+                     Specification = "Tiết diện 2.5mm², vỏ PVC chống cháy",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Dây đơn lõi đồng, dùng cho ổ cắm"
+                 },
+                 new Material
+                 {
+                     ID = 25,
+                     MaterialName = "Dây điện đơn 3.5mm² - Daphaco",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 3000,
+                     UnitPrice = 12000,
+                     Specification = "Tiết diện 3.5mm², vỏ PVC chống cháy",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Dây đơn lõi đồng, dùng cho điều hòa"
+                 },
+                 new Material
+                 {
+                     ID = 26,
+                     MaterialName = "Atomat 1 pha 40A",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 150,
+                     UnitPrice = 98000,
+                     Specification = "Dòng cắt 40A, điện áp 230V, tiêu chuẩn IEC 60898",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Lắp tủ điện chính"
+                 },
+                 new Material
+                 {
+                     ID = 27,
+                     MaterialName = "Bóng đèn LED bulb 9W",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 300,
+                     UnitPrice = 48000,
+                     Specification = "Công suất 9W (~60W đèn sợi đốt), nhiệt độ màu 4000K",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Tuổi thọ 25,000 giờ"
+                 },
+                 new Material
+                 {
+                     ID = 28,
+                     MaterialName = "Đèn LED pha 50W",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 50,
+                     UnitPrice = 350000,
+                     Specification = "IP67, quang thông 5000lm, góc chiếu 120°",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Chống nước, chống bụi"
+                 },
+                 new Material
+                 {
+                     ID = 29,
+                     MaterialName = "Máy bơm nước Pentax",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 10,
+                     UnitPrice = 3500000,
+                     Specification = "Lưu lượng 2.4m³/h, cột áp 32m, điện 1 pha 220V",
+                     Status = "Đặt hàng trước",
+                     MaterialTypeID = 3,
+                     Note = "Bơm tăng áp cho biệt thự"
+                 },
+                 new Material
+                 {
+                     ID = 30,
+                     MaterialName = "Bình nóng lạnh Ariston",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 15,
+                     UnitPrice = 3200000,
+                     Specification = "Công suất 2500W, chống giật ELCB, inox 304",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 3,
+                     Note = "Lắp phòng tắm gia đình"
+                 },
+                 // 4. Vật tư cơ khí, kết cấu
+                 new Material
+                 {
+                     ID = 31,
+                     MaterialName = "Cốp pha nhôm định hình",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 2000,
+                     UnitPrice = 950000,
+                     Specification = "Độ dày 4mm, tải trọng 60kN/m², nhôm hợp kim 6061",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Tái sử dụng 200 lần, chống dính"
+                 },
+                 new Material
+                 {
+                     ID = 32,
+                     MaterialName = "Giàn giáo khung 1.7m x 1.2m",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 250,
+                     UnitPrice = 1450000,
+                     Specification = "Thép Q235, tải trọng 4.5 tấn/khung, mạ kẽm nhúng nóng",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Kèm chéo giằng và mâm đứng"
+                 },
+                 new Material
+                 {
+                     ID = 33,
+                     MaterialName = "Bulong neo M16x150mm",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 2000,
+                     UnitPrice = 18000,
+                     Specification = "Cấp bền 8.8, mạ kẽm điện phân, đầu hexagon",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Dùng neo cột thép vào móng"
+                 },
+                 new Material
+                 {
+                     ID = 34,
+                     MaterialName = "Vít khoan đuôi chuồn 12mm",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 15000,
+                     UnitPrice = 1200,
+                     Specification = "Thép carbon, phủ lớp zinc 15µm, 100 cái/hộp",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Bắt tôn vào xà gồ"
+                 },
+                 new Material
+                 {
+                     ID = 35,
+                     MaterialName = "Kính cường lực 10mm",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 100,
+                     UnitPrice = 480000,
+                     Specification = "Độ dày 10±0.2mm, chịu lực 90MPa, an toàn khi vỡ",
+                     Status = "Cắt theo yêu cầu",
+                     MaterialTypeID = 4,
+                     Note = "Thời gian gia công 3-5 ngày"
+                 },
+                 new Material
+                 {
+                     ID = 36,
+                     MaterialName = "Tấm inox 304 đánh bóng",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 45,
+                     UnitPrice = 850000,
+                     Specification = "Độ dày 1.5mm, kích thước 1.2x2.4m, bề mặt No.4",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Dùng làm lan can, bếp công nghiệp"
+                 },
+                 new Material
+                 {
+                     ID = 37,
+                     MaterialName = "Dây thép buộc 1.1mm",
+                     UnitOfMeasurementID = 1, // Kg
+                     StockQuantity = 500,
+                     UnitPrice = 32000,
+                     Specification = "Kẽm mạ đồng, độ bền kéo 400-500N/mm²",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Buộc thép, cốt thép"
+                 },
+                 new Material
+                 {
+                     ID = 38,
+                     MaterialName = "Thanh nhôm hộp 50x100mm",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 300,
+                     UnitPrice = 180000,
+                     Specification = "Hợp kim 6063-T5, dài 6m/cây, tải trọng 150kg/m",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 4,
+                     Note = "Dựng vách ngăn, mặt dựng"
+                 },
+                 // 5. Vật tư phụ, an toàn
+                 new Material
+                 {
+                     ID = 39,
+                     MaterialName = "Mũ bảo hộ lao động",
+                     UnitOfMeasurementID = 3, // Chiếc
+                     StockQuantity = 200,
+                     UnitPrice = 65000,
+                     Specification = "Nhựa HDPE, chịu lực 5kg, quai cài 4 điểm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Màu vàng, in logo công ty"
+                 },
+                 new Material
+                 {
+                     ID = 40,
+                     MaterialName = "Giày bảo hộ lao động",
+                     UnitOfMeasurementID = 7, // Đôi
+                     StockQuantity = 50,
+                     UnitPrice = 320000,
+                     Specification = "Mũi thép chịu lực 200J, đế chống trượt SR",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Size 38-44, chống đinh đâm"
+                 },
+                 new Material
+                 {
+                     ID = 41,
+                     MaterialName = "Keo silicone trung tính",
+                     UnitOfMeasurementID = 12, // Tuýp
+                     StockQuantity = 200,
+                     UnitPrice = 75000,
+                     Specification = "Độ giãn dài 400%, lực bám dính 1.5MPa",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Dán khe co giãn, chịu UV tốt"
+                 },
+                 new Material
+                 {
+                     ID = 42,
+                     MaterialName = "Băng keo hai mặt 50mm",
+                     UnitOfMeasurementID = 3, // Cuộn
+                     StockQuantity = 100,
+                     UnitPrice = 28000,
+                     Specification = "Lực kéo 40N/10mm, chịu nhiệt 80°C",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Dán bạt, che phủ bề mặt"
+                 },
+                 new Material
+                 {
+                     ID = 43,
+                     MaterialName = "Dây thừng PP 12mm",
+                     UnitOfMeasurementID = 5, // Mét
+                     StockQuantity = 1000,
+                     UnitPrice = 9000,
+                     Specification = "Chịu lực 150kg, kháng UV, chống mục",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Buộc vật liệu, giàn giáo"
+                 },
+                 new Material
+                 {
+                     ID = 44,
+                     MaterialName = "Lưới an toàn HDPE",
+                     UnitOfMeasurementID = 11, // m2
+                     StockQuantity = 1000,
+                     UnitPrice = 15000,
+                     Specification = "Chỉ PE, mắt lưới 15mm, chống tia UV 95%",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Che chắn an toàn, chống rơi vãi"
+                 },
+                 new Material
+                 {
+                     ID = 45,
+                     MaterialName = "Thùng rác công trình 120 lít",
+                     UnitOfMeasurementID = 3, // Cái
+                     StockQuantity = 30,
+                     UnitPrice = 550000,
+                     Specification = "Nhựa HDPE, bánh xe đẩy 360°, nắp kín",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Màu xanh lá, có nắp đậy"
+                 },
+                 new Material
+                 {
+                     ID = 46,
+                     MaterialName = "Biển báo an toàn công trình",
+                     UnitOfMeasurementID = 3, // Cái
+                     StockQuantity = 50,
+                     UnitPrice = 120000,
+                     Specification = "Nhựa PVC dày 3mm, kích thước 30x40cm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5,
+                     Note = "Theo tiêu chuẩn ISO 7010"
+                 },
+                 new Material // Thêm Que hàn
+                 {
+                     ID = 47,
+                     MaterialName = "Que hàn điện YAWATA-50",
+                     UnitOfMeasurementID = 1, // Kg
+                     StockQuantity = 500,
+                     UnitPrice = 48000,
+                     Specification = "Điện cực thép cacbon E6013, Φ3.2mm",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5, // Vật tư phụ trợ
+                     Note = "Dùng cho hàn kết cấu thép"
+                 },
+                 new Material // Thêm Răng cào
+                 {
+                     ID = 48,
+                     MaterialName = "Răng cào máy đào",
+                     UnitOfMeasurementID = 3, // Cái
+                     StockQuantity = 100,
+                     UnitPrice = 650000,
+                     Specification = "Hợp kim thép chịu mài mòn cao",
+                     Status = "Còn hàng",
+                     MaterialTypeID = 5, // Vật tư phụ trợ
+                     Note = "Phụ tùng cho máy cào bóc"
+                 }
+             );
+
+
+
+
+            // Seed data for Construction
+            modelBuilder.Entity<Construction>().HasData(
+                // Các công trình loại Dân dụng (Nhà ở)
+                new Construction
+                {
+                    ID = 1,
+                    ConstructionTypeID = 4, // Residential (Nhà ở)
+                    ConstructionStatusID = 3, // Completed
+                    ConstructionName = "Khu chung cư An Hòa Garden",
+                    Location = "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định",
+                    TotalArea = 1500.5f,
+                    StartDate = new DateTime(2021, 04, 10),
+                    ExpectedCompletionDate = new DateTime(2023, 01, 01),
+                    ActualCompletionDate = new DateTime(2023, 01, 01),  // Đã hoàn thành
+                    DesignBlueprint = "Design_AnHoa.pdf"
+                },
+                new Construction
+                {
+                    ID = 2,
+                    ConstructionTypeID = 4, // Residential (Nhà ở)
+                    ConstructionStatusID = 3, // Completed
+                    ConstructionName = "Nhà ở dân dụng Phù Mỹ",
+                    Location = "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định",
+                    TotalArea = 2500.0f,
+                    StartDate = new DateTime(2021, 02, 20),
+                    ExpectedCompletionDate = new DateTime(2023, 06, 15),
+                    ActualCompletionDate = new DateTime(2023, 06, 10),  // Đã hoàn thành
+                    DesignBlueprint = "Design_PhuyMy.pdf"
+                },
+                new Construction
+                {
+                    ID = 3,
+                    ConstructionTypeID = 4, // Residential (Nhà ở)
+                    ConstructionStatusID = 2, // Pending
+                    ConstructionName = "Nhà ở dân dụng An Nhơn",
+                    Location = "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định",
+                    TotalArea = 1800.0f,
+                    StartDate = new DateTime(2021, 05, 01),
+                    ExpectedCompletionDate = new DateTime(2023, 03, 01),
+                    ActualCompletionDate = null,  // Chưa hoàn thành
+                    DesignBlueprint = "Design_BinhDinh.pdf"
+                },
+
+                // Công trình loại Cầu đường
+                new Construction
+                {
+                    ID = 4,
+                    ConstructionTypeID = 1, // RoadBridge
+                    ConstructionStatusID = 2, // InProgress
+                    ConstructionName = "Cầu An Hòa",
+                    Location = "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định",
+                    TotalArea = 1500.5f,
+                    StartDate = new DateTime(2021, 04, 10),
+                    ExpectedCompletionDate = new DateTime(2023, 01, 01),
+                    ActualCompletionDate = null,  // Chưa hoàn thành
+                    DesignBlueprint = "Design_AnHoa.pdf"
+                },
+
+                new Construction
+                {
+                    ID = 5,
+                    ConstructionTypeID = 1, // RoadBridge
+                    ConstructionStatusID = 3, // Completed
+                    ConstructionName = "Đường tránh QL1A - Phù Mỹ",
+                    Location = "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định",
+                    TotalArea = 2500.0f,
+                    StartDate = new DateTime(2021, 02, 20),
+                    ExpectedCompletionDate = new DateTime(2023, 06, 15),
+                    ActualCompletionDate = new DateTime(2023, 06, 10),  // Đã hoàn thành
+                    DesignBlueprint = "Design_PhuyMy.pdf"
+                },
+
+                // Công trình loại Công nghiệp
+                new Construction
+                {
+                    ID = 6,
+                    ConstructionTypeID = 2, // Industrial
+                    ConstructionStatusID = 4, // Paused
+                    ConstructionName = "Nhà máy sản xuất thép An Phát",
+                    Location = "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định",
+                    TotalArea = 8000.0f,
+                    StartDate = new DateTime(2020, 07, 15),
+                    ExpectedCompletionDate = new DateTime(2022, 05, 20),
+                    ActualCompletionDate = null,  // Chưa hoàn thành
+                    DesignBlueprint = "Design_NhaMayThep.pdf"
+                },
+
+                // Công trình loại Thủy lợi
+                new Construction
+                {
+                    ID = 7,
+                    ConstructionTypeID = 3, // Irrigation
+                    ConstructionStatusID = 5, // Cancelled
+                    ConstructionName = "Đập thủy lợi Phú Tài",
+                    Location = "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định",
+                    TotalArea = 2000.0f,
+                    StartDate = new DateTime(2020, 03, 10),
+                    ExpectedCompletionDate = new DateTime(2022, 12, 25),
+                    ActualCompletionDate = null,  // Đã hủy
+                    DesignBlueprint = "Design_ThuyLoiPhuTai.pdf"
+                }
+            );
 
 
             // Seed data for ConstructionItem
@@ -1539,7 +1621,7 @@ namespace dotnet_api.Data.Extensions
                     StartDate = new DateTime(2021, 02, 25),
                     ExpectedCompletionDate = new DateTime(2022, 01, 15),
                     ActualCompletionDate = new DateTime(2022, 01, 10),
-                     WorkSubTypeVariantID= 1
+                    WorkSubTypeVariantID = 1
                 },
                 new ConstructionItem
                 {
@@ -1804,192 +1886,192 @@ namespace dotnet_api.Data.Extensions
             modelBuilder.Entity<ConstructionPlan>().HasData(
                 //Khu chung cư An Hòa Garden
                 // Thi công móng (ID = 1)
-                new ConstructionPlan { ID = 1, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 1, StartDate = new DateTime(2021, 04, 12), ExpectedCompletionDate = new DateTime(2021, 04, 25), ActualCompletionDate = new DateTime(2021, 04, 24) },
-                new ConstructionPlan { ID = 2, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 1, StartDate = new DateTime(2021, 04, 26), ExpectedCompletionDate = new DateTime(2021, 05, 15), ActualCompletionDate = new DateTime(2021, 05, 14) },
+                new ConstructionPlan { ID = 1, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 1, StartDate = new DateTime(2021, 04, 12), ExpectedCompletionDate = new DateTime(2021, 04, 25), ActualCompletionDate = new DateTime(2021, 04, 24) },
+                new ConstructionPlan { ID = 2, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 1, StartDate = new DateTime(2021, 04, 26), ExpectedCompletionDate = new DateTime(2021, 05, 15), ActualCompletionDate = new DateTime(2021, 05, 14) },
 
                 // Thi công khung kết cấu (ID = 2)
-                new ConstructionPlan { ID = 3, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 2, StartDate = new DateTime(2021, 05, 16), ExpectedCompletionDate = new DateTime(2021, 06, 10), ActualCompletionDate = new DateTime(2021, 06, 09) },
-                new ConstructionPlan { ID = 4, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 2, StartDate = new DateTime(2021, 06, 11), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = new DateTime(2021, 06, 28) },
+                new ConstructionPlan { ID = 3, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 2, StartDate = new DateTime(2021, 05, 16), ExpectedCompletionDate = new DateTime(2021, 06, 10), ActualCompletionDate = new DateTime(2021, 06, 09) },
+                new ConstructionPlan { ID = 4, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 2, StartDate = new DateTime(2021, 06, 11), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = new DateTime(2021, 06, 28) },
 
                 // Xây tường bao và ngăn phòng (ID = 3)
-                new ConstructionPlan { ID = 5, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 3, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = new DateTime(2021, 08, 14) },
+                new ConstructionPlan { ID = 5, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 3, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = new DateTime(2021, 08, 14) },
 
                 // Lắp đặt hệ thống điện nước (ID = 4)
-                new ConstructionPlan { ID = 6, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 4, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 08, 30), ActualCompletionDate = new DateTime(2021, 08, 29) },
-                new ConstructionPlan { ID = 7, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 4, StartDate = new DateTime(2021, 08, 31), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = new DateTime(2021, 09, 12) },
+                new ConstructionPlan { ID = 6, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 4, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 08, 30), ActualCompletionDate = new DateTime(2021, 08, 29) },
+                new ConstructionPlan { ID = 7, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 4, StartDate = new DateTime(2021, 08, 31), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = new DateTime(2021, 09, 12) },
 
                 // Ốp lát nền và tường (ID = 5)
-                new ConstructionPlan { ID = 8, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 5, StartDate = new DateTime(2021, 09, 16), ExpectedCompletionDate = new DateTime(2021, 10, 10), ActualCompletionDate = new DateTime(2021, 10, 09) },
+                new ConstructionPlan { ID = 8, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 5, StartDate = new DateTime(2021, 09, 16), ExpectedCompletionDate = new DateTime(2021, 10, 10), ActualCompletionDate = new DateTime(2021, 10, 09) },
 
                 // Sơn tường và chống thấm (ID = 6)
-                new ConstructionPlan { ID = 9, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 6, StartDate = new DateTime(2021, 10, 11), ExpectedCompletionDate = new DateTime(2021, 10, 25), ActualCompletionDate = new DateTime(2021, 10, 24) },
-                new ConstructionPlan { ID = 10, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 6, StartDate = new DateTime(2021, 10, 26), ExpectedCompletionDate = new DateTime(2021, 11, 01), ActualCompletionDate = new DateTime(2021, 10, 30) },
+                new ConstructionPlan { ID = 9, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 6, StartDate = new DateTime(2021, 10, 11), ExpectedCompletionDate = new DateTime(2021, 10, 25), ActualCompletionDate = new DateTime(2021, 10, 24) },
+                new ConstructionPlan { ID = 10, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 6, StartDate = new DateTime(2021, 10, 26), ExpectedCompletionDate = new DateTime(2021, 11, 01), ActualCompletionDate = new DateTime(2021, 10, 30) },
 
                 // Lắp cửa và lan can (ID = 7)
-                new ConstructionPlan { ID = 11, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 7, StartDate = new DateTime(2021, 11, 02), ExpectedCompletionDate = new DateTime(2021, 11, 20), ActualCompletionDate = new DateTime(2021, 11, 18) },
+                new ConstructionPlan { ID = 11, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 7, StartDate = new DateTime(2021, 11, 02), ExpectedCompletionDate = new DateTime(2021, 11, 20), ActualCompletionDate = new DateTime(2021, 11, 18) },
 
                 // Thi công thang máy và cầu thang (ID = 8)
-                new ConstructionPlan { ID = 12, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 8, StartDate = new DateTime(2021, 11, 21), ExpectedCompletionDate = new DateTime(2021, 12, 10), ActualCompletionDate = new DateTime(2021, 12, 08) },
+                new ConstructionPlan { ID = 12, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 8, StartDate = new DateTime(2021, 11, 21), ExpectedCompletionDate = new DateTime(2021, 12, 10), ActualCompletionDate = new DateTime(2021, 12, 08) },
 
                 // Hoàn thiện nội thất cơ bản (ID = 9)
-                new ConstructionPlan { ID = 13, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 9, StartDate = new DateTime(2021, 12, 11), ExpectedCompletionDate = new DateTime(2021, 12, 31), ActualCompletionDate = new DateTime(2021, 12, 30) },
+                new ConstructionPlan { ID = 13, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 9, StartDate = new DateTime(2021, 12, 11), ExpectedCompletionDate = new DateTime(2021, 12, 31), ActualCompletionDate = new DateTime(2021, 12, 30) },
 
                 // Cảnh quan và sân vườn (ID = 10)
-                new ConstructionPlan { ID = 14, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 10, StartDate = new DateTime(2022, 01, 01), ExpectedCompletionDate = new DateTime(2022, 01, 20), ActualCompletionDate = new DateTime(2022, 01, 18) },
+                new ConstructionPlan { ID = 14, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 10, StartDate = new DateTime(2022, 01, 01), ExpectedCompletionDate = new DateTime(2022, 01, 20), ActualCompletionDate = new DateTime(2022, 01, 18) },
                 // Nhà ở dân dụng Phù mỹ
                 // Hạng mục 11: San lấp mặt bằng
-                new ConstructionPlan { ID = 15, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 11, StartDate = new DateTime(2021, 02, 22), ExpectedCompletionDate = new DateTime(2021, 02, 28), ActualCompletionDate = new DateTime(2021, 02, 27) },
-                new ConstructionPlan { ID = 16, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 11, StartDate = new DateTime(2021, 03, 01), ExpectedCompletionDate = new DateTime(2021, 03, 10), ActualCompletionDate = new DateTime(2021, 03, 08) },
+                new ConstructionPlan { ID = 15, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 11, StartDate = new DateTime(2021, 02, 22), ExpectedCompletionDate = new DateTime(2021, 02, 28), ActualCompletionDate = new DateTime(2021, 02, 27) },
+                new ConstructionPlan { ID = 16, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 11, StartDate = new DateTime(2021, 03, 01), ExpectedCompletionDate = new DateTime(2021, 03, 10), ActualCompletionDate = new DateTime(2021, 03, 08) },
 
                 // Hạng mục 12: Đổ móng bê tông cốt thép
-                new ConstructionPlan { ID = 17, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 12, StartDate = new DateTime(2021, 03, 11), ExpectedCompletionDate = new DateTime(2021, 03, 25), ActualCompletionDate = new DateTime(2021, 03, 24) },
-                new ConstructionPlan { ID = 18, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 12, StartDate = new DateTime(2021, 03, 26), ExpectedCompletionDate = new DateTime(2021, 04, 15), ActualCompletionDate = new DateTime(2021, 04, 13) },
+                new ConstructionPlan { ID = 17, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 12, StartDate = new DateTime(2021, 03, 11), ExpectedCompletionDate = new DateTime(2021, 03, 25), ActualCompletionDate = new DateTime(2021, 03, 24) },
+                new ConstructionPlan { ID = 18, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 12, StartDate = new DateTime(2021, 03, 26), ExpectedCompletionDate = new DateTime(2021, 04, 15), ActualCompletionDate = new DateTime(2021, 04, 13) },
 
                 // Hạng mục 13: Dựng cột, dầm, sàn
-                new ConstructionPlan { ID = 19, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 13, StartDate = new DateTime(2021, 04, 16), ExpectedCompletionDate = new DateTime(2021, 05, 15), ActualCompletionDate = new DateTime(2021, 05, 14) },
-                new ConstructionPlan { ID = 20, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 13, StartDate = new DateTime(2021, 05, 16), ExpectedCompletionDate = new DateTime(2021, 06, 01), ActualCompletionDate = new DateTime(2021, 05, 29) },
+                new ConstructionPlan { ID = 19, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 13, StartDate = new DateTime(2021, 04, 16), ExpectedCompletionDate = new DateTime(2021, 05, 15), ActualCompletionDate = new DateTime(2021, 05, 14) },
+                new ConstructionPlan { ID = 20, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 13, StartDate = new DateTime(2021, 05, 16), ExpectedCompletionDate = new DateTime(2021, 06, 01), ActualCompletionDate = new DateTime(2021, 05, 29) },
 
                 // Hạng mục 14: Xây tường gạch
-                new ConstructionPlan { ID = 21, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 14, StartDate = new DateTime(2021, 06, 02), ExpectedCompletionDate = new DateTime(2021, 07, 10), ActualCompletionDate = new DateTime(2021, 07, 09) },
-                new ConstructionPlan { ID = 22, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 14, StartDate = new DateTime(2021, 07, 11), ExpectedCompletionDate = new DateTime(2021, 07, 20), ActualCompletionDate = new DateTime(2021, 07, 19) },
+                new ConstructionPlan { ID = 21, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 14, StartDate = new DateTime(2021, 06, 02), ExpectedCompletionDate = new DateTime(2021, 07, 10), ActualCompletionDate = new DateTime(2021, 07, 09) },
+                new ConstructionPlan { ID = 22, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 14, StartDate = new DateTime(2021, 07, 11), ExpectedCompletionDate = new DateTime(2021, 07, 20), ActualCompletionDate = new DateTime(2021, 07, 19) },
 
                 // Hạng mục 15: Lắp đặt hệ thống điện âm
-                new ConstructionPlan { ID = 23, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 15, StartDate = new DateTime(2021, 07, 21), ExpectedCompletionDate = new DateTime(2021, 08, 10), ActualCompletionDate = new DateTime(2021, 08, 09) },
-                new ConstructionPlan { ID = 24, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 15, StartDate = new DateTime(2021, 08, 11), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = new DateTime(2021, 08, 13) },
+                new ConstructionPlan { ID = 23, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 15, StartDate = new DateTime(2021, 07, 21), ExpectedCompletionDate = new DateTime(2021, 08, 10), ActualCompletionDate = new DateTime(2021, 08, 09) },
+                new ConstructionPlan { ID = 24, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 15, StartDate = new DateTime(2021, 08, 11), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = new DateTime(2021, 08, 13) },
 
                 // Hạng mục 16: Ốp lát gạch nền
-                new ConstructionPlan { ID = 25, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 16, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 09, 10), ActualCompletionDate = new DateTime(2021, 09, 09) },
+                new ConstructionPlan { ID = 25, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 16, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 09, 10), ActualCompletionDate = new DateTime(2021, 09, 09) },
 
                 // Hạng mục 17: Sơn nước nội ngoại thất
-                new ConstructionPlan { ID = 26, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 17, StartDate = new DateTime(2021, 09, 11), ExpectedCompletionDate = new DateTime(2021, 09, 30), ActualCompletionDate = new DateTime(2021, 09, 29) },
-                new ConstructionPlan { ID = 27, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 17, StartDate = new DateTime(2021, 10, 01), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = new DateTime(2021, 10, 12) },
+                new ConstructionPlan { ID = 26, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 17, StartDate = new DateTime(2021, 09, 11), ExpectedCompletionDate = new DateTime(2021, 09, 30), ActualCompletionDate = new DateTime(2021, 09, 29) },
+                new ConstructionPlan { ID = 27, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 17, StartDate = new DateTime(2021, 10, 01), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = new DateTime(2021, 10, 12) },
 
                 // Hạng mục 18: Lắp đặt hệ thống nước sinh hoạt
-                new ConstructionPlan { ID = 28, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 18, StartDate = new DateTime(2021, 10, 16), ExpectedCompletionDate = new DateTime(2021, 11, 10), ActualCompletionDate = new DateTime(2021, 11, 08) },
+                new ConstructionPlan { ID = 28, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 18, StartDate = new DateTime(2021, 10, 16), ExpectedCompletionDate = new DateTime(2021, 11, 10), ActualCompletionDate = new DateTime(2021, 11, 08) },
 
                 // Hạng mục 19: Thi công mái nhà
-                new ConstructionPlan { ID = 29, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 19, StartDate = new DateTime(2021, 11, 11), ExpectedCompletionDate = new DateTime(2021, 12, 05), ActualCompletionDate = new DateTime(2021, 12, 02) },
+                new ConstructionPlan { ID = 29, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 19, StartDate = new DateTime(2021, 11, 11), ExpectedCompletionDate = new DateTime(2021, 12, 05), ActualCompletionDate = new DateTime(2021, 12, 02) },
 
                 // Hạng mục 20: Hoàn thiện sân vườn trước nhà
-                new ConstructionPlan { ID = 30, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 20, StartDate = new DateTime(2021, 12, 06), ExpectedCompletionDate = new DateTime(2021, 12, 25), ActualCompletionDate = new DateTime(2021, 12, 23) },
+                new ConstructionPlan { ID = 30, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 20, StartDate = new DateTime(2021, 12, 06), ExpectedCompletionDate = new DateTime(2021, 12, 25), ActualCompletionDate = new DateTime(2021, 12, 23) },
                 // Nhà ở dân dụng An Nhơn
                 // Hạng mục San lấp mặt bằng
-                new ConstructionPlan { ID = 31, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 21, StartDate = new DateTime(2021, 05, 02), ExpectedCompletionDate = new DateTime(2021, 05, 25), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 31, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 21, StartDate = new DateTime(2021, 05, 02), ExpectedCompletionDate = new DateTime(2021, 05, 25), ActualCompletionDate = null },
 
                 // Hạng mục Đổ móng bê tông cốt thép
-                new ConstructionPlan { ID = 32, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 22, StartDate = new DateTime(2021, 05, 26), ExpectedCompletionDate = new DateTime(2021, 07, 05), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 32, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 22, StartDate = new DateTime(2021, 05, 26), ExpectedCompletionDate = new DateTime(2021, 07, 05), ActualCompletionDate = null },
 
                 // Hạng mục Dựng cột, dầm, sàn
-                new ConstructionPlan { ID = 33, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 23, StartDate = new DateTime(2021, 07, 06), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 33, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 23, StartDate = new DateTime(2021, 07, 06), ExpectedCompletionDate = new DateTime(2021, 08, 15), ActualCompletionDate = null },
 
                 // Hạng mục Xây tường gạch
-                new ConstructionPlan { ID = 34, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 24, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 10, 01), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 34, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 24, StartDate = new DateTime(2021, 08, 16), ExpectedCompletionDate = new DateTime(2021, 10, 01), ActualCompletionDate = null },
 
                 // Hạng mục Lắp đặt hệ thống điện âm
-                new ConstructionPlan { ID = 35, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 25, StartDate = new DateTime(2021, 10, 02), ExpectedCompletionDate = new DateTime(2021, 11, 10), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 35, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 25, StartDate = new DateTime(2021, 10, 02), ExpectedCompletionDate = new DateTime(2021, 11, 10), ActualCompletionDate = null },
 
                 // Hạng mục Ốp lát gạch nền
-                new ConstructionPlan { ID = 36, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 26, StartDate = new DateTime(2021, 11, 11), ExpectedCompletionDate = new DateTime(2021, 12, 20), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 36, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 26, StartDate = new DateTime(2021, 11, 11), ExpectedCompletionDate = new DateTime(2021, 12, 20), ActualCompletionDate = null },
 
                 // Hạng mục Sơn nước nội ngoại thất
-                new ConstructionPlan { ID = 37, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 27, StartDate = new DateTime(2021, 12, 21), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 37, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 27, StartDate = new DateTime(2021, 12, 21), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = null },
 
                 // Hạng mục Lắp đặt hệ thống nước sinh hoạt
-                new ConstructionPlan { ID = 38, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 28, StartDate = new DateTime(2022, 01, 16), ExpectedCompletionDate = new DateTime(2022, 02, 28), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 38, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 28, StartDate = new DateTime(2022, 01, 16), ExpectedCompletionDate = new DateTime(2022, 02, 28), ActualCompletionDate = null },
 
                 // Hạng mục Thi công mái nhà
-                new ConstructionPlan { ID = 39, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 29, StartDate = new DateTime(2022, 03, 01), ExpectedCompletionDate = new DateTime(2022, 04, 10), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 39, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 29, StartDate = new DateTime(2022, 03, 01), ExpectedCompletionDate = new DateTime(2022, 04, 10), ActualCompletionDate = null },
 
                 // Hạng mục Hoàn thiện sân vườn trước nhà
-                new ConstructionPlan { ID = 40, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 30, StartDate = new DateTime(2022, 04, 11), ExpectedCompletionDate = new DateTime(2022, 05, 05), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 40, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 30, StartDate = new DateTime(2022, 04, 11), ExpectedCompletionDate = new DateTime(2022, 05, 05), ActualCompletionDate = null },
                 // Cầu An Hòa
                 // Hạng mục ID = 31: Thi công nền đường (đã hoàn thành)
-                new ConstructionPlan { ID = 41, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 31, StartDate = new DateTime(2021, 04, 12), ExpectedCompletionDate = new DateTime(2021, 05, 20), ActualCompletionDate = new DateTime(2021, 05, 18) },
-                new ConstructionPlan { ID = 42, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 31, StartDate = new DateTime(2021, 05, 21), ExpectedCompletionDate = new DateTime(2021, 06, 30), ActualCompletionDate = new DateTime(2021, 06, 25) },
+                new ConstructionPlan { ID = 41, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 31, StartDate = new DateTime(2021, 04, 12), ExpectedCompletionDate = new DateTime(2021, 05, 20), ActualCompletionDate = new DateTime(2021, 05, 18) },
+                new ConstructionPlan { ID = 42, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 31, StartDate = new DateTime(2021, 05, 21), ExpectedCompletionDate = new DateTime(2021, 06, 30), ActualCompletionDate = new DateTime(2021, 06, 25) },
 
                 // Hạng mục ID = 32: Lắp đặt móng cầu (đã hoàn thành)
-                new ConstructionPlan { ID = 43, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 32, StartDate = new DateTime(2021, 07, 01), ExpectedCompletionDate = new DateTime(2021, 08, 10), ActualCompletionDate = new DateTime(2021, 08, 09) },
-                new ConstructionPlan { ID = 44, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 32, StartDate = new DateTime(2021, 08, 11), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = new DateTime(2021, 09, 10) },
+                new ConstructionPlan { ID = 43, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 32, StartDate = new DateTime(2021, 07, 01), ExpectedCompletionDate = new DateTime(2021, 08, 10), ActualCompletionDate = new DateTime(2021, 08, 09) },
+                new ConstructionPlan { ID = 44, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 32, StartDate = new DateTime(2021, 08, 11), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = new DateTime(2021, 09, 10) },
 
                 // Hạng mục ID = 33: Đổ bê tông cầu (đang thi công)
-                new ConstructionPlan { ID = 45, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 33, StartDate = new DateTime(2021, 09, 16), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = null },
-                new ConstructionPlan { ID = 46, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 33, StartDate = new DateTime(2021, 10, 16), ExpectedCompletionDate = new DateTime(2021, 11, 30), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 45, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 33, StartDate = new DateTime(2021, 09, 16), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 46, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 33, StartDate = new DateTime(2021, 10, 16), ExpectedCompletionDate = new DateTime(2021, 11, 30), ActualCompletionDate = null },
 
                 // Hạng mục ID = 34: Lắp đặt cầu giao thông
-                new ConstructionPlan { ID = 47, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 34, StartDate = new DateTime(2021, 12, 01), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 47, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 34, StartDate = new DateTime(2021, 12, 01), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = null },
 
                 // Hạng mục ID = 35: Lắp đặt hệ thống thoát nước
-                new ConstructionPlan { ID = 48, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 35, StartDate = new DateTime(2022, 03, 01), ExpectedCompletionDate = new DateTime(2022, 04, 10), ActualCompletionDate = null },
-                new ConstructionPlan { ID = 49, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 35, StartDate = new DateTime(2022, 04, 11), ExpectedCompletionDate = new DateTime(2022, 05, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 48, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 35, StartDate = new DateTime(2022, 03, 01), ExpectedCompletionDate = new DateTime(2022, 04, 10), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 49, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 35, StartDate = new DateTime(2022, 04, 11), ExpectedCompletionDate = new DateTime(2022, 05, 15), ActualCompletionDate = null },
 
                 // Hạng mục ID = 36: Hoàn thiện mặt cầu
-                new ConstructionPlan { ID = 50, ConstructionStatusID = 2, EmployeeID = 2, ConstructionItemID = 36, StartDate = new DateTime(2022, 05, 16), ExpectedCompletionDate = new DateTime(2022, 06, 20), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 50, ConstructionStatusID = 2, EmployeeID = "manager1-id", ConstructionItemID = 36, StartDate = new DateTime(2022, 05, 16), ExpectedCompletionDate = new DateTime(2022, 06, 20), ActualCompletionDate = null },
 
                 // Hạng mục ID = 37: Thi công bảo trì
-                new ConstructionPlan { ID = 51, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 37, StartDate = new DateTime(2022, 08, 01), ExpectedCompletionDate = new DateTime(2022, 09, 30), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 51, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 37, StartDate = new DateTime(2022, 08, 01), ExpectedCompletionDate = new DateTime(2022, 09, 30), ActualCompletionDate = null },
 
                 // Hạng mục ID = 38: Lắp đặt hệ thống chiếu sáng cầu
-                new ConstructionPlan { ID = 52, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 38, StartDate = new DateTime(2022, 10, 01), ExpectedCompletionDate = new DateTime(2022, 11, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 52, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 38, StartDate = new DateTime(2022, 10, 01), ExpectedCompletionDate = new DateTime(2022, 11, 15), ActualCompletionDate = null },
                 // Đường tránh QL1A - Phù Mỹ
-                new ConstructionPlan { ID = 53, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 39, StartDate = new DateTime(2021, 02, 25), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = new DateTime(2021, 07, 01) },
-                new ConstructionPlan { ID = 54, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 39, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = new DateTime(2022, 01, 10) },
+                new ConstructionPlan { ID = 53, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 39, StartDate = new DateTime(2021, 02, 25), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = new DateTime(2021, 07, 01) },
+                new ConstructionPlan { ID = 54, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 39, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2022, 01, 15), ActualCompletionDate = new DateTime(2022, 01, 10) },
 
-                new ConstructionPlan { ID = 55, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 40, StartDate = new DateTime(2022, 01, 16), ExpectedCompletionDate = new DateTime(2022, 03, 15), ActualCompletionDate = new DateTime(2022, 03, 14) },
-                new ConstructionPlan { ID = 56, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 40, StartDate = new DateTime(2022, 03, 16), ExpectedCompletionDate = new DateTime(2022, 05, 15), ActualCompletionDate = new DateTime(2022, 05, 10) },
+                new ConstructionPlan { ID = 55, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 40, StartDate = new DateTime(2022, 01, 16), ExpectedCompletionDate = new DateTime(2022, 03, 15), ActualCompletionDate = new DateTime(2022, 03, 14) },
+                new ConstructionPlan { ID = 56, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 40, StartDate = new DateTime(2022, 03, 16), ExpectedCompletionDate = new DateTime(2022, 05, 15), ActualCompletionDate = new DateTime(2022, 05, 10) },
 
-                new ConstructionPlan { ID = 57, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 41, StartDate = new DateTime(2022, 05, 16), ExpectedCompletionDate = new DateTime(2022, 08, 15), ActualCompletionDate = new DateTime(2022, 08, 14) },
+                new ConstructionPlan { ID = 57, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 41, StartDate = new DateTime(2022, 05, 16), ExpectedCompletionDate = new DateTime(2022, 08, 15), ActualCompletionDate = new DateTime(2022, 08, 14) },
 
-                new ConstructionPlan { ID = 58, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 42, StartDate = new DateTime(2022, 08, 20), ExpectedCompletionDate = new DateTime(2022, 09, 15), ActualCompletionDate = new DateTime(2022, 09, 14) },
-                new ConstructionPlan { ID = 59, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 42, StartDate = new DateTime(2022, 09, 16), ExpectedCompletionDate = new DateTime(2022, 10, 01), ActualCompletionDate = new DateTime(2022, 09, 29) },
+                new ConstructionPlan { ID = 58, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 42, StartDate = new DateTime(2022, 08, 20), ExpectedCompletionDate = new DateTime(2022, 09, 15), ActualCompletionDate = new DateTime(2022, 09, 14) },
+                new ConstructionPlan { ID = 59, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 42, StartDate = new DateTime(2022, 09, 16), ExpectedCompletionDate = new DateTime(2022, 10, 01), ActualCompletionDate = new DateTime(2022, 09, 29) },
 
-                new ConstructionPlan { ID = 60, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 43, StartDate = new DateTime(2022, 10, 05), ExpectedCompletionDate = new DateTime(2022, 11, 10), ActualCompletionDate = new DateTime(2022, 11, 09) },
-                new ConstructionPlan { ID = 61, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 43, StartDate = new DateTime(2022, 11, 11), ExpectedCompletionDate = new DateTime(2022, 11, 30), ActualCompletionDate = new DateTime(2022, 11, 25) },
+                new ConstructionPlan { ID = 60, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 43, StartDate = new DateTime(2022, 10, 05), ExpectedCompletionDate = new DateTime(2022, 11, 10), ActualCompletionDate = new DateTime(2022, 11, 09) },
+                new ConstructionPlan { ID = 61, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 43, StartDate = new DateTime(2022, 11, 11), ExpectedCompletionDate = new DateTime(2022, 11, 30), ActualCompletionDate = new DateTime(2022, 11, 25) },
 
-                new ConstructionPlan { ID = 62, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 44, StartDate = new DateTime(2022, 12, 01), ExpectedCompletionDate = new DateTime(2023, 03, 01), ActualCompletionDate = new DateTime(2023, 03, 01) },
-                new ConstructionPlan { ID = 63, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 44, StartDate = new DateTime(2023, 03, 02), ExpectedCompletionDate = new DateTime(2023, 06, 10), ActualCompletionDate = new DateTime(2023, 06, 10) },
+                new ConstructionPlan { ID = 62, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 44, StartDate = new DateTime(2022, 12, 01), ExpectedCompletionDate = new DateTime(2023, 03, 01), ActualCompletionDate = new DateTime(2023, 03, 01) },
+                new ConstructionPlan { ID = 63, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 44, StartDate = new DateTime(2023, 03, 02), ExpectedCompletionDate = new DateTime(2023, 06, 10), ActualCompletionDate = new DateTime(2023, 06, 10) },
                 // Nhà máy sản xuất thép An Phát
                 // Hạng mục ID = 45 (Completed)
-                new ConstructionPlan { ID = 64, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 45, StartDate = new DateTime(2020, 07, 20), ExpectedCompletionDate = new DateTime(2020, 09, 01), ActualCompletionDate = new DateTime(2020, 09, 01) },
-                new ConstructionPlan { ID = 65, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 45, StartDate = new DateTime(2020, 09, 02), ExpectedCompletionDate = new DateTime(2020, 10, 10), ActualCompletionDate = new DateTime(2020, 10, 10) },
+                new ConstructionPlan { ID = 64, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 45, StartDate = new DateTime(2020, 07, 20), ExpectedCompletionDate = new DateTime(2020, 09, 01), ActualCompletionDate = new DateTime(2020, 09, 01) },
+                new ConstructionPlan { ID = 65, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 45, StartDate = new DateTime(2020, 09, 02), ExpectedCompletionDate = new DateTime(2020, 10, 10), ActualCompletionDate = new DateTime(2020, 10, 10) },
 
                 // Hạng mục ID = 46 (Completed)
-                new ConstructionPlan { ID = 66, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 46, StartDate = new DateTime(2020, 10, 20), ExpectedCompletionDate = new DateTime(2020, 12, 15), ActualCompletionDate = new DateTime(2020, 12, 15) },
-                new ConstructionPlan { ID = 67, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 46, StartDate = new DateTime(2020, 12, 16), ExpectedCompletionDate = new DateTime(2021, 01, 25), ActualCompletionDate = new DateTime(2021, 01, 25) },
+                new ConstructionPlan { ID = 66, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 46, StartDate = new DateTime(2020, 10, 20), ExpectedCompletionDate = new DateTime(2020, 12, 15), ActualCompletionDate = new DateTime(2020, 12, 15) },
+                new ConstructionPlan { ID = 67, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 46, StartDate = new DateTime(2020, 12, 16), ExpectedCompletionDate = new DateTime(2021, 01, 25), ActualCompletionDate = new DateTime(2021, 01, 25) },
 
                 // Hạng mục ID = 47 (In Progress)
-                new ConstructionPlan { ID = 68, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 47, StartDate = new DateTime(2021, 02, 01), ExpectedCompletionDate = new DateTime(2021, 04, 01), ActualCompletionDate = null },
-                new ConstructionPlan { ID = 69, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 47, StartDate = new DateTime(2021, 04, 02), ExpectedCompletionDate = new DateTime(2021, 06, 01), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 68, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 47, StartDate = new DateTime(2021, 02, 01), ExpectedCompletionDate = new DateTime(2021, 04, 01), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 69, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 47, StartDate = new DateTime(2021, 04, 02), ExpectedCompletionDate = new DateTime(2021, 06, 01), ActualCompletionDate = null },
 
                 // Hạng mục ID = 48 (Paused)
-                new ConstructionPlan { ID = 70, ConstructionStatusID = 4, EmployeeID = 2, ConstructionItemID = 48, StartDate = new DateTime(2021, 06, 15), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 70, ConstructionStatusID = 4, EmployeeID = "manager1-id", ConstructionItemID = 48, StartDate = new DateTime(2021, 06, 15), ExpectedCompletionDate = new DateTime(2021, 09, 15), ActualCompletionDate = null },
 
                 // Hạng mục ID = 49 (Pending)
-                new ConstructionPlan { ID = 71, ConstructionStatusID = 1, EmployeeID = 3, ConstructionItemID = 49, StartDate = new DateTime(2022, 01, 01), ExpectedCompletionDate = new DateTime(2022, 02, 10), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 71, ConstructionStatusID = 1, EmployeeID = "manager2-id", ConstructionItemID = 49, StartDate = new DateTime(2022, 01, 01), ExpectedCompletionDate = new DateTime(2022, 02, 10), ActualCompletionDate = null },
 
                 // Hạng mục ID = 50 (Pending)
-                new ConstructionPlan { ID = 72, ConstructionStatusID = 1, EmployeeID = 4, ConstructionItemID = 50, StartDate = new DateTime(2022, 03, 20), ExpectedCompletionDate = new DateTime(2022, 04, 30), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 72, ConstructionStatusID = 1, EmployeeID = "manager3-id", ConstructionItemID = 50, StartDate = new DateTime(2022, 03, 20), ExpectedCompletionDate = new DateTime(2022, 04, 30), ActualCompletionDate = null },
                 // Đập thủy lợi Phú Tài
                 // ConstructionItemID = 51, Completed
-                new ConstructionPlan { ID = 73, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 51, StartDate = new DateTime(2020, 03, 15), ExpectedCompletionDate = new DateTime(2020, 04, 15), ActualCompletionDate = new DateTime(2020, 04, 14) },
-                new ConstructionPlan { ID = 74, ConstructionStatusID = 3, EmployeeID = 3, ConstructionItemID = 51, StartDate = new DateTime(2020, 04, 16), ExpectedCompletionDate = new DateTime(2020, 05, 01), ActualCompletionDate = new DateTime(2020, 04, 28) },
+                new ConstructionPlan { ID = 73, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 51, StartDate = new DateTime(2020, 03, 15), ExpectedCompletionDate = new DateTime(2020, 04, 15), ActualCompletionDate = new DateTime(2020, 04, 14) },
+                new ConstructionPlan { ID = 74, ConstructionStatusID = 3, EmployeeID = "manager2-id", ConstructionItemID = 51, StartDate = new DateTime(2020, 04, 16), ExpectedCompletionDate = new DateTime(2020, 05, 01), ActualCompletionDate = new DateTime(2020, 04, 28) },
 
                 // ConstructionItemID = 52, Completed
-                new ConstructionPlan { ID = 75, ConstructionStatusID = 3, EmployeeID = 4, ConstructionItemID = 52, StartDate = new DateTime(2020, 05, 10), ExpectedCompletionDate = new DateTime(2020, 06, 20), ActualCompletionDate = new DateTime(2020, 06, 18) },
-                new ConstructionPlan { ID = 76, ConstructionStatusID = 3, EmployeeID = 2, ConstructionItemID = 52, StartDate = new DateTime(2020, 06, 21), ExpectedCompletionDate = new DateTime(2020, 08, 01), ActualCompletionDate = new DateTime(2020, 07, 25) },
+                new ConstructionPlan { ID = 75, ConstructionStatusID = 3, EmployeeID = "manager3-id", ConstructionItemID = 52, StartDate = new DateTime(2020, 05, 10), ExpectedCompletionDate = new DateTime(2020, 06, 20), ActualCompletionDate = new DateTime(2020, 06, 18) },
+                new ConstructionPlan { ID = 76, ConstructionStatusID = 3, EmployeeID = "manager1-id", ConstructionItemID = 52, StartDate = new DateTime(2020, 06, 21), ExpectedCompletionDate = new DateTime(2020, 08, 01), ActualCompletionDate = new DateTime(2020, 07, 25) },
 
                 // ConstructionItemID = 53, In Progress
-                new ConstructionPlan { ID = 77, ConstructionStatusID = 2, EmployeeID = 3, ConstructionItemID = 53, StartDate = new DateTime(2020, 08, 10), ExpectedCompletionDate = new DateTime(2020, 10, 01), ActualCompletionDate = null },
-                new ConstructionPlan { ID = 78, ConstructionStatusID = 2, EmployeeID = 4, ConstructionItemID = 53, StartDate = new DateTime(2020, 10, 02), ExpectedCompletionDate = new DateTime(2020, 11, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 77, ConstructionStatusID = 2, EmployeeID = "manager2-id", ConstructionItemID = 53, StartDate = new DateTime(2020, 08, 10), ExpectedCompletionDate = new DateTime(2020, 10, 01), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 78, ConstructionStatusID = 2, EmployeeID = "manager3-id", ConstructionItemID = 53, StartDate = new DateTime(2020, 10, 02), ExpectedCompletionDate = new DateTime(2020, 11, 15), ActualCompletionDate = null },
 
                 // ConstructionItemID = 54, Paused
-                new ConstructionPlan { ID = 79, ConstructionStatusID = 4, EmployeeID = 2, ConstructionItemID = 54, StartDate = new DateTime(2020, 12, 01), ExpectedCompletionDate = new DateTime(2021, 01, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 79, ConstructionStatusID = 4, EmployeeID = "manager1-id", ConstructionItemID = 54, StartDate = new DateTime(2020, 12, 01), ExpectedCompletionDate = new DateTime(2021, 01, 15), ActualCompletionDate = null },
 
                 // ConstructionItemID = 55, Pending
-                new ConstructionPlan { ID = 80, ConstructionStatusID = 1, EmployeeID = 3, ConstructionItemID = 55, StartDate = new DateTime(2021, 04, 01), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = null },
-                new ConstructionPlan { ID = 81, ConstructionStatusID = 1, EmployeeID = 4, ConstructionItemID = 55, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 80, ConstructionStatusID = 1, EmployeeID = "manager2-id", ConstructionItemID = 55, StartDate = new DateTime(2021, 04, 01), ExpectedCompletionDate = new DateTime(2021, 07, 01), ActualCompletionDate = null },
+                new ConstructionPlan { ID = 81, ConstructionStatusID = 1, EmployeeID = "manager3-id", ConstructionItemID = 55, StartDate = new DateTime(2021, 07, 02), ExpectedCompletionDate = new DateTime(2021, 10, 15), ActualCompletionDate = null },
 
                 // ConstructionItemID = 56, Pending
-                new ConstructionPlan { ID = 82, ConstructionStatusID = 1, EmployeeID = 2, ConstructionItemID = 56, StartDate = new DateTime(2021, 10, 20), ExpectedCompletionDate = new DateTime(2021, 12, 25), ActualCompletionDate = null }
+                new ConstructionPlan { ID = 82, ConstructionStatusID = 1, EmployeeID = "manager1-id", ConstructionItemID = 56, StartDate = new DateTime(2021, 10, 20), ExpectedCompletionDate = new DateTime(2021, 12, 25), ActualCompletionDate = null }
                 );
 
 
@@ -2355,7 +2437,7 @@ namespace dotnet_api.Data.Extensions
     new WorkAttribute { ID = 28, UnitOfMeasurementID = 13, WorkAttributeName = "Loại bóng đèn" },
     new WorkAttribute { ID = 29, UnitOfMeasurementID = 6, WorkAttributeName = "Chiều dài dây điện" },
 
-// Thuộc tính trát tường
+    // Thuộc tính trát tường
     new WorkAttribute { ID = 30, UnitOfMeasurementID = 6, WorkAttributeName = "Chiều cao tường" },
     new WorkAttribute { ID = 31, UnitOfMeasurementID = 2, WorkAttributeName = "Chiều dày lớp trát" }
 );
@@ -2419,7 +2501,7 @@ namespace dotnet_api.Data.Extensions
                 new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 14, WorkAttributeID = 13, Value = "Gạch lỗ" },
                 new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 14, WorkAttributeID = 14, Value = "0.15" },
 
-                // Biến thể cho Xây tường ngăn
+// Biến thể cho Xây tường ngăn
 new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 15, WorkAttributeID = 13, Value = "Thạch cao" },
 new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 15, WorkAttributeID = 14, Value = "0.10" },
 
@@ -2563,92 +2645,92 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
                new MaterialNorm { MaterialID = 6, WorkSubTypeVariantID = 35, Quantity = 300 } // Đá mi
            );
 
-           // Seed data for ExportOrder
-           modelBuilder.Entity<ExportOrder>().HasData(
-               new ExportOrder { ID = 1, EmployeeID = 2, ConstructionPlanID = 1, ExportDate = new DateTime(2023, 01, 01) },
-               new ExportOrder { ID = 2, EmployeeID = 3, ConstructionPlanID = 2, ExportDate = new DateTime(2023, 01, 01) }
-           );
+            // Seed data for ExportOrder
+            modelBuilder.Entity<ExportOrder>().HasData(
+                new ExportOrder { ID = 1, EmployeeID = "manager1-id", ConstructionPlanID = 1, ExportDate = new DateTime(2023, 01, 01) },
+                new ExportOrder { ID = 2, EmployeeID = "manager2-id", ConstructionPlanID = 2, ExportDate = new DateTime(2023, 01, 01) }
+            );
 
-           // Seed data for Material_ExportOrder
-           modelBuilder.Entity<Material_ExportOrder>().HasData(
-               new Material_ExportOrder { ExportOrderID = 1, MaterialID = 1, Quantity = 20 },
-               new Material_ExportOrder { ExportOrderID = 1, MaterialID = 2, Quantity = 10 },
-               new Material_ExportOrder { ExportOrderID = 2, MaterialID = 3, Quantity = 15 }
-           );
+            // Seed data for Material_ExportOrder
+            modelBuilder.Entity<Material_ExportOrder>().HasData(
+                new Material_ExportOrder { ExportOrderID = 1, MaterialID = 1, Quantity = 20 },
+                new Material_ExportOrder { ExportOrderID = 1, MaterialID = 2, Quantity = 10 },
+                new Material_ExportOrder { ExportOrderID = 2, MaterialID = 3, Quantity = 15 }
+            );
 
-           // Seed data for Attendance
-           modelBuilder.Entity<Attendance>().HasData(
-               new Attendance { EmployeeID = 3, ConstructionTaskID = 1, AttendanceDate = new DateTime(2023, 01, 01), Status = "có mặt" },
-               new Attendance { EmployeeID = 3, ConstructionTaskID = 2, AttendanceDate = new DateTime(2024, 01, 01), Status = "vắng mặt" }
-           );
+            // Seed data for Attendance
+            modelBuilder.Entity<Attendance>().HasData(
+                new Attendance { EmployeeID = "manager2-id", ConstructionTaskID = 1, AttendanceDate = new DateTime(2023, 01, 01), Status = "có mặt" },
+                new Attendance { EmployeeID = "manager2-id", ConstructionTaskID = 2, AttendanceDate = new DateTime(2024, 01, 01), Status = "vắng mặt" }
+            );
 
-           // Seed data for ImportOrder
-           modelBuilder.Entity<ImportOrder>().HasData(
-               new ImportOrder { ID = 1, EmployeeID = 5, ImportDate = new DateTime(2024, 01, 01) },
-               new ImportOrder { ID = 2, EmployeeID = 6, ImportDate = new DateTime(2024, 01, 05) }
-           );
+            // Seed data for ImportOrder
+            modelBuilder.Entity<ImportOrder>().HasData(
+                new ImportOrder { ID = 1, EmployeeID = "manager3-id", ImportDate = new DateTime(2024, 01, 01) },
+                new ImportOrder { ID = 2, EmployeeID = "manager3-id", ImportDate = new DateTime(2024, 01, 05) }
+            );
 
-           // Seed data for Report
-           modelBuilder.Entity<Report>().HasData(
-               new Report { ID=1, EmployeeID = 2, ConstructionID = 1, Content = "Báo cáo tiến độ ngày 1", Level = "Cao", ProblemType = "Chậm tiến độ", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
-               new Report { ID=2,  EmployeeID = 3, ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ProblemType = "Thiếu vật liệu", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" }
-           );
+            // Seed data for Report
+            modelBuilder.Entity<Report>().HasData(
+                new Report { ID = 1, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Báo cáo tiến độ ngày 1", Level = "Cao", ProblemType = "Chậm tiến độ", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 2, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ProblemType = "Thiếu vật liệu", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" }
+            );
 
-           // Seed data for ReportAttachment
-           modelBuilder.Entity<ReportAttachment>().HasData(
-               new ReportAttachment { ID=1, ReportID = 1, FilePath = "/uploads/report1.pdf", UploadDate = new DateTime(2023, 01, 01) },
-               new ReportAttachment { ID=2, ReportID = 2, FilePath = "/uploads/report2.pdf", UploadDate = new DateTime(2023, 01, 01) }
-               );
-           modelBuilder.Entity<ReportStatusLog>().HasData(
-               new ReportStatusLog { ID = 1, ReportID = 1, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) },
-               new ReportStatusLog { ID = 2, ReportID = 2, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) }
-               );
+            // Seed data for ReportAttachment
+            modelBuilder.Entity<ReportAttachment>().HasData(
+                new ReportAttachment { ID = 1, ReportID = 1, FilePath = "/uploads/report1.pdf", UploadDate = new DateTime(2023, 01, 01) },
+                new ReportAttachment { ID = 2, ReportID = 2, FilePath = "/uploads/report2.pdf", UploadDate = new DateTime(2023, 01, 01) }
+                );
+            modelBuilder.Entity<ReportStatusLog>().HasData(
+                new ReportStatusLog { ID = 1, ReportID = 1, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) },
+                new ReportStatusLog { ID = 2, ReportID = 2, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) }
+                );
 
-           // Seed data for WorkType
-           modelBuilder.Entity<WorkType>().HasData(
-               new WorkType { ID = 1, WorkTypeName = "Công tác chuẩn bị mặt bằng" },
-               new WorkType { ID = 2, WorkTypeName = "Công tác đổ bê tông" },
-               new WorkType { ID = 3, WorkTypeName = "Công tác xây" },
-               new WorkType { ID = 4, WorkTypeName = "Công tác điện nước" },
-               new WorkType { ID = 5, WorkTypeName = "Công tác hoàn thiện" },
-               new WorkType { ID = 6, WorkTypeName = "Công tác lắp đặt thiết bị" },
-               new WorkType { ID = 7, WorkTypeName = "Công tác cảnh quan" }
-           );
+            // Seed data for WorkType
+            modelBuilder.Entity<WorkType>().HasData(
+                new WorkType { ID = 1, WorkTypeName = "Công tác chuẩn bị mặt bằng" },
+                new WorkType { ID = 2, WorkTypeName = "Công tác đổ bê tông" },
+                new WorkType { ID = 3, WorkTypeName = "Công tác xây" },
+                new WorkType { ID = 4, WorkTypeName = "Công tác điện nước" },
+                new WorkType { ID = 5, WorkTypeName = "Công tác hoàn thiện" },
+                new WorkType { ID = 6, WorkTypeName = "Công tác lắp đặt thiết bị" },
+                new WorkType { ID = 7, WorkTypeName = "Công tác cảnh quan" }
+            );
 
-           // Seed data for WorkSubType
-           modelBuilder.Entity<WorkSubType>().HasData(
-               // Công tác chuẩn bị mặt bằng
-               new WorkSubType { ID = 1, WorkTypeID = 1, WorkSubTypeName = "San lấp mặt bằng" },
-               new WorkSubType { ID = 2, WorkTypeID = 1, WorkSubTypeName = "Đào đất" },
-               new WorkSubType { ID = 3, WorkTypeID = 1, WorkSubTypeName = "Phá dỡ công trình cũ" },
+            // Seed data for WorkSubType
+            modelBuilder.Entity<WorkSubType>().HasData(
+                // Công tác chuẩn bị mặt bằng
+                new WorkSubType { ID = 1, WorkTypeID = 1, WorkSubTypeName = "San lấp mặt bằng" },
+                new WorkSubType { ID = 2, WorkTypeID = 1, WorkSubTypeName = "Đào đất" },
+                new WorkSubType { ID = 3, WorkTypeID = 1, WorkSubTypeName = "Phá dỡ công trình cũ" },
 
-               // Công tác đổ bê tông
-               new WorkSubType { ID = 4, WorkTypeID = 2, WorkSubTypeName = "Đổ móng bê tông" },
-               new WorkSubType { ID = 5, WorkTypeID = 2, WorkSubTypeName = "Đổ bê tông cột" },
-               new WorkSubType { ID = 6, WorkTypeID = 2, WorkSubTypeName = "Đổ bê tông dầm sàn" },
+                // Công tác đổ bê tông
+                new WorkSubType { ID = 4, WorkTypeID = 2, WorkSubTypeName = "Đổ móng bê tông" },
+                new WorkSubType { ID = 5, WorkTypeID = 2, WorkSubTypeName = "Đổ bê tông cột" },
+                new WorkSubType { ID = 6, WorkTypeID = 2, WorkSubTypeName = "Đổ bê tông dầm sàn" },
 
-               // Công tác xây
-               new WorkSubType { ID = 7, WorkTypeID = 3, WorkSubTypeName = "Xây tường bao" },
-               new WorkSubType { ID = 8, WorkTypeID = 3, WorkSubTypeName = "Xây tường ngăn" },
-               
-               // Công tác điện nước
-               new WorkSubType { ID = 9, WorkTypeID = 4, WorkSubTypeName = "Lắp đặt hệ thống điện" },
-               new WorkSubType { ID = 10, WorkTypeID = 4, WorkSubTypeName = "Lắp đặt hệ thống nước" },
-               
-               // Công tác hoàn thiện
-               new WorkSubType { ID = 11, WorkTypeID = 5, WorkSubTypeName = "Ốp lát" },
-               new WorkSubType { ID = 12, WorkTypeID = 5, WorkSubTypeName = "Sơn nước" },
-               new WorkSubType { ID = 13, WorkTypeID = 5, WorkSubTypeName = "Trát tường" },
-               
-               // Công tác lắp đặt thiết bị
-               new WorkSubType { ID = 14, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt cửa" },
-               new WorkSubType { ID = 15, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt thiết bị vệ sinh" },
-               new WorkSubType { ID = 16, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt thang máy" },
-               
-               // Công tác cảnh quan
-               new WorkSubType { ID = 17, WorkTypeID = 7, WorkSubTypeName = "Thi công sân vườn" },
-               new WorkSubType { ID = 18, WorkTypeID = 7, WorkSubTypeName = "Thi công hệ thống chiếu sáng" }
-           );
+                // Công tác xây
+                new WorkSubType { ID = 7, WorkTypeID = 3, WorkSubTypeName = "Xây tường bao" },
+                new WorkSubType { ID = 8, WorkTypeID = 3, WorkSubTypeName = "Xây tường ngăn" },
+
+                // Công tác điện nước
+                new WorkSubType { ID = 9, WorkTypeID = 4, WorkSubTypeName = "Lắp đặt hệ thống điện" },
+                new WorkSubType { ID = 10, WorkTypeID = 4, WorkSubTypeName = "Lắp đặt hệ thống nước" },
+
+                // Công tác hoàn thiện
+                new WorkSubType { ID = 11, WorkTypeID = 5, WorkSubTypeName = "Ốp lát" },
+                new WorkSubType { ID = 12, WorkTypeID = 5, WorkSubTypeName = "Sơn nước" },
+                new WorkSubType { ID = 13, WorkTypeID = 5, WorkSubTypeName = "Trát tường" },
+
+                // Công tác lắp đặt thiết bị
+                new WorkSubType { ID = 14, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt cửa" },
+                new WorkSubType { ID = 15, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt thiết bị vệ sinh" },
+                new WorkSubType { ID = 16, WorkTypeID = 6, WorkSubTypeName = "Lắp đặt thang máy" },
+
+                // Công tác cảnh quan
+                new WorkSubType { ID = 17, WorkTypeID = 7, WorkSubTypeName = "Thi công sân vườn" },
+                new WorkSubType { ID = 18, WorkTypeID = 7, WorkSubTypeName = "Thi công hệ thống chiếu sáng" }
+            );
 
             // Seed data for WorkSubTypeVariant
             modelBuilder.Entity<WorkSubTypeVariant>().HasData(
@@ -2774,15 +2856,14 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
             // Seed data for MaterialPlan
             modelBuilder.Entity<MaterialPlan>().HasData(
                // Link ImportOrder 1 to Plan 1 for Material 1 (Xi măng)
-               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 1, ImportQuantity = 50, Status = ReportStatusEnum.Approved }, 
+               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 1, ImportQuantity = 50, Status = ReportStatusEnum.Approved },
                // Link ImportOrder 1 to Plan 1 for Material 3 (Cát vàng)
-               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 3, ImportQuantity = 100, Status = ReportStatusEnum.Approved }, 
+               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 3, ImportQuantity = 100, Status = ReportStatusEnum.Approved },
                // Link ImportOrder 2 to Plan 3 for Material 10 (Thép phi 14)
-               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 3, MaterialID = 10, ImportQuantity = 500, Status = ReportStatusEnum.Pending }, 
+               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 3, MaterialID = 10, ImportQuantity = 500, Status = ReportStatusEnum.Pending },
                // Link ImportOrder 2 to Plan 77 (Dam - Đào móng) for Material 48 (Răng cào) - Assuming Răng cào comes from ImportOrder 2
-               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 77, MaterialID = 48, ImportQuantity = 2, Status = ReportStatusEnum.Pending } 
+               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 77, MaterialID = 48, ImportQuantity = 2, Status = ReportStatusEnum.Pending }
            );
-
-       }
-   }
+        }
+    }
 }

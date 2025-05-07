@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_api.Data;
 
@@ -11,9 +12,11 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250506144956_UserRole")]
+    partial class UserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,25 +55,25 @@ namespace dotnet_api.Migrations
                         new
                         {
                             Id = "1",
-                            Name = "technician",
+                            Name = "Nhân viên kỹ thuật",
                             NormalizedName = "TECHNICIAN"
                         },
                         new
                         {
                             Id = "2",
-                            Name = "manager",
+                            Name = "Chỉ huy công trình",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
                             Id = "3",
-                            Name = "director",
+                            Name = "Giám đốc",
                             NormalizedName = "DIRECTOR"
                         },
                         new
                         {
                             Id = "4",
-                            Name = "employee",
+                            Name = "Thợ",
                             NormalizedName = "EMPLOYEE"
                         });
                 });
@@ -339,7 +342,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "46286cf3-2f94-4f71-a987-8d58e07a4116",
+                            ConcurrencyStamp = "08949224-76eb-4bef-a52e-0df22af76645",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -361,7 +364,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bdf1c048-a759-4d6f-824c-ebd0e90d2ed5",
+                            ConcurrencyStamp = "e0c428cc-a449-43e0-af38-70368509e161",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -383,7 +386,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "952aa589-71f8-4994-aace-baa6e5657a9f",
+                            ConcurrencyStamp = "ea1266be-5842-4a1f-bbee-8f5a9ba3f5d2",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -405,7 +408,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b95d22af-16ef-40b6-91d8-21bf6cc0b9ea",
+                            ConcurrencyStamp = "1726e118-4358-44c3-9f5b-3bd8adf6ff05",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -427,7 +430,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81b91094-8e07-473e-8b34-cd0a4e99936f",
+                            ConcurrencyStamp = "fb64bf7c-c111-434e-8bc5-2ad4207ecf8b",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -449,7 +452,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3c4bff1e-5fe6-45ff-aa79-73ef7d6f7af0",
+                            ConcurrencyStamp = "3a358b15-a349-4296-a09a-312ea27051ad",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -471,7 +474,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "08fb0b8c-36d0-4d61-9c83-2ad7f4c052fb",
+                            ConcurrencyStamp = "1b562248-6873-43b5-b403-99b271929a29",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -493,7 +496,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dde92e25-13cf-4405-92cb-4ffa4dc2a0fe",
+                            ConcurrencyStamp = "6943c126-0e03-4c9e-be95-af4b297fa6af",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -514,7 +517,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2f1894aa-22fa-426a-9e49-2c25f3769dcc",
+                            ConcurrencyStamp = "ee6c4dd0-7727-4147-b89e-61570b7e593c",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -535,7 +538,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0d996bd3-a5d0-4290-ad71-2cc7673b615f",
+                            ConcurrencyStamp = "7dbebe3c-5c41-4a1c-a768-2893b7d2b6b7",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -556,7 +559,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "933f9e74-3c86-4961-a94a-2b47438bfb99",
+                            ConcurrencyStamp = "6a2dfa84-5c70-4d9e-b8df-649948c4509b",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -577,7 +580,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fb084648-8cbd-47c2-adc3-d73f125e34f4",
+                            ConcurrencyStamp = "562b891a-c1e8-4d8a-a569-9b7fcb811535",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",

@@ -10,6 +10,11 @@ namespace dotnet_api.DTOs
         public DateTime StartDate { get; set; }
         public DateTime ExpectedCompletionDate { get; set; }
         public DateTime ActualCompletionDate { get; set; }
+
+        public string EmployeeName { get; set; }
+        public string ConstructionItemName { get; set; }
+        public string ConstructionName { get; set; }
+        public string StatusName { get; set; }
     }
 }
 

@@ -1,15 +1,18 @@
+using Microsoft.AspNetCore.Identity;
 using dotnet_api.Data.Enums;
 
 namespace dotnet_api.Data.Entities
 {
-    public class Employee
+    public class ApplicationUser : IdentityUser
     {
-        public int ID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
+        
+        // Fields from Employee
         public int RoleID { get; set; }
-        public string Name { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string? Phone { get; set; }
         public EmployeeStatusEnum Status { get; set; }
 
         // Navigation properties
@@ -19,6 +22,5 @@ namespace dotnet_api.Data.Entities
         public ICollection<Report> Reports { get; set; }
         public ICollection<ConstructionPlan> ConstructionPlans { get; set; }
         public ICollection<ImportOrder> ImportOrders { get; set; }
-
     }
-}
+} 

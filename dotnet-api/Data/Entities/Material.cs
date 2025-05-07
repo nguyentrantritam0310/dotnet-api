@@ -18,6 +18,5 @@ namespace dotnet_api.Data.Entities
         public ICollection<MaterialNorm> MaterialNorms { get; set; }
         public ICollection<MaterialPlan> MaterialPlans { get; set; }
         public ICollection<Material_ExportOrder> Material_ExportOrders { get; set; }
-
     }
 }

@@ -2,14 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using dotnet_api.Data.Entities;
 using dotnet_api.Data.Configurations;
 using dotnet_api.Data.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace dotnet_api.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Construction> Constructions { get; set; }
         public DbSet<ConstructionItem> ConstructionItems { get; set; }
@@ -18,7 +21,6 @@ namespace dotnet_api.Data
         public DbSet<ConstructionTask> ConstructionTasks { get; set; }
         public DbSet<ConstructionTemplateItem> ConstructionTemplateItems { get; set; }
         public DbSet<ConstructionType> ConstructionTypes { get; set; }
-        public DbSet<Employee> Employees { get; set; }
         public DbSet<ExportOrder> ExportOrders { get; set; }
         public DbSet<ImportOrder> ImportOrders { get; set; }
         public DbSet<Material> Materials { get; set; }
@@ -39,6 +41,56 @@ namespace dotnet_api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure Identity tables
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.ToTable(name: "AspNetUsers");
+                
+                // Configure relationships
+                entity.HasOne(e => e.Role)
+                    .WithMany(r => r.Users)
+                    .HasForeignKey(e => e.RoleID);
+
+                // Configure required fields
+                entity.Property(e => e.FirstName).IsRequired();
+                entity.Property(e => e.LastName).IsRequired();
+                entity.Property(e => e.Phone).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
+            });
+
+            modelBuilder.Entity<IdentityRole>(entity =>
+            {
+                entity.ToTable(name: "AspNetRoles");
+            });
+
+            modelBuilder.Entity<IdentityUserRole<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserRoles");
+            });
+
+            modelBuilder.Entity<IdentityUserClaim<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserClaims");
+            });
+
+            modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserLogins");
+            });
+
+            modelBuilder.Entity<IdentityRoleClaim<string>>(entity =>
+            {
+                entity.ToTable("AspNetRoleClaims");
+            });
+
+            modelBuilder.Entity<IdentityUserToken<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserTokens");
+            });
+
+            // Apply configurations
             modelBuilder.ApplyConfiguration(new AttendanceConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionItemConfiguration());
@@ -47,7 +99,6 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ConstructionTaskConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionTemplateItemConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfiguration(new ExportOrderConfiguration());
             modelBuilder.ApplyConfiguration(new ImportOrderConfiguration());
             modelBuilder.ApplyConfiguration(new MaterialConfiguration());
@@ -66,7 +117,7 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new WorkSubTypeVariantConfiguration());
             modelBuilder.ApplyConfiguration(new WorkTypeConfiguration());
 
-            // Add other configurations here
+            // Seed data
             modelBuilder.Seed();
         }
     }

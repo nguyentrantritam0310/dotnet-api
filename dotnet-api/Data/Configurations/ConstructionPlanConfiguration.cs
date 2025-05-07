@@ -26,17 +26,17 @@ namespace dotnet_api.Data.Configurations
             builder.HasOne(x => x.ConstructionStatus)
                    .WithMany(ci => ci.ConstructionPlans) 
                    .HasForeignKey(x => x.ConstructionStatusID)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.Employee)
                    .WithMany(ci => ci.ConstructionPlans) 
                    .HasForeignKey(x => x.EmployeeID)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(x => x.ConstructionItem)
                    .WithMany(ci => ci.ConstructionPlans)
                    .HasForeignKey(x => x.ConstructionItemID)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

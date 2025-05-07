@@ -18,11 +18,13 @@ namespace dotnet_api.Data.Configurations
 
             builder.HasOne(x => x.WorkSubTypeVariant)
                    .WithMany(e => e.WorkSubTypeVariant_WorkAttributes)
-                   .HasForeignKey(x => x.WorkSubTypeVariantID);
+                   .HasForeignKey(x => x.WorkSubTypeVariantID)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.WorkAttribute)
                    .WithMany(t => t.WorkSubTypeVariant_WorkAttributes)
-                   .HasForeignKey(x => x.WorkAttributeID);
+                   .HasForeignKey(x => x.WorkAttributeID)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

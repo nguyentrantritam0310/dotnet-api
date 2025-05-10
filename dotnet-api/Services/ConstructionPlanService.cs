@@ -2,8 +2,10 @@
 using dotnet_api.Data;
 using dotnet_api.Data.Entities;
 using dotnet_api.DTOs;
+using dotnet_api.DTOs.POST;
 using dotnet_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Python.Runtime;
 
 namespace dotnet_api.Services
 {
@@ -18,7 +20,7 @@ namespace dotnet_api.Services
             _mapper = mapper;
         }
 
-        public async Task<ConstructionPlanDTO> CreateConstructionPlanAsync(ConstructionPlanDTO constructionPlanDTO)
+        public async Task<ConstructionPlanDTO> CreateConstructionPlanAsync(ConstructionPlanDTOPOST constructionPlanDTO)
         {
             var constructionPlan = _mapper.Map<ConstructionPlan>(constructionPlanDTO);
             _context.ConstructionPlans.Add(constructionPlan);
@@ -45,20 +47,43 @@ namespace dotnet_api.Services
                 .Include(c => c.ConstructionItem)
                 .ThenInclude(ci => ci.Construction)
                 .Include(c => c.ConstructionStatus)
+                 .OrderByDescending(c => c.ID)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<ConstructionPlanDTO>>(constructionsPlan);
         }
 
-        public async Task<ConstructionPlanDTO> UpdateConstructionPlanAsync(ConstructionPlanDTO constructionPlanDTO)
+        public async Task<ConstructionPlanDTO> UpdateConstructionPlanAsync(ConstructionPlanDTOPUT constructionPlanDTO)
         {
-            var existingConstructionPlan = await _context.ConstructionPlans.FindAsync(constructionPlanDTO.ID);
+
+            var existingConstructionPlan = await _context.ConstructionPlans
+                .FirstOrDefaultAsync(c => c.ID == constructionPlanDTO.ID);
+
             if (existingConstructionPlan == null)
             {
                 return null;
             }
 
             _mapper.Map(constructionPlanDTO, existingConstructionPlan);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ConstructionPlanDTO>(existingConstructionPlan);
+        }
+
+        public async Task<ConstructionPlanDTO> UpdateConstructionPlanStatusAsync(int id, int status)
+        {
+            var existingConstructionPlan = await _context.ConstructionPlans
+                .Include(c => c.Employee)
+                .Include(c => c.ConstructionItem)
+                .ThenInclude(ci => ci.Construction)
+                .Include(c => c.ConstructionStatus)
+                .FirstOrDefaultAsync(c => c.ID == id);
+
+            if (existingConstructionPlan == null)
+            {
+                return null;
+            }
+
+            existingConstructionPlan.ConstructionStatusID = status;
             await _context.SaveChangesAsync();
             return _mapper.Map<ConstructionPlanDTO>(existingConstructionPlan);
         }

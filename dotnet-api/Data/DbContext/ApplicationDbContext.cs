@@ -14,6 +14,7 @@ namespace dotnet_api.Data
         }
 
         public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Construction> Constructions { get; set; }
         public DbSet<ConstructionItem> ConstructionItems { get; set; }
         public DbSet<ConstructionPlan> ConstructionPlans { get; set; }

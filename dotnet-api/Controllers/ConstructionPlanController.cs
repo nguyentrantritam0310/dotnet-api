@@ -1,4 +1,5 @@
 ﻿using dotnet_api.DTOs;
+using dotnet_api.DTOs.POST;
 using dotnet_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,18 +35,18 @@ namespace dotnet_api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ConstructionPlanDTO constructionPlanDTO)
+        public async Task<IActionResult> Create([FromBody] ConstructionPlanDTOPOST constructionPlanDTOPOST)
         {
-            var createdConstructionPlan = await _constructionPlanService.CreateConstructionPlanAsync(constructionPlanDTO);
+            var createdConstructionPlan = await _constructionPlanService.CreateConstructionPlanAsync(constructionPlanDTOPOST);
             return CreatedAtAction(nameof(GetById), new { id = createdConstructionPlan.ID }, createdConstructionPlan);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ConstructionPlanDTO constructionPlanDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] ConstructionPlanDTOPUT constructionPlanDTO)
         {
             if (id != constructionPlanDTO.ID)
             {
-                return BadRequest();
+                return BadRequest("ID in URL does not match ID in request body");
             }
 
             var updatedConstructionPlan = await _constructionPlanService.UpdateConstructionPlanAsync(constructionPlanDTO);
@@ -55,6 +56,17 @@ namespace dotnet_api.Controllers
             }
 
             return Ok(updatedConstructionPlan);
+        }
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDTO statusDTO)
+        {
+            var updatedPlan = await _constructionPlanService.UpdateConstructionPlanStatusAsync(id, statusDTO.Status);
+            if (updatedPlan == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedPlan);
         }
 
         [HttpDelete("{id}")]

@@ -19,9 +19,6 @@ namespace dotnet_api.Data.Configurations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            builder.Property(x => x.Description)
-                   .HasMaxLength(500);
-
             builder.Property(x => x.StartDate)
                    .IsRequired();
 

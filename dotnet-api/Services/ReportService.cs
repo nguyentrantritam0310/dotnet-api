@@ -45,6 +45,7 @@ namespace dotnet_api.Services
                 .Include(c => c.Employee)
                 .Include(c => c.ReportAttachments)
                 .Include(c => c.ReportStatusLogs)
+                .Where(c => c.ReportType != "Sự cố kĩ thuật")
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<ReportDTO>>(Reports);

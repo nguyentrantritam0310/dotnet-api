@@ -39,7 +39,9 @@ builder.Services.AddScoped<IConstructionItemService, ConstructionItemService>();
 builder.Services.AddScoped<IConstructionPlanService, ConstructionPlanService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();
-
+builder.Services.AddScoped<IConstructionTemplateItemService, ConstructionTemplateItemService>();
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddScoped<IExportOrderService, ExportOrderService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace dotnet_api.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -481,7 +481,6 @@ namespace dotnet_api.Migrations
                     ConstructionID = table.Column<int>(type: "int", nullable: false),
                     UnitOfMeasurementID = table.Column<int>(type: "int", nullable: false),
                     ConstructionItemName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpectedCompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ActualCompletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -770,10 +769,10 @@ namespace dotnet_api.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1", null, "Nhân viên kỹ thuật", "TECHNICIAN" },
-                    { "2", null, "Chỉ huy công trình", "MANAGER" },
-                    { "3", null, "Giám đốc", "DIRECTOR" },
-                    { "4", null, "Thợ", "EMPLOYEE" }
+                    { "1", null, "technician", "TECHNICIAN" },
+                    { "2", null, "manager", "MANAGER" },
+                    { "3", null, "director", "DIRECTOR" },
+                    { "4", null, "employee", "EMPLOYEE" }
                 });
 
             migrationBuilder.InsertData(
@@ -862,18 +861,18 @@ namespace dotnet_api.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Phone", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "RoleID", "SecurityStamp", "Status", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin-id", 0, "982500d2-2f0e-4219-9557-a2554e37857d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
-                    { "manager1-id", 0, "e906e55c-ce2d-4706-aed9-05d384a322df", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
-                    { "manager2-id", 0, "191fef48-8919-4926-bfe6-3632af4085d0", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
-                    { "manager3-id", 0, "1bcfcafd-a081-49b9-8506-a483e61686f9", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
-                    { "tech1-id", 0, "058a1a21-dcde-4585-8c22-e5f0d4daf60d", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
-                    { "tech2-id", 0, "a83b4b45-df54-4945-b10d-029d164e6eaa", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
-                    { "tech3-id", 0, "26222823-978e-4f2e-9b43-8cbce4c0937a", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
-                    { "worker1-id", 0, "5e30df18-037c-424a-8dff-b092b2992d6e", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
-                    { "worker2-id", 0, "5ae37276-88c6-4ef1-9c48-e18ad0078e22", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
-                    { "worker3-id", 0, "582f3ff5-6c30-46bc-8c52-2e7e74affe51", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
-                    { "worker4-id", 0, "52e44a16-f6a3-44ca-a92a-d17d79540405", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
-                    { "worker5-id", 0, "08bddce8-aa22-4a10-b9cf-ad3dc6a27d4a", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
+                    { "admin-id", 0, "d8a08ed7-3953-4f93-93f8-5992efdd4f9d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
+                    { "manager1-id", 0, "71b86170-ea3f-49ec-9508-1a9bf257b105", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
+                    { "manager2-id", 0, "3033efab-8886-4fce-be83-5d5574335098", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
+                    { "manager3-id", 0, "a9bf10ed-e662-4222-a8c9-8549b27aac8e", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
+                    { "tech1-id", 0, "1a4167f3-c98b-4624-a0a7-a4bd615085b0", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
+                    { "tech2-id", 0, "90c1b059-9bfc-4e68-94d2-c6c4164214f4", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
+                    { "tech3-id", 0, "f1adac07-d960-4813-8627-25c30a770db0", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
+                    { "worker1-id", 0, "a80aea9a-a282-4c44-a366-0752660297e2", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
+                    { "worker2-id", 0, "27faa094-3cdd-49e4-b79e-e8c8d6e35733", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
+                    { "worker3-id", 0, "81342b72-0952-49ae-a09d-eca4b7d15d79", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
+                    { "worker4-id", 0, "fa336ec0-f7fb-48f9-a83d-ce0ffc59f562", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
+                    { "worker5-id", 0, "c12567f5-9877-489e-8015-4ee94974e23d", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -881,13 +880,13 @@ namespace dotnet_api.Migrations
                 columns: new[] { "ID", "ActualCompletionDate", "ConstructionName", "ConstructionStatusID", "ConstructionTypeID", "DesignBlueprint", "ExpectedCompletionDate", "Location", "StartDate", "TotalArea" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu chung cư An Hòa Garden", 3, 4, "Design_AnHoa.pdf", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định", new DateTime(2021, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500.5f },
-                    { 2, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Nhà ở dân dụng Phù Mỹ", 3, 4, "Design_PhuyMy.pdf", new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định", new DateTime(2021, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f },
-                    { 3, null, "Nhà ở dân dụng An Nhơn", 2, 4, "Design_BinhDinh.pdf", new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định", new DateTime(2021, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f },
-                    { 4, null, "Cầu An Hòa", 2, 1, "Design_AnHoa.pdf", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định", new DateTime(2021, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500.5f },
-                    { 5, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đường tránh QL1A - Phù Mỹ", 3, 1, "Design_PhuyMy.pdf", new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định", new DateTime(2021, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f },
-                    { 6, null, "Nhà máy sản xuất thép An Phát", 4, 2, "Design_NhaMayThep.pdf", new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định", new DateTime(2020, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 8000f },
-                    { 7, null, "Đập thủy lợi Phú Tài", 5, 3, "Design_ThuyLoiPhuTai.pdf", new DateTime(2022, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định", new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f }
+                    { 1, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu chung cư An Hòa Garden", 4, 1, "Design_AnHoa.pdf", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định", new DateTime(2021, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500.5f },
+                    { 2, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Nhà ở dân dụng Phù Mỹ", 4, 1, "Design_PhuyMy.pdf", new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định", new DateTime(2021, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f },
+                    { 3, null, "Nhà ở dân dụng An Nhơn", 1, 1, "Design_BinhDinh.pdf", new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định", new DateTime(2021, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f },
+                    { 4, null, "Cầu An Hòa", 2, 2, "Design_AnHoa.pdf", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định", new DateTime(2021, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500.5f },
+                    { 5, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đường tránh QL1A - Phù Mỹ", 4, 2, "Design_PhuyMy.pdf", new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định", new DateTime(2021, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f },
+                    { 6, null, "Nhà máy sản xuất thép An Phát", 3, 3, "Design_NhaMayThep.pdf", new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định", new DateTime(2020, 7, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 8000f },
+                    { 7, null, "Đập thủy lợi Phú Tài", 5, 4, "Design_ThuyLoiPhuTai.pdf", new DateTime(2022, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định", new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f }
                 });
 
             migrationBuilder.InsertData(
@@ -1009,6 +1008,25 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "3", "admin-id" },
+                    { "2", "manager1-id" },
+                    { "2", "manager2-id" },
+                    { "2", "manager3-id" },
+                    { "1", "tech1-id" },
+                    { "1", "tech2-id" },
+                    { "1", "tech3-id" },
+                    { "4", "worker1-id" },
+                    { "4", "worker2-id" },
+                    { "4", "worker3-id" },
+                    { "4", "worker4-id" },
+                    { "4", "worker5-id" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "ImportOrders",
                 columns: new[] { "ID", "EmployeeID", "ImportDate" },
                 values: new object[,]
@@ -1023,7 +1041,15 @@ namespace dotnet_api.Migrations
                 values: new object[,]
                 {
                     { 1, 1, "Báo cáo tiến độ ngày 1", "manager1-id", "Cao", "Chậm tiến độ", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 2, 2, "Báo cáo tiến độ ngày 2", "manager2-id", "Thấp", "Thiếu vật liệu", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" }
+                    { 2, 2, "Báo cáo tiến độ ngày 2", "manager2-id", "Thấp", "Thiếu vật liệu", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 3, 1, "Hệ thống điện gặp trục trặc", "manager1-id", "Cao", "Sự cố điện", new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 4, 3, "Rò rỉ nước tại tầng hầm", "manager2-id", "Trung bình", "Hệ thống nước", new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 5, 4, "Thiết bị giám sát không hoạt động", "manager3-id", "Thấp", "Thiết bị", new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 6, 1, "Ngã giàn giáo tại khu A", "manager1-id", "Cao", "Tai nạn lao động", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 7, 2, "Máy xúc bị hỏng giữa ca", "manager2-id", "Trung bình", "Hư hỏng thiết bị", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 8, 3, "Công nhân đình công", "manager3-id", "Cao", "Xung đột nhân sự", new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 9, 4, "Chậm tiến độ do mưa lớn", "manager2-id", "Thấp", "Thời tiết", new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 10, 1, "Vật liệu không đạt chất lượng", "manager1-id", "Trung bình", "Vật liệu kém", new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" }
                 });
 
             migrationBuilder.InsertData(
@@ -1071,65 +1097,65 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.InsertData(
                 table: "ConstructionItems",
-                columns: new[] { "ID", "ActualCompletionDate", "ConstructionID", "ConstructionItemName", "ConstructionStatusID", "Description", "ExpectedCompletionDate", "StartDate", "TotalVolume", "UnitOfMeasurementID", "WorkSubTypeVariantID" },
+                columns: new[] { "ID", "ActualCompletionDate", "ConstructionID", "ConstructionItemName", "ConstructionStatusID", "ExpectedCompletionDate", "StartDate", "TotalVolume", "UnitOfMeasurementID", "WorkSubTypeVariantID" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công móng", 3, "Đào, gia cố và đổ bê tông móng", new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 500f, 6, 3 },
-                    { 2, new DateTime(2021, 6, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công khung kết cấu", 3, "Đổ bê tông cột, dầm và sàn", new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 1, 8 },
-                    { 3, new DateTime(2021, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Xây tường bao và ngăn phòng", 3, "Dùng gạch nung để xây tường bao và chia phòng", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 30000f, 12, 13 },
-                    { 4, new DateTime(2021, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Lắp đặt hệ thống điện nước", 3, "Đi dây điện, ống nước và lắp đặt thiết bị", new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 1, 19 },
-                    { 5, new DateTime(2021, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Ốp lát nền và tường", 3, "Ốp lát gạch sàn và tường nhà vệ sinh, bếp", new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 8, 21 },
-                    { 6, new DateTime(2021, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Sơn tường và chống thấm", 3, "Sơn hoàn thiện mặt trong và ngoài công trình", new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 2200f, 8, 23 },
-                    { 7, new DateTime(2021, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Lắp cửa và lan can", 3, "Cửa sổ, cửa chính, lan can ban công", new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 300f, 13, 27 },
-                    { 8, new DateTime(2021, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công thang máy và cầu thang", 3, "Lắp đặt hệ thống thang máy và thi công cầu thang bộ", new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 10f, 13, 31 },
-                    { 9, new DateTime(2021, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Hoàn thiện nội thất cơ bản", 3, "Lắp đặt bếp, tủ, thiết bị vệ sinh", new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 150f, 13, 30 },
-                    { 10, new DateTime(2022, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Cảnh quan và sân vườn", 3, "Làm vỉa hè, trồng cây, tạo tiểu cảnh", new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 8, 33 },
-                    { 11, new DateTime(2021, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "San lấp mặt bằng", 3, "Chuẩn bị nền đất, san ủi, đầm chặt", new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 6, 1 },
-                    { 12, new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Đổ móng bê tông cốt thép", 3, "Thi công móng nhà theo thiết kế", new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 6, 7 },
-                    { 13, new DateTime(2021, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Dựng cột, dầm, sàn", 3, "Thi công phần khung bê tông", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 1, 9 },
-                    { 14, new DateTime(2021, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Xây tường gạch", 3, "Xây toàn bộ tường ngăn và tường bao", new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 25000f, 12, 13 },
-                    { 15, new DateTime(2021, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Lắp đặt hệ thống điện âm", 3, "Đi dây, đặt ống và bảng điện âm tường", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 1, 17 },
-                    { 16, new DateTime(2021, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Ốp lát gạch nền", 3, "Ốp gạch sàn toàn bộ các tầng", new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f, 8, 22 },
-                    { 17, new DateTime(2021, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Sơn nước nội ngoại thất", 3, "Sơn tường bên trong và mặt ngoài", new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 3500f, 8, 23 },
-                    { 18, new DateTime(2021, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Lắp đặt hệ thống nước sinh hoạt", 3, "Ống dẫn nước, bồn chứa và đầu vòi", new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 60f, 13, 20 },
-                    { 19, new DateTime(2021, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Thi công mái nhà", 3, "Mái tôn chống nóng và thoát nước", new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 900f, 8, 15 },
-                    { 20, new DateTime(2021, 12, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Hoàn thiện sân vườn trước nhà", 3, "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng", new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), 700f, 8, 33 },
-                    { 21, null, 3, "San lấp mặt bằng", 3, "Chuẩn bị nền đất, san ủi, đầm chặt", new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 6, 2 },
-                    { 22, null, 3, "Đổ móng bê tông cốt thép", 3, "Thi công móng nhà theo thiết kế", new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), 900f, 6, 2 },
-                    { 23, null, 3, "Dựng cột, dầm, sàn", 3, "Thi công phần khung bê tông", new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 1, 7 },
-                    { 24, null, 3, "Xây tường gạch", 3, "Xây toàn bộ tường ngăn và tường bao", new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 30000f, 12, 13 },
-                    { 25, null, 3, "Lắp đặt hệ thống điện âm", 3, "Đi dây, đặt ống và bảng điện âm tường", new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f, 1, 17 },
-                    { 26, null, 3, "Ốp lát gạch nền", 3, "Ốp gạch sàn toàn bộ các tầng", new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 8, 22 },
-                    { 27, null, 3, "Sơn nước nội ngoại thất", 3, "Sơn tường bên trong và mặt ngoài", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 4000f, 8, 24 },
-                    { 28, null, 3, "Lắp đặt hệ thống nước sinh hoạt", 3, "Ống dẫn nước, bồn chứa và đầu vòi", new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 70f, 13, 30 },
-                    { 29, null, 3, "Thi công mái nhà", 3, "Mái tôn chống nóng và thoát nước", new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 8, 16 },
-                    { 30, null, 3, "Hoàn thiện sân vườn trước nhà", 3, "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng", new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 8, 33 },
-                    { 31, new DateTime(2021, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Thi công nền đường", 3, "San lấp, đầm chặt nền đường theo thiết kế", new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 6, 1 },
-                    { 32, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Lắp đặt móng cầu", 3, "Thi công móng cầu, cọc bê tông", new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 6, 8 },
-                    { 33, null, 4, "Đổ bê tông cầu", 3, "Đổ bê tông cốt thép cho dầm cầu", new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 6, 9 },
-                    { 34, null, 4, "Lắp đặt cầu giao thông", 3, "Lắp đặt các bộ phận kết cấu cầu, như lan can, cầu giao thông", new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 500f, 8, 14 },
-                    { 35, null, 4, "Lắp đặt hệ thống thoát nước", 3, "Lắp đặt cống, rãnh thoát nước dưới cầu", new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 6, 19 },
-                    { 36, null, 4, "Hoàn thiện mặt cầu", 3, "Làm lớp phủ bảo vệ cầu, mặt cầu bê tông nhựa", new DateTime(2022, 7, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 8, 25 },
-                    { 37, null, 4, "Thi công bảo trì", 3, "Thi công lớp bảo vệ, đánh bóng, phủ lớp chống thấm", new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 8, 26 },
-                    { 38, null, 4, "Lắp đặt hệ thống chiếu sáng cầu", 3, "Lắp đặt đèn chiếu sáng, hệ thống điện cho cầu", new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 50f, 13, 36 },
-                    { 39, new DateTime(2022, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Thi công nền đường", 3, "San lấp và nén chặt nền đường toàn tuyến.", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 4000f, 6, 1 },
-                    { 40, new DateTime(2022, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Lát mặt đường nhựa", 3, "Trải lớp bê tông nhựa dày 10cm.", new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000f, 8, 8 },
-                    { 41, new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Thi công rãnh thoát nước", 3, "Xây dựng hệ thống thoát nước dọc hai bên đường.", new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 1, 19 },
-                    { 42, new DateTime(2022, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Sơn kẻ vạch đường", 3, "Kẻ vạch phân làn và sơn biển báo.", new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 600f, 8, 24 },
-                    { 43, new DateTime(2022, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Lắp đặt hệ thống đèn đường", 3, "Đèn LED chiếu sáng năng lượng mặt trời.", new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 100f, 13, 36 },
-                    { 44, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Kiểm tra & nghiệm thu", 3, "Đánh giá chất lượng thi công theo chuẩn.", new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1f, 13, 36 },
-                    { 45, new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, "San lấp mặt bằng", 3, "Chuẩn bị mặt bằng thi công, san lấp nền móng.", new DateTime(2020, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 12000f, 6, 2 },
-                    { 46, new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, "Thi công móng", 3, "Xây dựng móng nhà xưởng chính.", new DateTime(2021, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000f, 6, 7 },
-                    { 47, null, 6, "Dựng khung thép nhà xưởng", 2, "Lắp dựng khung thép chính và phụ.", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 350f, 7, 9 },
-                    { 48, null, 6, "Lắp đặt máy móc thiết bị", 4, "Lắp hệ thống máy cán thép và dây chuyền sản xuất.", new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 45f, 13, 31 },
-                    { 49, null, 6, "Xây dựng nhà kho nguyên liệu", 1, "Xây nhà kho chứa phôi và nguyên liệu.", new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 8, 8 },
-                    { 50, null, 6, "Thi công hệ thống xử lý nước thải", 1, "Hệ thống thu gom và xử lý nước thải đạt chuẩn.", new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2f, 13, 20 },
-                    { 51, new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, "Khảo sát địa chất", 3, "Đo đạc, khảo sát địa chất khu vực xây đập.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1f, 13, 1 },
-                    { 52, new DateTime(2020, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, "San lấp mặt bằng", 3, "Chuẩn bị mặt bằng thi công đập.", new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 10000f, 6, 2 },
-                    { 53, null, 7, "Đào hố móng đập", 2, "Đào hố móng trước khi đổ bê tông nền.", new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 7000f, 6, 4 },
-                    { 54, null, 7, "Lắp cống xả đáy", 4, "Thi công hệ thống cống xả đáy tại chân đập.", new DateTime(2021, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3f, 13, 19 },
-                    { 55, null, 7, "Xây thân đập", 1, "Thi công thân đập chính bằng bê tông cốt thép.", new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 15000f, 6, 7 },
-                    { 56, null, 7, "Làm đường công vụ", 1, "Thi công đường nội bộ phục vụ vận chuyển vật liệu.", new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 8, 33 }
+                    { 1, new DateTime(2021, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công móng", 3, new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 500f, 6, 3 },
+                    { 2, new DateTime(2021, 6, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công khung kết cấu", 3, new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 1, 8 },
+                    { 3, new DateTime(2021, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Xây tường bao và ngăn phòng", 3, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 30000f, 12, 13 },
+                    { 4, new DateTime(2021, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Lắp đặt hệ thống điện nước", 3, new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 1, 19 },
+                    { 5, new DateTime(2021, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Ốp lát nền và tường", 3, new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 8, 21 },
+                    { 6, new DateTime(2021, 10, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Sơn tường và chống thấm", 3, new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 2200f, 8, 23 },
+                    { 7, new DateTime(2021, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Lắp cửa và lan can", 3, new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 300f, 13, 27 },
+                    { 8, new DateTime(2021, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Thi công thang máy và cầu thang", 3, new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 10f, 13, 31 },
+                    { 9, new DateTime(2021, 12, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Hoàn thiện nội thất cơ bản", 3, new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 150f, 13, 30 },
+                    { 10, new DateTime(2022, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Cảnh quan và sân vườn", 3, new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 8, 33 },
+                    { 11, new DateTime(2021, 3, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "San lấp mặt bằng", 3, new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 6, 1 },
+                    { 12, new DateTime(2021, 4, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Đổ móng bê tông cốt thép", 3, new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 6, 7 },
+                    { 13, new DateTime(2021, 5, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Dựng cột, dầm, sàn", 3, new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 1, 9 },
+                    { 14, new DateTime(2021, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Xây tường gạch", 3, new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 25000f, 12, 13 },
+                    { 15, new DateTime(2021, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Lắp đặt hệ thống điện âm", 3, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 1, 17 },
+                    { 16, new DateTime(2021, 9, 9, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Ốp lát gạch nền", 3, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f, 8, 22 },
+                    { 17, new DateTime(2021, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Sơn nước nội ngoại thất", 3, new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 3500f, 8, 23 },
+                    { 18, new DateTime(2021, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Lắp đặt hệ thống nước sinh hoạt", 3, new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 60f, 13, 20 },
+                    { 19, new DateTime(2021, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Thi công mái nhà", 3, new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 900f, 8, 15 },
+                    { 20, new DateTime(2021, 12, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Hoàn thiện sân vườn trước nhà", 3, new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), 700f, 8, 33 },
+                    { 21, null, 3, "San lấp mặt bằng", 3, new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 6, 2 },
+                    { 22, null, 3, "Đổ móng bê tông cốt thép", 3, new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), 900f, 6, 2 },
+                    { 23, null, 3, "Dựng cột, dầm, sàn", 3, new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 1, 7 },
+                    { 24, null, 3, "Xây tường gạch", 3, new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 30000f, 12, 13 },
+                    { 25, null, 3, "Lắp đặt hệ thống điện âm", 3, new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), 2000f, 1, 17 },
+                    { 26, null, 3, "Ốp lát gạch nền", 3, new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 8, 22 },
+                    { 27, null, 3, "Sơn nước nội ngoại thất", 3, new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), 4000f, 8, 24 },
+                    { 28, null, 3, "Lắp đặt hệ thống nước sinh hoạt", 3, new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 70f, 13, 30 },
+                    { 29, null, 3, "Thi công mái nhà", 3, new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000f, 8, 16 },
+                    { 30, null, 3, "Hoàn thiện sân vườn trước nhà", 3, new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 8, 33 },
+                    { 31, new DateTime(2021, 6, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Thi công nền đường", 3, new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 6, 1 },
+                    { 32, new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Lắp đặt móng cầu", 3, new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 6, 8 },
+                    { 33, null, 4, "Đổ bê tông cầu", 3, new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 6, 9 },
+                    { 34, null, 4, "Lắp đặt cầu giao thông", 3, new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 500f, 8, 14 },
+                    { 35, null, 4, "Lắp đặt hệ thống thoát nước", 3, new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 6, 19 },
+                    { 36, null, 4, "Hoàn thiện mặt cầu", 3, new DateTime(2022, 7, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200f, 8, 25 },
+                    { 37, null, 4, "Thi công bảo trì", 3, new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 800f, 8, 26 },
+                    { 38, null, 4, "Lắp đặt hệ thống chiếu sáng cầu", 3, new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 50f, 13, 36 },
+                    { 39, new DateTime(2022, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Thi công nền đường", 3, new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 4000f, 6, 1 },
+                    { 40, new DateTime(2022, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Lát mặt đường nhựa", 3, new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000f, 8, 8 },
+                    { 41, new DateTime(2022, 8, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Thi công rãnh thoát nước", 3, new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 1500f, 1, 19 },
+                    { 42, new DateTime(2022, 9, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Sơn kẻ vạch đường", 3, new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 600f, 8, 24 },
+                    { 43, new DateTime(2022, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Lắp đặt hệ thống đèn đường", 3, new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 100f, 13, 36 },
+                    { 44, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Kiểm tra & nghiệm thu", 3, new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1f, 13, 36 },
+                    { 45, new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, "San lấp mặt bằng", 3, new DateTime(2020, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 12000f, 6, 2 },
+                    { 46, new DateTime(2021, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, "Thi công móng", 3, new DateTime(2021, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 5000f, 6, 7 },
+                    { 47, null, 6, "Dựng khung thép nhà xưởng", 2, new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 350f, 7, 9 },
+                    { 48, null, 6, "Lắp đặt máy móc thiết bị", 4, new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 45f, 13, 31 },
+                    { 49, null, 6, "Xây dựng nhà kho nguyên liệu", 1, new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1800f, 8, 8 },
+                    { 50, null, 6, "Thi công hệ thống xử lý nước thải", 1, new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2f, 13, 20 },
+                    { 51, new DateTime(2020, 4, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, "Khảo sát địa chất", 3, new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1f, 13, 1 },
+                    { 52, new DateTime(2020, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, "San lấp mặt bằng", 3, new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 10000f, 6, 2 },
+                    { 53, null, 7, "Đào hố móng đập", 2, new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 7000f, 6, 4 },
+                    { 54, null, 7, "Lắp cống xả đáy", 4, new DateTime(2021, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3f, 13, 19 },
+                    { 55, null, 7, "Xây thân đập", 1, new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 15000f, 6, 7 },
+                    { 56, null, 7, "Làm đường công vụ", 1, new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 2500f, 8, 33 }
                 });
 
             migrationBuilder.InsertData(
@@ -1222,7 +1248,15 @@ namespace dotnet_api.Migrations
                 values: new object[,]
                 {
                     { 1, "/uploads/report1.pdf", 1, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "/uploads/report2.pdf", 2, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 2, "/uploads/report2.pdf", 2, new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "/uploads/report3.pdf", 3, new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, "/uploads/report4.pdf", 4, new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, "/uploads/report5.pdf", 5, new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, "/uploads/report6.pdf", 6, new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7, "/uploads/report7.pdf", 7, new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8, "/uploads/report8.pdf", 8, new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 9, "/uploads/report9.pdf", 9, new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 10, "/uploads/report10.pdf", 10, new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -1231,7 +1265,15 @@ namespace dotnet_api.Migrations
                 values: new object[,]
                 {
                     { 1, "Đang chờ phê duyệt", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Pending" },
-                    { 2, "Đang chờ phê duyệt", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Pending" }
+                    { 2, "Đang chờ phê duyệt", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "Pending" },
+                    { 3, "Đang chờ phê duyệt", new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "Pending" },
+                    { 4, "Đang chờ phê duyệt", new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "Pending" },
+                    { 5, "Đang chờ phê duyệt", new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "Pending" },
+                    { 6, "Đang chờ phê duyệt", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, "Pending" },
+                    { 7, "Đang chờ phê duyệt", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, "Pending" },
+                    { 8, "Đang chờ phê duyệt", new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 8, "Pending" },
+                    { 9, "Đang chờ phê duyệt", new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 9, "Pending" },
+                    { 10, "Đang chờ phê duyệt", new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 10, "Pending" }
                 });
 
             migrationBuilder.InsertData(

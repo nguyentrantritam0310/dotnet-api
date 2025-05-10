@@ -970,8 +970,8 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 1,
-                    ConstructionTypeID = 4, // Residential (Nhà ở)
-                    ConstructionStatusID = 3, // Completed
+                    ConstructionTypeID = 1, // Residential (Nhà ở)
+                    ConstructionStatusID = 4, // Completed
                     ConstructionName = "Khu chung cư An Hòa Garden",
                     Location = "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định",
                     TotalArea = 1500.5f,
@@ -983,8 +983,8 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 2,
-                    ConstructionTypeID = 4, // Residential (Nhà ở)
-                    ConstructionStatusID = 3, // Completed
+                    ConstructionTypeID = 1, // Residential (Nhà ở)
+                    ConstructionStatusID = 4, // Completed
                     ConstructionName = "Nhà ở dân dụng Phù Mỹ",
                     Location = "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định",
                     TotalArea = 2500.0f,
@@ -996,8 +996,8 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 3,
-                    ConstructionTypeID = 4, // Residential (Nhà ở)
-                    ConstructionStatusID = 2, // Pending
+                    ConstructionTypeID = 1, // Residential (Nhà ở)
+                    ConstructionStatusID = 1, // Pending
                     ConstructionName = "Nhà ở dân dụng An Nhơn",
                     Location = "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định",
                     TotalArea = 1800.0f,
@@ -1011,7 +1011,7 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 4,
-                    ConstructionTypeID = 1, // RoadBridge
+                    ConstructionTypeID = 2, // RoadBridge
                     ConstructionStatusID = 2, // InProgress
                     ConstructionName = "Cầu An Hòa",
                     Location = "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định",
@@ -1025,8 +1025,8 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 5,
-                    ConstructionTypeID = 1, // RoadBridge
-                    ConstructionStatusID = 3, // Completed
+                    ConstructionTypeID = 2, // RoadBridge
+                    ConstructionStatusID = 4, // Completed
                     ConstructionName = "Đường tránh QL1A - Phù Mỹ",
                     Location = "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định",
                     TotalArea = 2500.0f,
@@ -1040,8 +1040,8 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 6,
-                    ConstructionTypeID = 2, // Industrial
-                    ConstructionStatusID = 4, // Paused
+                    ConstructionTypeID = 3, // Industrial
+                    ConstructionStatusID = 3, // Paused
                     ConstructionName = "Nhà máy sản xuất thép An Phát",
                     Location = "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định",
                     TotalArea = 8000.0f,
@@ -1055,7 +1055,7 @@ namespace dotnet_api.Data.Extensions
                 new Construction
                 {
                     ID = 7,
-                    ConstructionTypeID = 3, // Irrigation
+                    ConstructionTypeID = 4, // Irrigation
                     ConstructionStatusID = 5, // Cancelled
                     ConstructionName = "Đập thủy lợi Phú Tài",
                     Location = "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định",
@@ -1076,7 +1076,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 1,
                     ConstructionID = 1,
                     ConstructionItemName = "Thi công móng",
-                    Description = "Đào, gia cố và đổ bê tông móng",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 500,
                     StartDate = new DateTime(2021, 04, 12),
@@ -1090,7 +1089,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 2,
                     ConstructionID = 1,
                     ConstructionItemName = "Thi công khung kết cấu",
-                    Description = "Đổ bê tông cột, dầm và sàn",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 1200,
                     StartDate = new DateTime(2021, 05, 16),
@@ -1104,7 +1102,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 3,
                     ConstructionID = 1,
                     ConstructionItemName = "Xây tường bao và ngăn phòng",
-                    Description = "Dùng gạch nung để xây tường bao và chia phòng",
                     UnitOfMeasurementID = 12, // viên
                     TotalVolume = 30000,
                     StartDate = new DateTime(2021, 07, 02),
@@ -1118,7 +1115,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 4,
                     ConstructionID = 1,
                     ConstructionItemName = "Lắp đặt hệ thống điện nước",
-                    Description = "Đi dây điện, ống nước và lắp đặt thiết bị",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 2500,
                     StartDate = new DateTime(2021, 08, 16),
@@ -1133,7 +1129,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 5,
                     ConstructionID = 1,
                     ConstructionItemName = "Ốp lát nền và tường",
-                    Description = "Ốp lát gạch sàn và tường nhà vệ sinh, bếp",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 1800,
                     StartDate = new DateTime(2021, 09, 16),
@@ -1147,7 +1142,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 6,
                     ConstructionID = 1,
                     ConstructionItemName = "Sơn tường và chống thấm",
-                    Description = "Sơn hoàn thiện mặt trong và ngoài công trình",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 2200,
                     StartDate = new DateTime(2021, 10, 11),
@@ -1161,7 +1155,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 7,
                     ConstructionID = 1,
                     ConstructionItemName = "Lắp cửa và lan can",
-                    Description = "Cửa sổ, cửa chính, lan can ban công",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 300,
                     StartDate = new DateTime(2021, 11, 02),
@@ -1175,7 +1168,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 8,
                     ConstructionID = 1,
                     ConstructionItemName = "Thi công thang máy và cầu thang",
-                    Description = "Lắp đặt hệ thống thang máy và thi công cầu thang bộ",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 10,
                     StartDate = new DateTime(2021, 11, 21),
@@ -1189,7 +1181,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 9,
                     ConstructionID = 1,
                     ConstructionItemName = "Hoàn thiện nội thất cơ bản",
-                    Description = "Lắp đặt bếp, tủ, thiết bị vệ sinh",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 150,
                     StartDate = new DateTime(2021, 12, 11),
@@ -1203,7 +1194,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 10,
                     ConstructionID = 1,
                     ConstructionItemName = "Cảnh quan và sân vườn",
-                    Description = "Làm vỉa hè, trồng cây, tạo tiểu cảnh",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 1000,
                     StartDate = new DateTime(2022, 01, 01),
@@ -1218,7 +1208,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 11,
                     ConstructionID = 2,
                     ConstructionItemName = "San lấp mặt bằng",
-                    Description = "Chuẩn bị nền đất, san ủi, đầm chặt",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 1000,
                     StartDate = new DateTime(2021, 02, 22),
@@ -1232,7 +1221,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 12,
                     ConstructionID = 2,
                     ConstructionItemName = "Đổ móng bê tông cốt thép",
-                    Description = "Thi công móng nhà theo thiết kế",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 800,
                     StartDate = new DateTime(2021, 03, 11),
@@ -1246,7 +1234,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 13,
                     ConstructionID = 2,
                     ConstructionItemName = "Dựng cột, dầm, sàn",
-                    Description = "Thi công phần khung bê tông",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 1500,
                     StartDate = new DateTime(2021, 04, 16),
@@ -1260,7 +1247,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 14,
                     ConstructionID = 2,
                     ConstructionItemName = "Xây tường gạch",
-                    Description = "Xây toàn bộ tường ngăn và tường bao",
                     UnitOfMeasurementID = 12, // viên
                     TotalVolume = 25000,
                     StartDate = new DateTime(2021, 06, 02),
@@ -1274,7 +1260,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 15,
                     ConstructionID = 2,
                     ConstructionItemName = "Lắp đặt hệ thống điện âm",
-                    Description = "Đi dây, đặt ống và bảng điện âm tường",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 1800,
                     StartDate = new DateTime(2021, 07, 21),
@@ -1288,7 +1273,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 16,
                     ConstructionID = 2,
                     ConstructionItemName = "Ốp lát gạch nền",
-                    Description = "Ốp gạch sàn toàn bộ các tầng",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 2000,
                     StartDate = new DateTime(2021, 08, 16),
@@ -1302,7 +1286,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 17,
                     ConstructionID = 2,
                     ConstructionItemName = "Sơn nước nội ngoại thất",
-                    Description = "Sơn tường bên trong và mặt ngoài",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 3500,
                     StartDate = new DateTime(2021, 09, 11),
@@ -1316,7 +1299,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 18,
                     ConstructionID = 2,
                     ConstructionItemName = "Lắp đặt hệ thống nước sinh hoạt",
-                    Description = "Ống dẫn nước, bồn chứa và đầu vòi",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 60,
                     StartDate = new DateTime(2021, 10, 16),
@@ -1330,7 +1312,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 19,
                     ConstructionID = 2,
                     ConstructionItemName = "Thi công mái nhà",
-                    Description = "Mái tôn chống nóng và thoát nước",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 900,
                     StartDate = new DateTime(2021, 11, 11),
@@ -1344,7 +1325,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 20,
                     ConstructionID = 2,
                     ConstructionItemName = "Hoàn thiện sân vườn trước nhà",
-                    Description = "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 700,
                     StartDate = new DateTime(2021, 12, 06),
@@ -1359,7 +1339,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 21,
                     ConstructionID = 3,
                     ConstructionItemName = "San lấp mặt bằng",
-                    Description = "Chuẩn bị nền đất, san ủi, đầm chặt",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 1200,
                     StartDate = new DateTime(2021, 05, 02),
@@ -1373,7 +1352,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 22,
                     ConstructionID = 3,
                     ConstructionItemName = "Đổ móng bê tông cốt thép",
-                    Description = "Thi công móng nhà theo thiết kế",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 900,
                     StartDate = new DateTime(2021, 05, 26),
@@ -1387,7 +1365,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 23,
                     ConstructionID = 3,
                     ConstructionItemName = "Dựng cột, dầm, sàn",
-                    Description = "Thi công phần khung bê tông",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 1800,
                     StartDate = new DateTime(2021, 07, 06),
@@ -1401,7 +1378,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 24,
                     ConstructionID = 3,
                     ConstructionItemName = "Xây tường gạch",
-                    Description = "Xây toàn bộ tường ngăn và tường bao",
                     UnitOfMeasurementID = 12, // viên
                     TotalVolume = 30000,
                     StartDate = new DateTime(2021, 08, 16),
@@ -1415,7 +1391,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 25,
                     ConstructionID = 3,
                     ConstructionItemName = "Lắp đặt hệ thống điện âm",
-                    Description = "Đi dây, đặt ống và bảng điện âm tường",
                     UnitOfMeasurementID = 1, // mét
                     TotalVolume = 2000,
                     StartDate = new DateTime(2021, 10, 02),
@@ -1429,7 +1404,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 26,
                     ConstructionID = 3,
                     ConstructionItemName = "Ốp lát gạch nền",
-                    Description = "Ốp gạch sàn toàn bộ các tầng",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 2500,
                     StartDate = new DateTime(2021, 11, 11),
@@ -1443,7 +1417,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 27,
                     ConstructionID = 3,
                     ConstructionItemName = "Sơn nước nội ngoại thất",
-                    Description = "Sơn tường bên trong và mặt ngoài",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 4000,
                     StartDate = new DateTime(2021, 12, 21),
@@ -1457,7 +1430,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 28,
                     ConstructionID = 3,
                     ConstructionItemName = "Lắp đặt hệ thống nước sinh hoạt",
-                    Description = "Ống dẫn nước, bồn chứa và đầu vòi",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 70,
                     StartDate = new DateTime(2022, 01, 16),
@@ -1471,7 +1443,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 29,
                     ConstructionID = 3,
                     ConstructionItemName = "Thi công mái nhà",
-                    Description = "Mái tôn chống nóng và thoát nước",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 1000,
                     StartDate = new DateTime(2022, 03, 01),
@@ -1485,7 +1456,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 30,
                     ConstructionID = 3,
                     ConstructionItemName = "Hoàn thiện sân vườn trước nhà",
-                    Description = "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 800,
                     StartDate = new DateTime(2022, 04, 11),
@@ -1501,7 +1471,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 31,
                     ConstructionID = 4,
                     ConstructionItemName = "Thi công nền đường",
-                    Description = "San lấp, đầm chặt nền đường theo thiết kế",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 2500,
                     StartDate = new DateTime(2021, 04, 12),
@@ -1515,7 +1484,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 32,
                     ConstructionID = 4,
                     ConstructionItemName = "Lắp đặt móng cầu",
-                    Description = "Thi công móng cầu, cọc bê tông",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 1200,
                     StartDate = new DateTime(2021, 07, 01),
@@ -1529,7 +1497,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 33,
                     ConstructionID = 4,
                     ConstructionItemName = "Đổ bê tông cầu",
-                    Description = "Đổ bê tông cốt thép cho dầm cầu",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 1500,
                     StartDate = new DateTime(2021, 09, 16),
@@ -1543,7 +1510,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 34,
                     ConstructionID = 4,
                     ConstructionItemName = "Lắp đặt cầu giao thông",
-                    Description = "Lắp đặt các bộ phận kết cấu cầu, như lan can, cầu giao thông",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 500,
                     StartDate = new DateTime(2021, 12, 01),
@@ -1557,7 +1523,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 35,
                     ConstructionID = 4,
                     ConstructionItemName = "Lắp đặt hệ thống thoát nước",
-                    Description = "Lắp đặt cống, rãnh thoát nước dưới cầu",
                     UnitOfMeasurementID = 6, // mét khối
                     TotalVolume = 800,
                     StartDate = new DateTime(2022, 03, 01),
@@ -1571,7 +1536,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 36,
                     ConstructionID = 4,
                     ConstructionItemName = "Hoàn thiện mặt cầu",
-                    Description = "Làm lớp phủ bảo vệ cầu, mặt cầu bê tông nhựa",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 1200,
                     StartDate = new DateTime(2022, 05, 16),
@@ -1585,7 +1549,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 37,
                     ConstructionID = 4,
                     ConstructionItemName = "Thi công bảo trì",
-                    Description = "Thi công lớp bảo vệ, đánh bóng, phủ lớp chống thấm",
                     UnitOfMeasurementID = 8, // mét vuông
                     TotalVolume = 800,
                     StartDate = new DateTime(2022, 08, 01),
@@ -1599,7 +1562,6 @@ namespace dotnet_api.Data.Extensions
                     ID = 38,
                     ConstructionID = 4,
                     ConstructionItemName = "Lắp đặt hệ thống chiếu sáng cầu",
-                    Description = "Lắp đặt đèn chiếu sáng, hệ thống điện cho cầu",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 50,
                     StartDate = new DateTime(2022, 10, 01),
@@ -1615,7 +1577,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Thi công nền đường",
-                    Description = "San lấp và nén chặt nền đường toàn tuyến.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 4000f,
                     StartDate = new DateTime(2021, 02, 25),
@@ -1629,7 +1590,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Lát mặt đường nhựa",
-                    Description = "Trải lớp bê tông nhựa dày 10cm.",
                     UnitOfMeasurementID = 8, // m²
                     TotalVolume = 5000f,
                     StartDate = new DateTime(2022, 01, 16),
@@ -1644,7 +1604,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Thi công rãnh thoát nước",
-                    Description = "Xây dựng hệ thống thoát nước dọc hai bên đường.",
                     UnitOfMeasurementID = 1, // m
                     TotalVolume = 1500f,
                     StartDate = new DateTime(2022, 05, 16),
@@ -1659,7 +1618,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Sơn kẻ vạch đường",
-                    Description = "Kẻ vạch phân làn và sơn biển báo.",
                     UnitOfMeasurementID = 8, // m²
                     TotalVolume = 600f,
                     StartDate = new DateTime(2022, 08, 20),
@@ -1674,7 +1632,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Lắp đặt hệ thống đèn đường",
-                    Description = "Đèn LED chiếu sáng năng lượng mặt trời.",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 100f,
                     StartDate = new DateTime(2022, 10, 05),
@@ -1689,7 +1646,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 5,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Kiểm tra & nghiệm thu",
-                    Description = "Đánh giá chất lượng thi công theo chuẩn.",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 1f,
                     StartDate = new DateTime(2022, 12, 01),
@@ -1705,7 +1661,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "San lấp mặt bằng",
-                    Description = "Chuẩn bị mặt bằng thi công, san lấp nền móng.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 12000f,
                     StartDate = new DateTime(2020, 07, 20),
@@ -1720,7 +1675,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "Thi công móng",
-                    Description = "Xây dựng móng nhà xưởng chính.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 5000f,
                     StartDate = new DateTime(2020, 10, 20),
@@ -1735,7 +1689,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 2, // In Progress
                     ConstructionItemName = "Dựng khung thép nhà xưởng",
-                    Description = "Lắp dựng khung thép chính và phụ.",
                     UnitOfMeasurementID = 7, // tấn
                     TotalVolume = 350f,
                     StartDate = new DateTime(2021, 02, 01),
@@ -1750,7 +1703,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 4, // Paused
                     ConstructionItemName = "Lắp đặt máy móc thiết bị",
-                    Description = "Lắp hệ thống máy cán thép và dây chuyền sản xuất.",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 45f,
                     StartDate = new DateTime(2021, 06, 15),
@@ -1765,7 +1717,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 1, // Pending
                     ConstructionItemName = "Xây dựng nhà kho nguyên liệu",
-                    Description = "Xây nhà kho chứa phôi và nguyên liệu.",
                     UnitOfMeasurementID = 8, // m²
                     TotalVolume = 1800f,
                     StartDate = new DateTime(2022, 01, 01),
@@ -1779,7 +1730,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 6,
                     ConstructionStatusID = 1, // Pending
                     ConstructionItemName = "Thi công hệ thống xử lý nước thải",
-                    Description = "Hệ thống thu gom và xử lý nước thải đạt chuẩn.",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 2f,
                     StartDate = new DateTime(2022, 03, 20),
@@ -1795,7 +1745,6 @@ namespace dotnet_api.Data.Extensions
                  ConstructionID = 7,
                  ConstructionStatusID = 3, // Completed
                  ConstructionItemName = "Khảo sát địa chất",
-                 Description = "Đo đạc, khảo sát địa chất khu vực xây đập.",
                  UnitOfMeasurementID = 13, // cái
                  TotalVolume = 1f,
                  StartDate = new DateTime(2020, 03, 15),
@@ -1810,7 +1759,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 7,
                     ConstructionStatusID = 3, // Completed
                     ConstructionItemName = "San lấp mặt bằng",
-                    Description = "Chuẩn bị mặt bằng thi công đập.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 10000f,
                     StartDate = new DateTime(2020, 05, 10),
@@ -1824,7 +1772,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 7,
                     ConstructionStatusID = 2, // In Progress
                     ConstructionItemName = "Đào hố móng đập",
-                    Description = "Đào hố móng trước khi đổ bê tông nền.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 7000f,
                     StartDate = new DateTime(2020, 08, 10),
@@ -1839,7 +1786,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 7,
                     ConstructionStatusID = 4, // Paused
                     ConstructionItemName = "Lắp cống xả đáy",
-                    Description = "Thi công hệ thống cống xả đáy tại chân đập.",
                     UnitOfMeasurementID = 13, // cái
                     TotalVolume = 3f,
                     StartDate = new DateTime(2020, 12, 01),
@@ -1854,7 +1800,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 7,
                     ConstructionStatusID = 1, // Pending
                     ConstructionItemName = "Xây thân đập",
-                    Description = "Thi công thân đập chính bằng bê tông cốt thép.",
                     UnitOfMeasurementID = 6, // m³
                     TotalVolume = 15000f,
                     StartDate = new DateTime(2021, 04, 01),
@@ -1869,7 +1814,6 @@ namespace dotnet_api.Data.Extensions
                     ConstructionID = 7,
                     ConstructionStatusID = 1, // Pending
                     ConstructionItemName = "Làm đường công vụ",
-                    Description = "Thi công đường nội bộ phục vụ vận chuyển vật liệu.",
                     UnitOfMeasurementID = 8, // m²
                     TotalVolume = 2500f,
                     StartDate = new DateTime(2021, 10, 20),
@@ -2672,19 +2616,49 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
 
             // Seed data for Report
             modelBuilder.Entity<Report>().HasData(
+                // ===== Sự cố kỹ thuật =====
                 new Report { ID = 1, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Báo cáo tiến độ ngày 1", Level = "Cao", ProblemType = "Chậm tiến độ", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
-                new Report { ID = 2, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ProblemType = "Thiếu vật liệu", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" }
+                new Report { ID = 2, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ProblemType = "Thiếu vật liệu", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 3, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Hệ thống điện gặp trục trặc", Level = "Cao", ProblemType = "Sự cố điện", ReportDate = new DateTime(2023, 02, 10), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 4, EmployeeID = "manager2-id", ConstructionID = 3, Content = "Rò rỉ nước tại tầng hầm", Level = "Trung bình", ProblemType = "Hệ thống nước", ReportDate = new DateTime(2023, 03, 05), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 5, EmployeeID = "manager3-id", ConstructionID = 4, Content = "Thiết bị giám sát không hoạt động", Level = "Thấp", ProblemType = "Thiết bị", ReportDate = new DateTime(2023, 04, 12), ReportType = "Sự cố kĩ thuật" },
+
+                // ===== Sự cố thi công =====
+                new Report { ID = 6, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Ngã giàn giáo tại khu A", Level = "Cao", ProblemType = "Tai nạn lao động", ReportDate = new DateTime(2023, 01, 15), ReportType = "Sự cố thi công" },
+                new Report { ID = 7, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Máy xúc bị hỏng giữa ca", Level = "Trung bình", ProblemType = "Hư hỏng thiết bị", ReportDate = new DateTime(2023, 02, 01), ReportType = "Sự cố thi công" },
+                new Report { ID = 8, EmployeeID = "manager3-id", ConstructionID = 3, Content = "Công nhân đình công", Level = "Cao", ProblemType = "Xung đột nhân sự", ReportDate = new DateTime(2023, 03, 20), ReportType = "Sự cố thi công" },
+                new Report { ID = 9, EmployeeID = "manager2-id", ConstructionID = 4, Content = "Chậm tiến độ do mưa lớn", Level = "Thấp", ProblemType = "Thời tiết", ReportDate = new DateTime(2023, 04, 01), ReportType = "Sự cố thi công" },
+                new Report { ID = 10, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Vật liệu không đạt chất lượng", Level = "Trung bình", ProblemType = "Vật liệu kém", ReportDate = new DateTime(2023, 05, 05), ReportType = "Sự cố thi công" }
             );
 
             // Seed data for ReportAttachment
             modelBuilder.Entity<ReportAttachment>().HasData(
                 new ReportAttachment { ID = 1, ReportID = 1, FilePath = "/uploads/report1.pdf", UploadDate = new DateTime(2023, 01, 01) },
-                new ReportAttachment { ID = 2, ReportID = 2, FilePath = "/uploads/report2.pdf", UploadDate = new DateTime(2023, 01, 01) }
-                );
+                new ReportAttachment { ID = 2, ReportID = 2, FilePath = "/uploads/report2.pdf", UploadDate = new DateTime(2023, 01, 01) },
+                new ReportAttachment { ID = 3, ReportID = 3, FilePath = "/uploads/report3.pdf", UploadDate = new DateTime(2023, 02, 10) },
+                new ReportAttachment { ID = 4, ReportID = 4, FilePath = "/uploads/report4.pdf", UploadDate = new DateTime(2023, 03, 05) },
+                new ReportAttachment { ID = 5, ReportID = 5, FilePath = "/uploads/report5.pdf", UploadDate = new DateTime(2023, 04, 12) },
+                new ReportAttachment { ID = 6, ReportID = 6, FilePath = "/uploads/report6.pdf", UploadDate = new DateTime(2023, 01, 15) },
+                new ReportAttachment { ID = 7, ReportID = 7, FilePath = "/uploads/report7.pdf", UploadDate = new DateTime(2023, 02, 01) },
+                new ReportAttachment { ID = 8, ReportID = 8, FilePath = "/uploads/report8.pdf", UploadDate = new DateTime(2023, 03, 20) },
+                new ReportAttachment { ID = 9, ReportID = 9, FilePath = "/uploads/report9.pdf", UploadDate = new DateTime(2023, 04, 01) },
+                new ReportAttachment { ID = 10, ReportID = 10, FilePath = "/uploads/report10.pdf", UploadDate = new DateTime(2023, 05, 05) }
+            );
+
+            // Seed data for ReportStatusLog
             modelBuilder.Entity<ReportStatusLog>().HasData(
                 new ReportStatusLog { ID = 1, ReportID = 1, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) },
-                new ReportStatusLog { ID = 2, ReportID = 2, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) }
-                );
+                new ReportStatusLog { ID = 2, ReportID = 2, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 01) },
+                new ReportStatusLog { ID = 3, ReportID = 3, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 02, 10) },
+                new ReportStatusLog { ID = 4, ReportID = 4, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 03, 05) },
+                new ReportStatusLog { ID = 5, ReportID = 5, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 04, 12) },
+                new ReportStatusLog { ID = 6, ReportID = 6, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 01, 15) },
+                new ReportStatusLog { ID = 7, ReportID = 7, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 02, 01) },
+                new ReportStatusLog { ID = 8, ReportID = 8, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 03, 20) },
+                new ReportStatusLog { ID = 9, ReportID = 9, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 04, 01) },
+                new ReportStatusLog { ID = 10, ReportID = 10, Status = ReportStatusEnum.Pending, Note = "Đang chờ phê duyệt", ReportDate = new DateTime(2023, 05, 05) }
+            );
+
 
             // Seed data for WorkType
             modelBuilder.Entity<WorkType>().HasData(

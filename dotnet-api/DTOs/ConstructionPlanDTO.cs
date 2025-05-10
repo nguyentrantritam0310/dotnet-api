@@ -4,7 +4,7 @@ namespace dotnet_api.DTOs
     {
         public int ID { get; set; }
         public int ConstructionStatusID { get; set; }
-        public int EmployeeID { get; set; }
+        public string EmployeeID { get; set; }
         public int ConstructionItemID { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -14,6 +14,7 @@ namespace dotnet_api.DTOs
         public string EmployeeName { get; set; }
         public string ConstructionItemName { get; set; }
         public string ConstructionName { get; set; }
+        public string ConstructionID { get; set; }
         public string StatusName { get; set; }
     }
 }

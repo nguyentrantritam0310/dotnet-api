@@ -339,7 +339,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "46286cf3-2f94-4f71-a987-8d58e07a4116",
+                            ConcurrencyStamp = "d8a08ed7-3953-4f93-93f8-5992efdd4f9d",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -361,7 +361,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bdf1c048-a759-4d6f-824c-ebd0e90d2ed5",
+                            ConcurrencyStamp = "71b86170-ea3f-49ec-9508-1a9bf257b105",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -383,7 +383,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "952aa589-71f8-4994-aace-baa6e5657a9f",
+                            ConcurrencyStamp = "3033efab-8886-4fce-be83-5d5574335098",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -405,7 +405,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b95d22af-16ef-40b6-91d8-21bf6cc0b9ea",
+                            ConcurrencyStamp = "a9bf10ed-e662-4222-a8c9-8549b27aac8e",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -427,7 +427,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81b91094-8e07-473e-8b34-cd0a4e99936f",
+                            ConcurrencyStamp = "1a4167f3-c98b-4624-a0a7-a4bd615085b0",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -449,7 +449,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3c4bff1e-5fe6-45ff-aa79-73ef7d6f7af0",
+                            ConcurrencyStamp = "90c1b059-9bfc-4e68-94d2-c6c4164214f4",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -471,7 +471,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "08fb0b8c-36d0-4d61-9c83-2ad7f4c052fb",
+                            ConcurrencyStamp = "f1adac07-d960-4813-8627-25c30a770db0",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -493,7 +493,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dde92e25-13cf-4405-92cb-4ffa4dc2a0fe",
+                            ConcurrencyStamp = "a80aea9a-a282-4c44-a366-0752660297e2",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -514,7 +514,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2f1894aa-22fa-426a-9e49-2c25f3769dcc",
+                            ConcurrencyStamp = "27faa094-3cdd-49e4-b79e-e8c8d6e35733",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -535,7 +535,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0d996bd3-a5d0-4290-ad71-2cc7673b615f",
+                            ConcurrencyStamp = "81342b72-0952-49ae-a09d-eca4b7d15d79",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -556,7 +556,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "933f9e74-3c86-4961-a94a-2b47438bfb99",
+                            ConcurrencyStamp = "fa336ec0-f7fb-48f9-a83d-ce0ffc59f562",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -577,7 +577,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fb084648-8cbd-47c2-adc3-d73f125e34f4",
+                            ConcurrencyStamp = "c12567f5-9877-489e-8015-4ee94974e23d",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -690,8 +690,8 @@ namespace dotnet_api.Migrations
                             ID = 1,
                             ActualCompletionDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ConstructionName = "Khu chung cư An Hòa Garden",
-                            ConstructionStatusID = 3,
-                            ConstructionTypeID = 4,
+                            ConstructionStatusID = 4,
+                            ConstructionTypeID = 1,
                             DesignBlueprint = "Design_AnHoa.pdf",
                             ExpectedCompletionDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Số 10, đường Nguyễn Văn Cừ, thị trấn Tuy Phước, huyện Tuy Phước, Bình Định",
@@ -703,8 +703,8 @@ namespace dotnet_api.Migrations
                             ID = 2,
                             ActualCompletionDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ConstructionName = "Nhà ở dân dụng Phù Mỹ",
-                            ConstructionStatusID = 3,
-                            ConstructionTypeID = 4,
+                            ConstructionStatusID = 4,
+                            ConstructionTypeID = 1,
                             DesignBlueprint = "Design_PhuyMy.pdf",
                             ExpectedCompletionDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu phố 3, thị trấn Phù Mỹ, huyện Phù Mỹ, Bình Định",
@@ -715,8 +715,8 @@ namespace dotnet_api.Migrations
                         {
                             ID = 3,
                             ConstructionName = "Nhà ở dân dụng An Nhơn",
-                            ConstructionStatusID = 2,
-                            ConstructionTypeID = 4,
+                            ConstructionStatusID = 1,
+                            ConstructionTypeID = 1,
                             DesignBlueprint = "Design_BinhDinh.pdf",
                             ExpectedCompletionDate = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Số 50, đường Nguyễn Du, thị xã An Nhơn, Bình Định",
@@ -728,7 +728,7 @@ namespace dotnet_api.Migrations
                             ID = 4,
                             ConstructionName = "Cầu An Hòa",
                             ConstructionStatusID = 2,
-                            ConstructionTypeID = 1,
+                            ConstructionTypeID = 2,
                             DesignBlueprint = "Design_AnHoa.pdf",
                             ExpectedCompletionDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Km 12, Quốc lộ 1A, huyện Tuy Phước, tỉnh Bình Định",
@@ -740,8 +740,8 @@ namespace dotnet_api.Migrations
                             ID = 5,
                             ActualCompletionDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ConstructionName = "Đường tránh QL1A - Phù Mỹ",
-                            ConstructionStatusID = 3,
-                            ConstructionTypeID = 1,
+                            ConstructionStatusID = 4,
+                            ConstructionTypeID = 2,
                             DesignBlueprint = "Design_PhuyMy.pdf",
                             ExpectedCompletionDate = new DateTime(2023, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Đoạn từ Km 35 đến Km 50, Quốc lộ 1A, huyện Phù Mỹ, Bình Định",
@@ -752,8 +752,8 @@ namespace dotnet_api.Migrations
                         {
                             ID = 6,
                             ConstructionName = "Nhà máy sản xuất thép An Phát",
-                            ConstructionStatusID = 4,
-                            ConstructionTypeID = 2,
+                            ConstructionStatusID = 3,
+                            ConstructionTypeID = 3,
                             DesignBlueprint = "Design_NhaMayThep.pdf",
                             ExpectedCompletionDate = new DateTime(2022, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Khu công nghiệp Long Mỹ, xã Long Mỹ, huyện Phù Cát, Bình Định",
@@ -765,7 +765,7 @@ namespace dotnet_api.Migrations
                             ID = 7,
                             ConstructionName = "Đập thủy lợi Phú Tài",
                             ConstructionStatusID = 5,
-                            ConstructionTypeID = 3,
+                            ConstructionTypeID = 4,
                             DesignBlueprint = "Design_ThuyLoiPhuTai.pdf",
                             ExpectedCompletionDate = new DateTime(2022, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Location = "Số 20, xã Phú Tài, thành phố Quy Nhơn, Bình Định",
@@ -795,11 +795,6 @@ namespace dotnet_api.Migrations
 
                     b.Property<int>("ConstructionStatusID")
                         .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("ExpectedCompletionDate")
                         .HasColumnType("datetime2");
@@ -836,7 +831,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Thi công móng",
                             ConstructionStatusID = 3,
-                            Description = "Đào, gia cố và đổ bê tông móng",
                             ExpectedCompletionDate = new DateTime(2021, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 500f,
@@ -850,7 +844,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Thi công khung kết cấu",
                             ConstructionStatusID = 3,
-                            Description = "Đổ bê tông cột, dầm và sàn",
                             ExpectedCompletionDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1200f,
@@ -864,7 +857,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Xây tường bao và ngăn phòng",
                             ConstructionStatusID = 3,
-                            Description = "Dùng gạch nung để xây tường bao và chia phòng",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 30000f,
@@ -878,7 +870,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Lắp đặt hệ thống điện nước",
                             ConstructionStatusID = 3,
-                            Description = "Đi dây điện, ống nước và lắp đặt thiết bị",
                             ExpectedCompletionDate = new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2500f,
@@ -892,7 +883,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Ốp lát nền và tường",
                             ConstructionStatusID = 3,
-                            Description = "Ốp lát gạch sàn và tường nhà vệ sinh, bếp",
                             ExpectedCompletionDate = new DateTime(2021, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1800f,
@@ -906,7 +896,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Sơn tường và chống thấm",
                             ConstructionStatusID = 3,
-                            Description = "Sơn hoàn thiện mặt trong và ngoài công trình",
                             ExpectedCompletionDate = new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2200f,
@@ -920,7 +909,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Lắp cửa và lan can",
                             ConstructionStatusID = 3,
-                            Description = "Cửa sổ, cửa chính, lan can ban công",
                             ExpectedCompletionDate = new DateTime(2021, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 300f,
@@ -934,7 +922,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Thi công thang máy và cầu thang",
                             ConstructionStatusID = 3,
-                            Description = "Lắp đặt hệ thống thang máy và thi công cầu thang bộ",
                             ExpectedCompletionDate = new DateTime(2021, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 10f,
@@ -948,7 +935,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Hoàn thiện nội thất cơ bản",
                             ConstructionStatusID = 3,
-                            Description = "Lắp đặt bếp, tủ, thiết bị vệ sinh",
                             ExpectedCompletionDate = new DateTime(2021, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 150f,
@@ -962,7 +948,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 1,
                             ConstructionItemName = "Cảnh quan và sân vườn",
                             ConstructionStatusID = 3,
-                            Description = "Làm vỉa hè, trồng cây, tạo tiểu cảnh",
                             ExpectedCompletionDate = new DateTime(2022, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1000f,
@@ -976,7 +961,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "San lấp mặt bằng",
                             ConstructionStatusID = 3,
-                            Description = "Chuẩn bị nền đất, san ủi, đầm chặt",
                             ExpectedCompletionDate = new DateTime(2021, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1000f,
@@ -990,7 +974,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Đổ móng bê tông cốt thép",
                             ConstructionStatusID = 3,
-                            Description = "Thi công móng nhà theo thiết kế",
                             ExpectedCompletionDate = new DateTime(2021, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 800f,
@@ -1004,7 +987,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Dựng cột, dầm, sàn",
                             ConstructionStatusID = 3,
-                            Description = "Thi công phần khung bê tông",
                             ExpectedCompletionDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1500f,
@@ -1018,7 +1000,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Xây tường gạch",
                             ConstructionStatusID = 3,
-                            Description = "Xây toàn bộ tường ngăn và tường bao",
                             ExpectedCompletionDate = new DateTime(2021, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 25000f,
@@ -1032,7 +1013,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Lắp đặt hệ thống điện âm",
                             ConstructionStatusID = 3,
-                            Description = "Đi dây, đặt ống và bảng điện âm tường",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1800f,
@@ -1046,7 +1026,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Ốp lát gạch nền",
                             ConstructionStatusID = 3,
-                            Description = "Ốp gạch sàn toàn bộ các tầng",
                             ExpectedCompletionDate = new DateTime(2021, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2000f,
@@ -1060,7 +1039,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Sơn nước nội ngoại thất",
                             ConstructionStatusID = 3,
-                            Description = "Sơn tường bên trong và mặt ngoài",
                             ExpectedCompletionDate = new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 3500f,
@@ -1074,7 +1052,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Lắp đặt hệ thống nước sinh hoạt",
                             ConstructionStatusID = 3,
-                            Description = "Ống dẫn nước, bồn chứa và đầu vòi",
                             ExpectedCompletionDate = new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 60f,
@@ -1088,7 +1065,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Thi công mái nhà",
                             ConstructionStatusID = 3,
-                            Description = "Mái tôn chống nóng và thoát nước",
                             ExpectedCompletionDate = new DateTime(2021, 12, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 900f,
@@ -1102,7 +1078,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 2,
                             ConstructionItemName = "Hoàn thiện sân vườn trước nhà",
                             ConstructionStatusID = 3,
-                            Description = "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng",
                             ExpectedCompletionDate = new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 700f,
@@ -1115,7 +1090,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "San lấp mặt bằng",
                             ConstructionStatusID = 3,
-                            Description = "Chuẩn bị nền đất, san ủi, đầm chặt",
                             ExpectedCompletionDate = new DateTime(2021, 5, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1200f,
@@ -1128,7 +1102,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Đổ móng bê tông cốt thép",
                             ConstructionStatusID = 3,
-                            Description = "Thi công móng nhà theo thiết kế",
                             ExpectedCompletionDate = new DateTime(2021, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 5, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 900f,
@@ -1141,7 +1114,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Dựng cột, dầm, sàn",
                             ConstructionStatusID = 3,
-                            Description = "Thi công phần khung bê tông",
                             ExpectedCompletionDate = new DateTime(2021, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1800f,
@@ -1154,7 +1126,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Xây tường gạch",
                             ConstructionStatusID = 3,
-                            Description = "Xây toàn bộ tường ngăn và tường bao",
                             ExpectedCompletionDate = new DateTime(2021, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 30000f,
@@ -1167,7 +1138,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Lắp đặt hệ thống điện âm",
                             ConstructionStatusID = 3,
-                            Description = "Đi dây, đặt ống và bảng điện âm tường",
                             ExpectedCompletionDate = new DateTime(2021, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2000f,
@@ -1180,7 +1150,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Ốp lát gạch nền",
                             ConstructionStatusID = 3,
-                            Description = "Ốp gạch sàn toàn bộ các tầng",
                             ExpectedCompletionDate = new DateTime(2021, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 11, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2500f,
@@ -1193,7 +1162,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Sơn nước nội ngoại thất",
                             ConstructionStatusID = 3,
-                            Description = "Sơn tường bên trong và mặt ngoài",
                             ExpectedCompletionDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 4000f,
@@ -1206,7 +1174,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Lắp đặt hệ thống nước sinh hoạt",
                             ConstructionStatusID = 3,
-                            Description = "Ống dẫn nước, bồn chứa và đầu vòi",
                             ExpectedCompletionDate = new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 70f,
@@ -1219,7 +1186,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Thi công mái nhà",
                             ConstructionStatusID = 3,
-                            Description = "Mái tôn chống nóng và thoát nước",
                             ExpectedCompletionDate = new DateTime(2022, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1000f,
@@ -1232,7 +1198,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 3,
                             ConstructionItemName = "Hoàn thiện sân vườn trước nhà",
                             ConstructionStatusID = 3,
-                            Description = "Gạch lát sân, trồng cây và bố trí đèn chiếu sáng",
                             ExpectedCompletionDate = new DateTime(2022, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 4, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 800f,
@@ -1246,7 +1211,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Thi công nền đường",
                             ConstructionStatusID = 3,
-                            Description = "San lấp, đầm chặt nền đường theo thiết kế",
                             ExpectedCompletionDate = new DateTime(2021, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2500f,
@@ -1260,7 +1224,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Lắp đặt móng cầu",
                             ConstructionStatusID = 3,
-                            Description = "Thi công móng cầu, cọc bê tông",
                             ExpectedCompletionDate = new DateTime(2021, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1200f,
@@ -1273,7 +1236,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Đổ bê tông cầu",
                             ConstructionStatusID = 3,
-                            Description = "Đổ bê tông cốt thép cho dầm cầu",
                             ExpectedCompletionDate = new DateTime(2021, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 9, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1500f,
@@ -1286,7 +1248,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Lắp đặt cầu giao thông",
                             ConstructionStatusID = 3,
-                            Description = "Lắp đặt các bộ phận kết cấu cầu, như lan can, cầu giao thông",
                             ExpectedCompletionDate = new DateTime(2022, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 500f,
@@ -1299,7 +1260,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Lắp đặt hệ thống thoát nước",
                             ConstructionStatusID = 3,
-                            Description = "Lắp đặt cống, rãnh thoát nước dưới cầu",
                             ExpectedCompletionDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 800f,
@@ -1312,7 +1272,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Hoàn thiện mặt cầu",
                             ConstructionStatusID = 3,
-                            Description = "Làm lớp phủ bảo vệ cầu, mặt cầu bê tông nhựa",
                             ExpectedCompletionDate = new DateTime(2022, 7, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1200f,
@@ -1325,7 +1284,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Thi công bảo trì",
                             ConstructionStatusID = 3,
-                            Description = "Thi công lớp bảo vệ, đánh bóng, phủ lớp chống thấm",
                             ExpectedCompletionDate = new DateTime(2022, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 800f,
@@ -1338,7 +1296,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 4,
                             ConstructionItemName = "Lắp đặt hệ thống chiếu sáng cầu",
                             ConstructionStatusID = 3,
-                            Description = "Lắp đặt đèn chiếu sáng, hệ thống điện cho cầu",
                             ExpectedCompletionDate = new DateTime(2022, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 50f,
@@ -1352,7 +1309,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Thi công nền đường",
                             ConstructionStatusID = 3,
-                            Description = "San lấp và nén chặt nền đường toàn tuyến.",
                             ExpectedCompletionDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 4000f,
@@ -1366,7 +1322,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Lát mặt đường nhựa",
                             ConstructionStatusID = 3,
-                            Description = "Trải lớp bê tông nhựa dày 10cm.",
                             ExpectedCompletionDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 5000f,
@@ -1380,7 +1335,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Thi công rãnh thoát nước",
                             ConstructionStatusID = 3,
-                            Description = "Xây dựng hệ thống thoát nước dọc hai bên đường.",
                             ExpectedCompletionDate = new DateTime(2022, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1500f,
@@ -1394,7 +1348,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Sơn kẻ vạch đường",
                             ConstructionStatusID = 3,
-                            Description = "Kẻ vạch phân làn và sơn biển báo.",
                             ExpectedCompletionDate = new DateTime(2022, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 600f,
@@ -1408,7 +1361,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Lắp đặt hệ thống đèn đường",
                             ConstructionStatusID = 3,
-                            Description = "Đèn LED chiếu sáng năng lượng mặt trời.",
                             ExpectedCompletionDate = new DateTime(2022, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 100f,
@@ -1422,7 +1374,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 5,
                             ConstructionItemName = "Kiểm tra & nghiệm thu",
                             ConstructionStatusID = 3,
-                            Description = "Đánh giá chất lượng thi công theo chuẩn.",
                             ExpectedCompletionDate = new DateTime(2023, 6, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1f,
@@ -1436,7 +1387,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "San lấp mặt bằng",
                             ConstructionStatusID = 3,
-                            Description = "Chuẩn bị mặt bằng thi công, san lấp nền móng.",
                             ExpectedCompletionDate = new DateTime(2020, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 12000f,
@@ -1450,7 +1400,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "Thi công móng",
                             ConstructionStatusID = 3,
-                            Description = "Xây dựng móng nhà xưởng chính.",
                             ExpectedCompletionDate = new DateTime(2021, 1, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 5000f,
@@ -1463,7 +1412,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "Dựng khung thép nhà xưởng",
                             ConstructionStatusID = 2,
-                            Description = "Lắp dựng khung thép chính và phụ.",
                             ExpectedCompletionDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 350f,
@@ -1476,7 +1424,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "Lắp đặt máy móc thiết bị",
                             ConstructionStatusID = 4,
-                            Description = "Lắp hệ thống máy cán thép và dây chuyền sản xuất.",
                             ExpectedCompletionDate = new DateTime(2021, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 45f,
@@ -1489,7 +1436,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "Xây dựng nhà kho nguyên liệu",
                             ConstructionStatusID = 1,
-                            Description = "Xây nhà kho chứa phôi và nguyên liệu.",
                             ExpectedCompletionDate = new DateTime(2022, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1800f,
@@ -1502,7 +1448,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 6,
                             ConstructionItemName = "Thi công hệ thống xử lý nước thải",
                             ConstructionStatusID = 1,
-                            Description = "Hệ thống thu gom và xử lý nước thải đạt chuẩn.",
                             ExpectedCompletionDate = new DateTime(2022, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2022, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2f,
@@ -1516,7 +1461,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "Khảo sát địa chất",
                             ConstructionStatusID = 3,
-                            Description = "Đo đạc, khảo sát địa chất khu vực xây đập.",
                             ExpectedCompletionDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 1f,
@@ -1530,7 +1474,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "San lấp mặt bằng",
                             ConstructionStatusID = 3,
-                            Description = "Chuẩn bị mặt bằng thi công đập.",
                             ExpectedCompletionDate = new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 10000f,
@@ -1543,7 +1486,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "Đào hố móng đập",
                             ConstructionStatusID = 2,
-                            Description = "Đào hố móng trước khi đổ bê tông nền.",
                             ExpectedCompletionDate = new DateTime(2020, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 7000f,
@@ -1556,7 +1498,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "Lắp cống xả đáy",
                             ConstructionStatusID = 4,
-                            Description = "Thi công hệ thống cống xả đáy tại chân đập.",
                             ExpectedCompletionDate = new DateTime(2021, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2020, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 3f,
@@ -1569,7 +1510,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "Xây thân đập",
                             ConstructionStatusID = 1,
-                            Description = "Thi công thân đập chính bằng bê tông cốt thép.",
                             ExpectedCompletionDate = new DateTime(2021, 10, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 15000f,
@@ -1582,7 +1522,6 @@ namespace dotnet_api.Migrations
                             ConstructionID = 7,
                             ConstructionItemName = "Làm đường công vụ",
                             ConstructionStatusID = 1,
-                            Description = "Thi công đường nội bộ phục vụ vận chuyển vật liệu.",
                             ExpectedCompletionDate = new DateTime(2021, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             StartDate = new DateTime(2021, 10, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TotalVolume = 2500f,
@@ -5209,6 +5148,94 @@ namespace dotnet_api.Migrations
                             ProblemType = "Thiếu vật liệu",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            ConstructionID = 1,
+                            Content = "Hệ thống điện gặp trục trặc",
+                            EmployeeID = "manager1-id",
+                            Level = "Cao",
+                            ProblemType = "Sự cố điện",
+                            ReportDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố kĩ thuật"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            ConstructionID = 3,
+                            Content = "Rò rỉ nước tại tầng hầm",
+                            EmployeeID = "manager2-id",
+                            Level = "Trung bình",
+                            ProblemType = "Hệ thống nước",
+                            ReportDate = new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố kĩ thuật"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            ConstructionID = 4,
+                            Content = "Thiết bị giám sát không hoạt động",
+                            EmployeeID = "manager3-id",
+                            Level = "Thấp",
+                            ProblemType = "Thiết bị",
+                            ReportDate = new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố kĩ thuật"
+                        },
+                        new
+                        {
+                            ID = 6,
+                            ConstructionID = 1,
+                            Content = "Ngã giàn giáo tại khu A",
+                            EmployeeID = "manager1-id",
+                            Level = "Cao",
+                            ProblemType = "Tai nạn lao động",
+                            ReportDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố thi công"
+                        },
+                        new
+                        {
+                            ID = 7,
+                            ConstructionID = 2,
+                            Content = "Máy xúc bị hỏng giữa ca",
+                            EmployeeID = "manager2-id",
+                            Level = "Trung bình",
+                            ProblemType = "Hư hỏng thiết bị",
+                            ReportDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố thi công"
+                        },
+                        new
+                        {
+                            ID = 8,
+                            ConstructionID = 3,
+                            Content = "Công nhân đình công",
+                            EmployeeID = "manager3-id",
+                            Level = "Cao",
+                            ProblemType = "Xung đột nhân sự",
+                            ReportDate = new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố thi công"
+                        },
+                        new
+                        {
+                            ID = 9,
+                            ConstructionID = 4,
+                            Content = "Chậm tiến độ do mưa lớn",
+                            EmployeeID = "manager2-id",
+                            Level = "Thấp",
+                            ProblemType = "Thời tiết",
+                            ReportDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố thi công"
+                        },
+                        new
+                        {
+                            ID = 10,
+                            ConstructionID = 1,
+                            Content = "Vật liệu không đạt chất lượng",
+                            EmployeeID = "manager1-id",
+                            Level = "Trung bình",
+                            ProblemType = "Vật liệu kém",
+                            ReportDate = new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportType = "Sự cố thi công"
                         });
                 });
 
@@ -5251,6 +5278,62 @@ namespace dotnet_api.Migrations
                             FilePath = "/uploads/report2.pdf",
                             ReportID = 2,
                             UploadDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 3,
+                            FilePath = "/uploads/report3.pdf",
+                            ReportID = 3,
+                            UploadDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 4,
+                            FilePath = "/uploads/report4.pdf",
+                            ReportID = 4,
+                            UploadDate = new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 5,
+                            FilePath = "/uploads/report5.pdf",
+                            ReportID = 5,
+                            UploadDate = new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 6,
+                            FilePath = "/uploads/report6.pdf",
+                            ReportID = 6,
+                            UploadDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 7,
+                            FilePath = "/uploads/report7.pdf",
+                            ReportID = 7,
+                            UploadDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 8,
+                            FilePath = "/uploads/report8.pdf",
+                            ReportID = 8,
+                            UploadDate = new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 9,
+                            FilePath = "/uploads/report9.pdf",
+                            ReportID = 9,
+                            UploadDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 10,
+                            FilePath = "/uploads/report10.pdf",
+                            ReportID = 10,
+                            UploadDate = new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -5299,6 +5382,70 @@ namespace dotnet_api.Migrations
                             Note = "Đang chờ phê duyệt",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportID = 2,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 3,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 4,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 5,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 6,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 7,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 8,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 9,
+                            Status = "Pending"
+                        },
+                        new
+                        {
+                            ID = 10,
+                            Note = "Đang chờ phê duyệt",
+                            ReportDate = new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReportID = 10,
                             Status = "Pending"
                         });
                 });

@@ -6,5 +6,7 @@
         public int WorkSubTypeVarientID { get; set; }
         public int ConstructionTypeID { get; set; }
         public string ConstructionTemplateItemName { get; set; }
+        public string ConstructionTypeName { get; set; }
+        public string WorkSubTypeVariantName { get; set; }
     }
 }

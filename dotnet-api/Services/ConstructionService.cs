@@ -64,6 +64,9 @@ namespace dotnet_api.Services
                 .Include(c => c.ConstructionType)
                 .Include(c => c.ConstructionStatus)
                 .Include(c => c.ConstructionItems)
+                    .ThenInclude(ci => ci.ConstructionStatus)
+                .Include(c => c.ConstructionItems)
+                    .ThenInclude(ci => ci.UnitOfMeasurement)
                 .FirstOrDefaultAsync(c => c.ID == id);
 
             return construction == null ? null : _mapper.Map<ConstructionDTO>(construction);

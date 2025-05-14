@@ -23,8 +23,12 @@ namespace dotnet_api.Data.Extensions
                 .Property(m => m.Status)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<MaterialPlan>()
+            modelBuilder.Entity<ImportOrder>()
                 .Property(m => m.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<ImportOrderEmployee>()
+                .Property(m => m.Role)
                 .HasConversion<string>();
 
             modelBuilder.Entity<ConstructionType>()
@@ -2610,25 +2614,31 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
 
             // Seed data for ImportOrder
             modelBuilder.Entity<ImportOrder>().HasData(
-                new ImportOrder { ID = 1, EmployeeID = "manager3-id", ImportDate = new DateTime(2024, 01, 01) },
-                new ImportOrder { ID = 2, EmployeeID = "manager3-id", ImportDate = new DateTime(2024, 01, 05) }
+                new ImportOrder { ID = 1, ImportDate = new DateTime(2024, 01, 01), Status = ImportOrderStatusEnum.Approved },
+                new ImportOrder { ID = 2, ImportDate = new DateTime(2024, 01, 05), Status = ImportOrderStatusEnum.Pending }
+            );
+
+            // Seed data for ImportOrderEmployee
+            modelBuilder.Entity<ImportOrderEmployee>().HasData(
+                new ImportOrderEmployee { EmployeeID = "manager3-id", ImportOrderId = 1, Role = ImportOrderRoleEnum.Planner },
+                new ImportOrderEmployee { EmployeeID = "manager3-id", ImportOrderId = 2, Role = ImportOrderRoleEnum.Planner }
             );
 
             // Seed data for Report
             modelBuilder.Entity<Report>().HasData(
                 // ===== Sự cố kỹ thuật =====
-                new Report { ID = 1, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Báo cáo tiến độ ngày 1", Level = "Cao", ProblemType = "Chậm tiến độ", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
-                new Report { ID = 2, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ProblemType = "Thiếu vật liệu", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
-                new Report { ID = 3, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Hệ thống điện gặp trục trặc", Level = "Cao", ProblemType = "Sự cố điện", ReportDate = new DateTime(2023, 02, 10), ReportType = "Sự cố kĩ thuật" },
-                new Report { ID = 4, EmployeeID = "manager2-id", ConstructionID = 3, Content = "Rò rỉ nước tại tầng hầm", Level = "Trung bình", ProblemType = "Hệ thống nước", ReportDate = new DateTime(2023, 03, 05), ReportType = "Sự cố kĩ thuật" },
-                new Report { ID = 5, EmployeeID = "manager3-id", ConstructionID = 4, Content = "Thiết bị giám sát không hoạt động", Level = "Thấp", ProblemType = "Thiết bị", ReportDate = new DateTime(2023, 04, 12), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 1, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Báo cáo tiến độ ngày 1", Level = "Cao", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 2, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Báo cáo tiến độ ngày 2", Level = "Thấp", ReportDate = new DateTime(2023, 01, 01), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 3, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Hệ thống điện gặp trục trặc", Level = "Cao", ReportDate = new DateTime(2023, 02, 10), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 4, EmployeeID = "manager2-id", ConstructionID = 3, Content = "Rò rỉ nước tại tầng hầm", Level = "Trung bình", ReportDate = new DateTime(2023, 03, 05), ReportType = "Sự cố kĩ thuật" },
+                new Report { ID = 5, EmployeeID = "manager3-id", ConstructionID = 4, Content = "Thiết bị giám sát không hoạt động", Level = "Thấp", ReportDate = new DateTime(2023, 04, 12), ReportType = "Sự cố kĩ thuật" },
 
                 // ===== Sự cố thi công =====
-                new Report { ID = 6, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Ngã giàn giáo tại khu A", Level = "Cao", ProblemType = "Tai nạn lao động", ReportDate = new DateTime(2023, 01, 15), ReportType = "Sự cố thi công" },
-                new Report { ID = 7, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Máy xúc bị hỏng giữa ca", Level = "Trung bình", ProblemType = "Hư hỏng thiết bị", ReportDate = new DateTime(2023, 02, 01), ReportType = "Sự cố thi công" },
-                new Report { ID = 8, EmployeeID = "manager3-id", ConstructionID = 3, Content = "Công nhân đình công", Level = "Cao", ProblemType = "Xung đột nhân sự", ReportDate = new DateTime(2023, 03, 20), ReportType = "Sự cố thi công" },
-                new Report { ID = 9, EmployeeID = "manager2-id", ConstructionID = 4, Content = "Chậm tiến độ do mưa lớn", Level = "Thấp", ProblemType = "Thời tiết", ReportDate = new DateTime(2023, 04, 01), ReportType = "Sự cố thi công" },
-                new Report { ID = 10, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Vật liệu không đạt chất lượng", Level = "Trung bình", ProblemType = "Vật liệu kém", ReportDate = new DateTime(2023, 05, 05), ReportType = "Sự cố thi công" }
+                new Report { ID = 6, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Ngã giàn giáo tại khu A", Level = "Cao", ReportDate = new DateTime(2023, 01, 15), ReportType = "Sự cố thi công" },
+                new Report { ID = 7, EmployeeID = "manager2-id", ConstructionID = 2, Content = "Máy xúc bị hỏng giữa ca", Level = "Trung bình", ReportDate = new DateTime(2023, 02, 01), ReportType = "Sự cố thi công" },
+                new Report { ID = 8, EmployeeID = "manager3-id", ConstructionID = 3, Content = "Công nhân đình công", Level = "Cao", ReportDate = new DateTime(2023, 03, 20), ReportType = "Sự cố thi công" },
+                new Report { ID = 9, EmployeeID = "manager2-id", ConstructionID = 4, Content = "Chậm tiến độ do mưa lớn", Level = "Thấp", ReportDate = new DateTime(2023, 04, 01), ReportType = "Sự cố thi công" },
+                new Report { ID = 10, EmployeeID = "manager1-id", ConstructionID = 1, Content = "Vật liệu không đạt chất lượng", Level = "Trung bình", ReportDate = new DateTime(2023, 05, 05), ReportType = "Sự cố thi công" }
             );
 
             // Seed data for ReportAttachment
@@ -2830,13 +2840,13 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
             // Seed data for MaterialPlan
             modelBuilder.Entity<MaterialPlan>().HasData(
                // Link ImportOrder 1 to Plan 1 for Material 1 (Xi măng)
-               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 1, ImportQuantity = 50, Status = ReportStatusEnum.Approved },
+               new MaterialPlan { ImportOrderID = 1, ConstructionItemID = 1, MaterialID = 1, ImportQuantity = 50 },
                // Link ImportOrder 1 to Plan 1 for Material 3 (Cát vàng)
-               new MaterialPlan { ImportOrderID = 1, ConstructionPlanID = 1, MaterialID = 3, ImportQuantity = 100, Status = ReportStatusEnum.Approved },
+               new MaterialPlan { ImportOrderID = 1, ConstructionItemID = 1, MaterialID = 3, ImportQuantity = 100},
                // Link ImportOrder 2 to Plan 3 for Material 10 (Thép phi 14)
-               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 3, MaterialID = 10, ImportQuantity = 500, Status = ReportStatusEnum.Pending },
+               new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 10, ImportQuantity = 500 },
                // Link ImportOrder 2 to Plan 77 (Dam - Đào móng) for Material 48 (Răng cào) - Assuming Răng cào comes from ImportOrder 2
-               new MaterialPlan { ImportOrderID = 2, ConstructionPlanID = 77, MaterialID = 48, ImportQuantity = 2, Status = ReportStatusEnum.Pending }
+               new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 48, ImportQuantity = 2,  }
            );
         }
     }

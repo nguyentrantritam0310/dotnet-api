@@ -11,7 +11,6 @@ namespace dotnet_api.Data.Entities
         public string ReportType { get; set; }
         public string Content { get; set; }
         public string Level { get; set; }
-        public string ProblemType { get; set; }
 
         // Navigation properties
         public ApplicationUser Employee { get; set; }

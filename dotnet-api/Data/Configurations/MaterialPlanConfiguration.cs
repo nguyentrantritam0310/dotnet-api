@@ -10,12 +10,9 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("MaterialPlans");
 
-            builder.HasKey(x => new { x.ImportOrderID, x.MaterialID, x.ConstructionPlanID });
+            builder.HasKey(x => new { x.ImportOrderID, x.MaterialID, x.ConstructionItemID });
 
             builder.Property(x => x.ImportQuantity)
-                .IsRequired(); 
-
-            builder.Property(x => x.Status)
                 .IsRequired(); 
 
             builder.HasOne(x => x.Material)
@@ -28,9 +25,9 @@ namespace dotnet_api.Data.Configurations
                 .HasForeignKey(x => x.ImportOrderID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.ConstructionPlan)
+            builder.HasOne(x => x.ConstructionItem)
                 .WithMany(cp => cp.MaterialPlans)
-                .HasForeignKey(x => x.ConstructionPlanID)
+                .HasForeignKey(x => x.ConstructionItemID)
                 .OnDelete(DeleteBehavior.Cascade); 
         }
     }

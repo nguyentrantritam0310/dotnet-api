@@ -12,7 +12,6 @@ namespace dotnet_api.DTOs
         public string ReportType { get; set; }
         public string Content { get; set; }
         public string Level { get; set; }
-        public string ProblemType { get; set; }
         public List<ReportStatusLogDTO> StatusLogs { get; set; }
         public List<ReportAttachmentDTO> Attachments { get; set; }
 

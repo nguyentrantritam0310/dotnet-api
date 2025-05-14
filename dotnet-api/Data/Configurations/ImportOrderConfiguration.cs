@@ -18,10 +18,8 @@ namespace dotnet_api.Data.Configurations
             builder.Property(x => x.ImportDate)
                 .IsRequired();
 
-            builder.HasOne(x => x.Employee)
-                .WithMany(e => e.ImportOrders) 
-                .HasForeignKey(x => x.EmployeeID)
-                .OnDelete(DeleteBehavior.Restrict); 
+            builder.Property(x => x.Status)
+            .IsRequired();
         }
     }
 }

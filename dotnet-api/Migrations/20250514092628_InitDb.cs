@@ -362,18 +362,18 @@ namespace dotnet_api.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ImportDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ImportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ImportOrders", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_ImportOrders_AspNetUsers_EmployeeID",
-                        column: x => x.EmployeeID,
+                        name: "FK_ImportOrders_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -387,8 +387,7 @@ namespace dotnet_api.Migrations
                     ReportDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReportType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Level = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ProblemType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Level = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -423,6 +422,31 @@ namespace dotnet_api.Migrations
                         name: "FK_WorkSubTypeVariants_WorkSubTypes_WorkSubTypeID",
                         column: x => x.WorkSubTypeID,
                         principalTable: "WorkSubTypes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImportOrderEmployees",
+                columns: table => new
+                {
+                    ImportOrderId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImportOrderEmployees", x => new { x.ImportOrderId, x.EmployeeID });
+                    table.ForeignKey(
+                        name: "FK_ImportOrderEmployees_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ImportOrderEmployees_ImportOrders_ImportOrderId",
+                        column: x => x.ImportOrderId,
+                        principalTable: "ImportOrders",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -627,6 +651,39 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MaterialPlans",
+                columns: table => new
+                {
+                    ImportOrderID = table.Column<int>(type: "int", nullable: false),
+                    MaterialID = table.Column<int>(type: "int", nullable: false),
+                    ConstructionItemID = table.Column<int>(type: "int", nullable: false),
+                    ImportQuantity = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialPlans", x => new { x.ImportOrderID, x.MaterialID, x.ConstructionItemID });
+                    table.ForeignKey(
+                        name: "FK_MaterialPlans_ConstructionItems_ConstructionItemID",
+                        column: x => x.ConstructionItemID,
+                        principalTable: "ConstructionItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialPlans_ImportOrders_ImportOrderID",
+                        column: x => x.ImportOrderID,
+                        principalTable: "ImportOrders",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MaterialPlans_Materials_MaterialID",
+                        column: x => x.MaterialID,
+                        principalTable: "Materials",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ConstructionTasks",
                 columns: table => new
                 {
@@ -678,39 +735,6 @@ namespace dotnet_api.Migrations
                         principalTable: "ConstructionPlans",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MaterialPlans",
-                columns: table => new
-                {
-                    ImportOrderID = table.Column<int>(type: "int", nullable: false),
-                    MaterialID = table.Column<int>(type: "int", nullable: false),
-                    ConstructionPlanID = table.Column<int>(type: "int", nullable: false),
-                    ImportQuantity = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MaterialPlans", x => new { x.ImportOrderID, x.MaterialID, x.ConstructionPlanID });
-                    table.ForeignKey(
-                        name: "FK_MaterialPlans_ConstructionPlans_ConstructionPlanID",
-                        column: x => x.ConstructionPlanID,
-                        principalTable: "ConstructionPlans",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MaterialPlans_ImportOrders_ImportOrderID",
-                        column: x => x.ImportOrderID,
-                        principalTable: "ImportOrders",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MaterialPlans_Materials_MaterialID",
-                        column: x => x.MaterialID,
-                        principalTable: "Materials",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -799,6 +823,15 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ImportOrders",
+                columns: new[] { "ID", "ApplicationUserId", "ImportDate", "Status" },
+                values: new object[,]
+                {
+                    { 1, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Approved" },
+                    { 2, null, new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Pending" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "MaterialTypes",
                 columns: new[] { "ID", "MaterialTypeName" },
                 values: new object[,]
@@ -861,18 +894,18 @@ namespace dotnet_api.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Phone", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "RoleID", "SecurityStamp", "Status", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin-id", 0, "d8a08ed7-3953-4f93-93f8-5992efdd4f9d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
-                    { "manager1-id", 0, "71b86170-ea3f-49ec-9508-1a9bf257b105", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
-                    { "manager2-id", 0, "3033efab-8886-4fce-be83-5d5574335098", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
-                    { "manager3-id", 0, "a9bf10ed-e662-4222-a8c9-8549b27aac8e", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
-                    { "tech1-id", 0, "1a4167f3-c98b-4624-a0a7-a4bd615085b0", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
-                    { "tech2-id", 0, "90c1b059-9bfc-4e68-94d2-c6c4164214f4", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
-                    { "tech3-id", 0, "f1adac07-d960-4813-8627-25c30a770db0", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
-                    { "worker1-id", 0, "a80aea9a-a282-4c44-a366-0752660297e2", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
-                    { "worker2-id", 0, "27faa094-3cdd-49e4-b79e-e8c8d6e35733", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
-                    { "worker3-id", 0, "81342b72-0952-49ae-a09d-eca4b7d15d79", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
-                    { "worker4-id", 0, "fa336ec0-f7fb-48f9-a83d-ce0ffc59f562", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
-                    { "worker5-id", 0, "c12567f5-9877-489e-8015-4ee94974e23d", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
+                    { "admin-id", 0, "4eb2f307-1017-4f57-8842-836d60dcfc5d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
+                    { "manager1-id", 0, "b5e88aec-7d75-4bca-87f0-05aec2338226", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
+                    { "manager2-id", 0, "f4a27c44-6140-4b4a-88c5-ff14c090d8eb", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
+                    { "manager3-id", 0, "6aa84b27-89dd-4b93-8e22-164dca078c68", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
+                    { "tech1-id", 0, "2eebf210-9fb1-477a-bc6d-8d502f164373", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
+                    { "tech2-id", 0, "61e7754f-15c5-4a63-81d4-8c808871110e", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
+                    { "tech3-id", 0, "be7dbaeb-a2e3-43de-9e4c-ef812a0f3f18", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
+                    { "worker1-id", 0, "6081b318-93a7-4460-97a9-a14716cd12d5", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
+                    { "worker2-id", 0, "645213ab-e71c-49d0-ac4a-ab16caf3e477", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
+                    { "worker3-id", 0, "666168cd-42aa-48e6-827a-a5170dc7ea9d", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
+                    { "worker4-id", 0, "b88ca5fa-7bd9-45f8-9020-112230e658db", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
+                    { "worker5-id", 0, "572c92fd-ea8d-4251-bd61-b1cdf1b24213", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -1027,29 +1060,29 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ImportOrders",
-                columns: new[] { "ID", "EmployeeID", "ImportDate" },
+                table: "ImportOrderEmployees",
+                columns: new[] { "EmployeeID", "ImportOrderId", "Role" },
                 values: new object[,]
                 {
-                    { 1, "manager3-id", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "manager3-id", new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { "manager3-id", 1, "Planner" },
+                    { "manager3-id", 2, "Planner" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Reports",
-                columns: new[] { "ID", "ConstructionID", "Content", "EmployeeID", "Level", "ProblemType", "ReportDate", "ReportType" },
+                columns: new[] { "ID", "ConstructionID", "Content", "EmployeeID", "Level", "ReportDate", "ReportType" },
                 values: new object[,]
                 {
-                    { 1, 1, "Báo cáo tiến độ ngày 1", "manager1-id", "Cao", "Chậm tiến độ", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 2, 2, "Báo cáo tiến độ ngày 2", "manager2-id", "Thấp", "Thiếu vật liệu", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 3, 1, "Hệ thống điện gặp trục trặc", "manager1-id", "Cao", "Sự cố điện", new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 4, 3, "Rò rỉ nước tại tầng hầm", "manager2-id", "Trung bình", "Hệ thống nước", new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 5, 4, "Thiết bị giám sát không hoạt động", "manager3-id", "Thấp", "Thiết bị", new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
-                    { 6, 1, "Ngã giàn giáo tại khu A", "manager1-id", "Cao", "Tai nạn lao động", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
-                    { 7, 2, "Máy xúc bị hỏng giữa ca", "manager2-id", "Trung bình", "Hư hỏng thiết bị", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
-                    { 8, 3, "Công nhân đình công", "manager3-id", "Cao", "Xung đột nhân sự", new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
-                    { 9, 4, "Chậm tiến độ do mưa lớn", "manager2-id", "Thấp", "Thời tiết", new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
-                    { 10, 1, "Vật liệu không đạt chất lượng", "manager1-id", "Trung bình", "Vật liệu kém", new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" }
+                    { 1, 1, "Báo cáo tiến độ ngày 1", "manager1-id", "Cao", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 2, 2, "Báo cáo tiến độ ngày 2", "manager2-id", "Thấp", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 3, 1, "Hệ thống điện gặp trục trặc", "manager1-id", "Cao", new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 4, 3, "Rò rỉ nước tại tầng hầm", "manager2-id", "Trung bình", new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 5, 4, "Thiết bị giám sát không hoạt động", "manager3-id", "Thấp", new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố kĩ thuật" },
+                    { 6, 1, "Ngã giàn giáo tại khu A", "manager1-id", "Cao", new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 7, 2, "Máy xúc bị hỏng giữa ca", "manager2-id", "Trung bình", new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 8, 3, "Công nhân đình công", "manager3-id", "Cao", new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 9, 4, "Chậm tiến độ do mưa lớn", "manager2-id", "Thấp", new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" },
+                    { 10, 1, "Vật liệu không đạt chất lượng", "manager1-id", "Trung bình", new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sự cố thi công" }
                 });
 
             migrationBuilder.InsertData(
@@ -1443,6 +1476,17 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "MaterialPlans",
+                columns: new[] { "ConstructionItemID", "ImportOrderID", "MaterialID", "ImportQuantity", "Note" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, 50, null },
+                    { 1, 1, 3, 100, null },
+                    { 2, 2, 10, 500, null },
+                    { 2, 2, 48, 2, null }
+                });
+
+            migrationBuilder.InsertData(
                 table: "ConstructionTasks",
                 columns: new[] { "ID", "ConstructionPlanID", "ConstructionStatusID", "Workload" },
                 values: new object[,]
@@ -1626,17 +1670,6 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "MaterialPlans",
-                columns: new[] { "ConstructionPlanID", "ImportOrderID", "MaterialID", "ImportQuantity", "Status" },
-                values: new object[,]
-                {
-                    { 1, 1, 1, 50, "Approved" },
-                    { 1, 1, 3, 100, "Approved" },
-                    { 3, 2, 10, 500, "Pending" },
-                    { 77, 2, 48, 2, "Pending" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Attendances",
                 columns: new[] { "ConstructionTaskID", "EmployeeID", "AttendanceDate", "Status" },
                 values: new object[,]
@@ -1780,9 +1813,14 @@ namespace dotnet_api.Migrations
                 column: "EmployeeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ImportOrders_EmployeeID",
-                table: "ImportOrders",
+                name: "IX_ImportOrderEmployees_EmployeeID",
+                table: "ImportOrderEmployees",
                 column: "EmployeeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ImportOrders_ApplicationUserId",
+                table: "ImportOrders",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Material_ExportOrders_MaterialID",
@@ -1795,9 +1833,9 @@ namespace dotnet_api.Migrations
                 column: "WorkSubTypeVariantID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MaterialPlans_ConstructionPlanID",
+                name: "IX_MaterialPlans_ConstructionItemID",
                 table: "MaterialPlans",
-                column: "ConstructionPlanID");
+                column: "ConstructionItemID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MaterialPlans_MaterialID",
@@ -1878,6 +1916,9 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "ConstructionTemplateItems");
+
+            migrationBuilder.DropTable(
+                name: "ImportOrderEmployees");
 
             migrationBuilder.DropTable(
                 name: "Material_ExportOrders");

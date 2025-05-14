@@ -12,7 +12,7 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250510105126_InitDb")]
+    [Migration("20250514092628_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -342,7 +342,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d8a08ed7-3953-4f93-93f8-5992efdd4f9d",
+                            ConcurrencyStamp = "4eb2f307-1017-4f57-8842-836d60dcfc5d",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -364,7 +364,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "71b86170-ea3f-49ec-9508-1a9bf257b105",
+                            ConcurrencyStamp = "b5e88aec-7d75-4bca-87f0-05aec2338226",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -386,7 +386,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3033efab-8886-4fce-be83-5d5574335098",
+                            ConcurrencyStamp = "f4a27c44-6140-4b4a-88c5-ff14c090d8eb",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -408,7 +408,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a9bf10ed-e662-4222-a8c9-8549b27aac8e",
+                            ConcurrencyStamp = "6aa84b27-89dd-4b93-8e22-164dca078c68",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -430,7 +430,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1a4167f3-c98b-4624-a0a7-a4bd615085b0",
+                            ConcurrencyStamp = "2eebf210-9fb1-477a-bc6d-8d502f164373",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -452,7 +452,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "90c1b059-9bfc-4e68-94d2-c6c4164214f4",
+                            ConcurrencyStamp = "61e7754f-15c5-4a63-81d4-8c808871110e",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -474,7 +474,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f1adac07-d960-4813-8627-25c30a770db0",
+                            ConcurrencyStamp = "be7dbaeb-a2e3-43de-9e4c-ef812a0f3f18",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -496,7 +496,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a80aea9a-a282-4c44-a366-0752660297e2",
+                            ConcurrencyStamp = "6081b318-93a7-4460-97a9-a14716cd12d5",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -517,7 +517,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "27faa094-3cdd-49e4-b79e-e8c8d6e35733",
+                            ConcurrencyStamp = "645213ab-e71c-49d0-ac4a-ab16caf3e477",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -538,7 +538,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "81342b72-0952-49ae-a09d-eca4b7d15d79",
+                            ConcurrencyStamp = "666168cd-42aa-48e6-827a-a5170dc7ea9d",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -559,7 +559,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fa336ec0-f7fb-48f9-a83d-ce0ffc59f562",
+                            ConcurrencyStamp = "b88ca5fa-7bd9-45f8-9020-112230e658db",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -580,7 +580,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c12567f5-9877-489e-8015-4ee94974e23d",
+                            ConcurrencyStamp = "572c92fd-ea8d-4251-bd61-b1cdf1b24213",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -4050,16 +4050,19 @@ namespace dotnet_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("EmployeeID")
-                        .IsRequired()
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ImportDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("EmployeeID");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("ImportOrders", (string)null);
 
@@ -4067,14 +4070,48 @@ namespace dotnet_api.Migrations
                         new
                         {
                             ID = 1,
-                            EmployeeID = "manager3-id",
-                            ImportDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ImportDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Approved"
                         },
                         new
                         {
                             ID = 2,
+                            ImportDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Pending"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrderEmployee", b =>
+                {
+                    b.Property<int>("ImportOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("ImportOrderId", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("ImportOrderEmployees", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ImportOrderId = 1,
                             EmployeeID = "manager3-id",
-                            ImportDate = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Role = "Planner"
+                        },
+                        new
+                        {
+                            ImportOrderId = 2,
+                            EmployeeID = "manager3-id",
+                            Role = "Planner"
                         });
                 });
 
@@ -4947,19 +4984,18 @@ namespace dotnet_api.Migrations
                     b.Property<int>("MaterialID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ConstructionPlanID")
+                    b.Property<int>("ConstructionItemID")
                         .HasColumnType("int");
 
                     b.Property<int>("ImportQuantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ImportOrderID", "MaterialID", "ConstructionPlanID");
+                    b.HasKey("ImportOrderID", "MaterialID", "ConstructionItemID");
 
-                    b.HasIndex("ConstructionPlanID");
+                    b.HasIndex("ConstructionItemID");
 
                     b.HasIndex("MaterialID");
 
@@ -4970,33 +5006,29 @@ namespace dotnet_api.Migrations
                         {
                             ImportOrderID = 1,
                             MaterialID = 1,
-                            ConstructionPlanID = 1,
-                            ImportQuantity = 50,
-                            Status = "Approved"
+                            ConstructionItemID = 1,
+                            ImportQuantity = 50
                         },
                         new
                         {
                             ImportOrderID = 1,
                             MaterialID = 3,
-                            ConstructionPlanID = 1,
-                            ImportQuantity = 100,
-                            Status = "Approved"
+                            ConstructionItemID = 1,
+                            ImportQuantity = 100
                         },
                         new
                         {
                             ImportOrderID = 2,
                             MaterialID = 10,
-                            ConstructionPlanID = 3,
-                            ImportQuantity = 500,
-                            Status = "Pending"
+                            ConstructionItemID = 2,
+                            ImportQuantity = 500
                         },
                         new
                         {
                             ImportOrderID = 2,
                             MaterialID = 48,
-                            ConstructionPlanID = 77,
-                            ImportQuantity = 2,
-                            Status = "Pending"
+                            ConstructionItemID = 2,
+                            ImportQuantity = 2
                         });
                 });
 
@@ -5108,11 +5140,6 @@ namespace dotnet_api.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("ProblemType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<DateTime>("ReportDate")
                         .HasColumnType("datetime2");
 
@@ -5137,7 +5164,6 @@ namespace dotnet_api.Migrations
                             Content = "Báo cáo tiến độ ngày 1",
                             EmployeeID = "manager1-id",
                             Level = "Cao",
-                            ProblemType = "Chậm tiến độ",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
                         },
@@ -5148,7 +5174,6 @@ namespace dotnet_api.Migrations
                             Content = "Báo cáo tiến độ ngày 2",
                             EmployeeID = "manager2-id",
                             Level = "Thấp",
-                            ProblemType = "Thiếu vật liệu",
                             ReportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
                         },
@@ -5159,7 +5184,6 @@ namespace dotnet_api.Migrations
                             Content = "Hệ thống điện gặp trục trặc",
                             EmployeeID = "manager1-id",
                             Level = "Cao",
-                            ProblemType = "Sự cố điện",
                             ReportDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
                         },
@@ -5170,7 +5194,6 @@ namespace dotnet_api.Migrations
                             Content = "Rò rỉ nước tại tầng hầm",
                             EmployeeID = "manager2-id",
                             Level = "Trung bình",
-                            ProblemType = "Hệ thống nước",
                             ReportDate = new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
                         },
@@ -5181,7 +5204,6 @@ namespace dotnet_api.Migrations
                             Content = "Thiết bị giám sát không hoạt động",
                             EmployeeID = "manager3-id",
                             Level = "Thấp",
-                            ProblemType = "Thiết bị",
                             ReportDate = new DateTime(2023, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố kĩ thuật"
                         },
@@ -5192,7 +5214,6 @@ namespace dotnet_api.Migrations
                             Content = "Ngã giàn giáo tại khu A",
                             EmployeeID = "manager1-id",
                             Level = "Cao",
-                            ProblemType = "Tai nạn lao động",
                             ReportDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố thi công"
                         },
@@ -5203,7 +5224,6 @@ namespace dotnet_api.Migrations
                             Content = "Máy xúc bị hỏng giữa ca",
                             EmployeeID = "manager2-id",
                             Level = "Trung bình",
-                            ProblemType = "Hư hỏng thiết bị",
                             ReportDate = new DateTime(2023, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố thi công"
                         },
@@ -5214,7 +5234,6 @@ namespace dotnet_api.Migrations
                             Content = "Công nhân đình công",
                             EmployeeID = "manager3-id",
                             Level = "Cao",
-                            ProblemType = "Xung đột nhân sự",
                             ReportDate = new DateTime(2023, 3, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố thi công"
                         },
@@ -5225,7 +5244,6 @@ namespace dotnet_api.Migrations
                             Content = "Chậm tiến độ do mưa lớn",
                             EmployeeID = "manager2-id",
                             Level = "Thấp",
-                            ProblemType = "Thời tiết",
                             ReportDate = new DateTime(2023, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố thi công"
                         },
@@ -5236,7 +5254,6 @@ namespace dotnet_api.Migrations
                             Content = "Vật liệu không đạt chất lượng",
                             EmployeeID = "manager1-id",
                             Level = "Trung bình",
-                            ProblemType = "Vật liệu kém",
                             ReportDate = new DateTime(2023, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReportType = "Sự cố thi công"
                         });
@@ -6924,13 +6941,28 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrder", b =>
                 {
-                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", null)
                         .WithMany("ImportOrders")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrderEmployee", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("ImportOrderEmployees")
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("dotnet_api.Data.Entities.ImportOrder", "ImportOrder")
+                        .WithMany("ImportOrderEmployees")
+                        .HasForeignKey("ImportOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Employee");
+
+                    b.Navigation("ImportOrder");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Material", b =>
@@ -6973,9 +7005,9 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.MaterialPlan", b =>
                 {
-                    b.HasOne("dotnet_api.Data.Entities.ConstructionPlan", "ConstructionPlan")
+                    b.HasOne("dotnet_api.Data.Entities.ConstructionItem", "ConstructionItem")
                         .WithMany("MaterialPlans")
-                        .HasForeignKey("ConstructionPlanID")
+                        .HasForeignKey("ConstructionItemID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -6991,7 +7023,7 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ConstructionPlan");
+                    b.Navigation("ConstructionItem");
 
                     b.Navigation("ImportOrder");
 
@@ -7118,6 +7150,8 @@ namespace dotnet_api.Migrations
 
                     b.Navigation("ExportOrders");
 
+                    b.Navigation("ImportOrderEmployees");
+
                     b.Navigation("ImportOrders");
 
                     b.Navigation("Reports");
@@ -7133,6 +7167,8 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.ConstructionItem", b =>
                 {
                     b.Navigation("ConstructionPlans");
+
+                    b.Navigation("MaterialPlans");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ConstructionPlan", b =>
@@ -7140,8 +7176,6 @@ namespace dotnet_api.Migrations
                     b.Navigation("ConstructionTasks");
 
                     b.Navigation("ExportOrders");
-
-                    b.Navigation("MaterialPlans");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ConstructionStatus", b =>
@@ -7174,6 +7208,8 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrder", b =>
                 {
+                    b.Navigation("ImportOrderEmployees");
+
                     b.Navigation("MaterialPlans");
                 });
 

@@ -14,5 +14,8 @@ namespace dotnet_api.DTOs
         public DateTime ActualCompletionDate { get; set; }
         public float TotalVolume { get; set; }
 
+        public string UnitName { get; set; }
+        public string ConstructionItemStatusName { get; set; }
+
     }
 }

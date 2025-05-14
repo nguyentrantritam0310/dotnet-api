@@ -17,12 +17,15 @@ namespace dotnet_api.Mapping
                 opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
             .ForMember(dest => dest.ConstructionItems,
                     opt => opt.MapFrom(src => src.ConstructionItems
-                    .ToList()));
-            //.ForMember(dest => dest.ItemStatusName,
-            //    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
-            //.ForMember(dest => dest.unitName,
-            //    opt => opt.MapFrom(src => src.Unit));
-            CreateMap<ConstructionItem, ConstructionItemDTO>();
+                    .ToList()))
+             .ForMember(dest => dest.ConstructionTypeName,
+                opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionType.ConstructionTypeName)));
+            CreateMap<ConstructionItem, ConstructionItemDTO>()
+                .ForMember(dest => dest.UnitName,
+        opt => opt.MapFrom(src => src.UnitOfMeasurement.ShortName))
+    .ForMember(dest => dest.ConstructionItemStatusName,
+        opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
+                ;
             CreateMap<ConstructionPlan, ConstructionPlanDTO>()
                 .ForMember(dest => dest.EmployeeName,
                     opt => opt.MapFrom(src => $"{src.Employee.FirstName} {src.Employee.LastName}"))
@@ -44,7 +47,10 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.WorkSubTypeVariantName,
                     opt => opt.MapFrom(src => src.WorkSubTypeVariant.Description))
                 ;
-            CreateMap<ConstructionTask, ConstructionTaskDTO>();
+            CreateMap<ConstructionTask, ConstructionTaskDTO>()
+                .ForMember(dest => dest.StatusName,
+                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)));
+            ;
             CreateMap<ConstructionType, ConstructionTypeDTO>();
             CreateMap<ApplicationUser, EmployeeDTO>();
             CreateMap<ExportOrder, ExportOrderDTO>()
@@ -57,14 +63,49 @@ namespace dotnet_api.Mapping
                     .ForMember(dest => dest.materialName,
                     opt => opt.MapFrom(src => src.Material_ExportOrders.Select(m => m.Material.MaterialName)))
                 ;
-            CreateMap<ImportOrder, ImportOrderDTO>();
+            CreateMap<ImportOrder, ImportOrderDTO>()
+                .ForMember(dest => dest.ImportOrderEmployee,
+                    opt => opt.MapFrom(src => src.ImportOrderEmployees
+                    .ToList()))
+                ;
+            CreateMap<ImportOrderEmployee, ImportOrderEmployeeDTO>()
+            .ForMember(dest => dest.EmployeeName,
+                    opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
+            ;
+            CreateMap<ImportOrderDTOPOST, ImportOrder>().ReverseMap();
+
+            CreateMap<ImportOrderEmployeeDTOPOST, ImportOrderEmployee>().ReverseMap();
+
             CreateMap<Material_ExportOrder, Material_ExportOrderDTO>();
             CreateMap<Material, MaterialDTO>()
                 .ForMember(dest => dest.MaterialTypeName,
                     opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialType.MaterialTypeName)));
 
-            CreateMap<MaterialNorm, MaterialNormDTO>();
-            CreateMap<MaterialPlan, MaterialPlanDTO>();
+            CreateMap<MaterialNorm, MaterialNormDTO>()
+                .ForMember(dest => dest.MaterialName,
+                    opt => opt.MapFrom(src => src.Material.MaterialName))
+                .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src => src.Material.UnitPrice))
+                .ForMember(dest => dest.UnitOfMeasurement,
+                    opt => opt.MapFrom(src => src.Material.UnitOfMeasurement.ShortName))
+                 .ForMember(dest => dest.ConstructionId,
+                    opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.Construction.ID).FirstOrDefault()))
+                 .ForMember(dest => dest.ConstructionItemName,
+                    opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.ConstructionItemName).FirstOrDefault()))
+                 .ForMember(dest => dest.ConstructionItemID,
+                    opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.ID).FirstOrDefault()))
+                ;
+         
+            CreateMap<MaterialPlan, MaterialPlanDTO>()
+                .ForMember(dest => dest.MaterialName,
+                    opt => opt.MapFrom(src => src.Material.MaterialName))
+                .ForMember(dest => dest.UnitOfMeasurement,
+                    opt => opt.MapFrom(src => src.Material.UnitOfMeasurement.ShortName))
+                .ForMember(dest => dest.Price,
+                    opt => opt.MapFrom(src => src.Material.UnitPrice))
+                ;
+            CreateMap<MaterialPlanDTOPOST, MaterialPlan>().ReverseMap();
+
             CreateMap<MaterialType, MaterialTypeDTO>();
             CreateMap<ReportAttachment, ReportAttachmentDTO>();
             CreateMap<Report, ReportDTO>()

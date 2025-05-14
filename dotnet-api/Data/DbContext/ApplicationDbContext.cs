@@ -24,6 +24,7 @@ namespace dotnet_api.Data
         public DbSet<ConstructionType> ConstructionTypes { get; set; }
         public DbSet<ExportOrder> ExportOrders { get; set; }
         public DbSet<ImportOrder> ImportOrders { get; set; }
+        public DbSet<ImportOrderEmployee> ImportOrderEmployees { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<Material_ExportOrder> Material_ExportOrders { get; set; }
         public DbSet<MaterialNorm> MaterialNorms { get; set; }
@@ -102,6 +103,7 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ConstructionTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ExportOrderConfiguration());
             modelBuilder.ApplyConfiguration(new ImportOrderConfiguration());
+            modelBuilder.ApplyConfiguration(new ImportOrderEmployeeConfiguration());
             modelBuilder.ApplyConfiguration(new MaterialConfiguration());
             modelBuilder.ApplyConfiguration(new MaterialPlanConfiguration());
             modelBuilder.ApplyConfiguration(new MaterialExportOrderConfiguration());

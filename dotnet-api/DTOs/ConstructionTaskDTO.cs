@@ -6,6 +6,7 @@ namespace dotnet_api.DTOs
         public int ConstructionStatusID { get; set; }
         public int ConstructionPlanID { get; set; }
         public float Workload { get; set; }
+        public string StatusName { get; set; }
 
     }
 }

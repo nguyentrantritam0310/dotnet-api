@@ -36,7 +36,7 @@ namespace dotnet_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExportOrderDTO>> CreateExportOrder(ExportOrderDTO exportOrderDTO)
+        public async Task<ActionResult<ExportOrderDTO>> CreateExportOrder(ExportOrderDTOPOST exportOrderDTO)
         {
             try
             {

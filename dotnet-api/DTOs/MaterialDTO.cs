@@ -6,6 +6,7 @@ namespace dotnet_api.DTOs
     {
         public int ID { get; set; }
         public int UnitOfMeasurementID { get; set; }
+        public string UnitOfMeasurement { get; set; }
         public string MaterialName { get; set; }
         public int StockQuantity { get; set; }
         public decimal UnitPrice { get; set; }
@@ -15,5 +16,11 @@ namespace dotnet_api.DTOs
         public int MaterialTypeID { get; set; }
         public string MaterialTypeName { get; set; }
 
+    }
+
+    public class MaterialUpdateStockQuantityDTO
+    {
+        public int ID { get; set; }
+        public int StockQuantity { get; set; }
     }
 }

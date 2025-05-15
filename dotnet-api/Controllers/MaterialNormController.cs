@@ -22,5 +22,12 @@ namespace dotnet_api.Controllers
             var MaterialNorm = await _MaterialNormService.GetAllMaterialNormByConstructionAsync(id);
             return Ok(MaterialNorm);
         }
+
+        [HttpGet("item/{id}")]
+        public async Task<IActionResult> GetAllByItem(int id)
+        {
+            var MaterialNorm = await _MaterialNormService.GetAllMaterialNormByConstructionItemAsync(id);
+            return Ok(MaterialNorm);
+        }
     }
 }

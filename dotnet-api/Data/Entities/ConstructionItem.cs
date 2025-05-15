@@ -20,6 +20,7 @@ namespace dotnet_api.Data.Entities
         public WorkSubTypeVariant WorkSubTypeVariant { get; set; }
         public ICollection<MaterialPlan> MaterialPlans { get; set; }
         public ICollection<ConstructionPlan> ConstructionPlans { get; set; }
+        public ICollection<ExportOrder> ExportOrders { get; set; }
 
     }
 }

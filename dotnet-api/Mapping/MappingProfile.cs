@@ -57,9 +57,9 @@ namespace dotnet_api.Mapping
                  .ForMember(dest => dest.EmployeeName,
                     opt => opt.MapFrom(src => src.Employee.FirstName + " " +  src.Employee.LastName))
                  .ForMember(dest => dest.ConstructionItemName,
-                    opt => opt.MapFrom(src => src.ConstructionPlan.ConstructionItem.ConstructionItemName))
+                    opt => opt.MapFrom(src => src.ConstructionItem.ConstructionItemName))
                     .ForMember(dest => dest.ConstructionName,
-                    opt => opt.MapFrom(src => src.ConstructionPlan.ConstructionItem.Construction.ConstructionName))
+                    opt => opt.MapFrom(src => src.ConstructionItem.Construction.ConstructionName))
                     .ForMember(dest => dest.materialName,
                     opt => opt.MapFrom(src => src.Material_ExportOrders.Select(m => m.Material.MaterialName)))
                 ;
@@ -79,11 +79,15 @@ namespace dotnet_api.Mapping
             CreateMap<Material_ExportOrder, Material_ExportOrderDTO>();
             CreateMap<Material, MaterialDTO>()
                 .ForMember(dest => dest.MaterialTypeName,
-                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialType.MaterialTypeName)));
-
+                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialType.MaterialTypeName)))
+             .ForMember(dest => dest.UnitOfMeasurement,
+                    opt => opt.MapFrom(src => src.UnitOfMeasurement.ShortName));
+            CreateMap<MaterialUpdateStockQuantityDTO, Material>().ReverseMap();
             CreateMap<MaterialNorm, MaterialNormDTO>()
                 .ForMember(dest => dest.MaterialName,
                     opt => opt.MapFrom(src => src.Material.MaterialName))
+                .ForMember(dest => dest.StockQuantity,
+                    opt => opt.MapFrom(src => src.Material.StockQuantity))
                 .ForMember(dest => dest.Price,
                     opt => opt.MapFrom(src => src.Material.UnitPrice))
                 .ForMember(dest => dest.UnitOfMeasurement,
@@ -95,7 +99,20 @@ namespace dotnet_api.Mapping
                  .ForMember(dest => dest.ConstructionItemID,
                     opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.ID).FirstOrDefault()))
                 ;
-         
+
+            CreateMap<MaterialNorm, MaterialNormItemDTO>()
+    .ForMember(dest => dest.MaterialName,
+        opt => opt.MapFrom(src => src.Material.MaterialName))
+    .ForMember(dest => dest.StockQuantity,
+                    opt => opt.MapFrom(src => src.Material.StockQuantity))
+    .ForMember(dest => dest.UnitOfMeasurement,
+        opt => opt.MapFrom(src => src.Material.UnitOfMeasurement.ShortName))
+     .ForMember(dest => dest.ConstructionItemName,
+        opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.ConstructionItemName).FirstOrDefault()))
+     .ForMember(dest => dest.ConstructionItemID,
+        opt => opt.MapFrom(src => src.WorkSubTypeVariant.ConstructionItems.Select(ci => ci.ID).FirstOrDefault()))
+    ;
+
             CreateMap<MaterialPlan, MaterialPlanDTO>()
                 .ForMember(dest => dest.MaterialName,
                     opt => opt.MapFrom(src => src.Material.MaterialName))
@@ -135,6 +152,10 @@ namespace dotnet_api.Mapping
                     opt => opt.MapFrom(src => new UnitofMeasurement { UnitName = src.UnitOfMeasurement }))
                 .ForMember(dest => dest.ConstructionStatus, 
                     opt => opt.MapFrom(src => new ConstructionStatus { Name = ConstructionStatusEnum.Pending }));
+
+            CreateMap<Material_ExportOrderDTO, Material_ExportOrder>().ReverseMap();
+            CreateMap<ExportOrderDTOPOST, ExportOrder>().ReverseMap();
+
         }
     }
 }

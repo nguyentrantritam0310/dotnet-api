@@ -2595,8 +2595,8 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
 
             // Seed data for ExportOrder
             modelBuilder.Entity<ExportOrder>().HasData(
-                new ExportOrder { ID = 1, EmployeeID = "manager1-id", ConstructionPlanID = 1, ExportDate = new DateTime(2023, 01, 01) },
-                new ExportOrder { ID = 2, EmployeeID = "manager2-id", ConstructionPlanID = 2, ExportDate = new DateTime(2023, 01, 01) }
+                new ExportOrder { ID = 1, EmployeeID = "manager1-id", ConstructionItemID = 1, ExportDate = new DateTime(2023, 01, 01) },
+                new ExportOrder { ID = 2, EmployeeID = "manager2-id", ConstructionItemID = 2, ExportDate = new DateTime(2023, 01, 01) }
             );
 
             // Seed data for Material_ExportOrder

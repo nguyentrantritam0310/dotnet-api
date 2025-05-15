@@ -47,6 +47,7 @@ builder.Services.AddScoped<IImportOrderEmployeeService, ImportOrderEmployeeServi
 builder.Services.AddScoped<IConstructionTaskService, ConstructionTaskService>();
 builder.Services.AddScoped<IMaterialNormService, MaterialNormService>();
 builder.Services.AddScoped<IMaterialPlanService, MaterialPlanService>();
+builder.Services.AddScoped<IMaterial_ExportOrderService, Material_ExportOrderService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 

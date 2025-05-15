@@ -18,7 +18,5 @@ namespace dotnet_api.Data.Entities
         public ConstructionStatus ConstructionStatus { get; set; }
         public ConstructionItem ConstructionItem { get; set; }
         public ICollection<ConstructionTask> ConstructionTasks { get; set; }
-        
-        public ICollection<ExportOrder> ExportOrders { get; set; }
     }
 }

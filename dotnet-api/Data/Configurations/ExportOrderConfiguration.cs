@@ -23,9 +23,9 @@ namespace dotnet_api.Data.Configurations
                 .HasForeignKey(x => x.EmployeeID)
                 .OnDelete(DeleteBehavior.Restrict); 
 
-            builder.HasOne(x => x.ConstructionPlan)
+            builder.HasOne(x => x.ConstructionItem)
                 .WithMany(c => c.ExportOrders) 
-                .HasForeignKey(x => x.ConstructionPlanID)
+                .HasForeignKey(x => x.ConstructionItemID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

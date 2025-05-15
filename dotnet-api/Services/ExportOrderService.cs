@@ -27,8 +27,7 @@ namespace dotnet_api.Services
                 .Include(e => e.Material_ExportOrders)
                 .ThenInclude(me => me.Material)
                 .Include(e => e.Employee)
-                .Include(e => e.ConstructionPlan)
-                .ThenInclude(cp => cp.ConstructionItem)
+                .Include(cp => cp.ConstructionItem)
                 .ThenInclude(ci => ci.Construction)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<ExportOrderDTO>>(exportOrders);
@@ -43,7 +42,7 @@ namespace dotnet_api.Services
             return _mapper.Map<ExportOrderDTO>(exportOrder);
         }
 
-        public async Task<ExportOrderDTO> CreateExportOrder(ExportOrderDTO exportOrderDTO)
+        public async Task<ExportOrderDTO> CreateExportOrder(ExportOrderDTOPOST exportOrderDTO)
         {
             var exportOrder = _mapper.Map<ExportOrder>(exportOrderDTO);
             _context.ExportOrders.Add(exportOrder);

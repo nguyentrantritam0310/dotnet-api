@@ -35,36 +35,36 @@ namespace dotnet_api.Controllers
             return Ok(construction);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ConstructionDTOPOST constructionDTO)
-        {
-            try
-            {
-                var createdConstruction = await _constructionService.CreateConstructionAsync(constructionDTO);
-                return CreatedAtAction(nameof(GetById), new { id = createdConstruction.ID }, createdConstruction);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromForm] ConstructionDTOPOST constructionDTO, [FromForm] IFormFile designBlueprint)
+        //{
+        //    try
+        //    {
+        //        var createdConstruction = await _constructionService.CreateConstructionAsync(constructionDTO, designBlueprint);
+        //        return CreatedAtAction(nameof(GetById), new { id = createdConstruction.ID }, createdConstruction);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ConstructionDTO constructionDTO)
-        {
-            if (id != constructionDTO.ID)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> Update(int id, [FromForm] ConstructionDTO constructionDTO, [FromForm] IFormFile designBlueprint)
+        //{
+        //    if (id != constructionDTO.ID)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            var updatedConstruction = await _constructionService.UpdateConstructionAsync(constructionDTO);
-            if (updatedConstruction == null)
-            {
-                return NotFound();
-            }
+        //    var updatedConstruction = await _constructionService.UpdateConstructionAsync(constructionDTO, designBlueprint);
+        //    if (updatedConstruction == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(updatedConstruction);
-        }
+        //    return Ok(updatedConstruction);
+        //}
 
 
         [HttpPatch("{id}/status")]

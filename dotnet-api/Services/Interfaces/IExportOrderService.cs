@@ -8,7 +8,7 @@ namespace dotnet_api.Services.Interfaces
     {
         Task<IEnumerable<ExportOrderDTO>> GetAllExportOrders();
         Task<ExportOrderDTO> GetExportOrderById(int id);
-        Task<ExportOrderDTO> CreateExportOrder(ExportOrderDTO exportOrderDTO);
+        Task<ExportOrderDTO> CreateExportOrder(ExportOrderDTOPOST exportOrderDTO);
         Task<ExportOrderDTO> UpdateExportOrder(int id, ExportOrderDTO exportOrderDTO);
         Task<bool> DeleteExportOrder(int id);
     }

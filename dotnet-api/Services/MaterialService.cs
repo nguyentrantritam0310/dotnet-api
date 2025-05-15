@@ -42,6 +42,7 @@ namespace dotnet_api.Services
         {   
             var Materials = await _context.Materials
                 .Include(c => c.MaterialType)
+                .Include(c => c.UnitOfMeasurement)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<MaterialDTO>>(Materials);
@@ -71,6 +72,19 @@ namespace dotnet_api.Services
             _context.Materials.Remove(Material);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<MaterialUpdateStockQuantityDTO> UpdateStockQuantityMaterialAsync(MaterialUpdateStockQuantityDTO materialUpdateStockQuantityDTO)
+        {
+            var existingMaterial = await _context.Materials.FindAsync(materialUpdateStockQuantityDTO.ID);
+            if (existingMaterial == null)
+            {
+                return null;
+            }
+
+            _mapper.Map(materialUpdateStockQuantityDTO, existingMaterial);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<MaterialUpdateStockQuantityDTO>(existingMaterial);
         }
     }
 }

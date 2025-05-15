@@ -57,6 +57,23 @@ namespace dotnet_api.Controllers
             return Ok(updatedMaterial);
         }
 
+        [HttpPut("update-stock/{id}")]
+        public async Task<IActionResult> UpdateStockQuantity(int id, [FromBody] MaterialUpdateStockQuantityDTO MaterialDTO)
+        {
+            if (id != MaterialDTO.ID)
+            {
+                return BadRequest();
+            }
+
+            var updatedMaterial = await _MaterialService.UpdateStockQuantityMaterialAsync(MaterialDTO);
+            if (updatedMaterial == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedMaterial);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

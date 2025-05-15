@@ -36,5 +36,19 @@ namespace dotnet_api.Services
 
             return _mapper.Map<IEnumerable<MaterialNormDTO>>(materialNorm);
         }
+
+        public async Task<IEnumerable<MaterialNormItemDTO>> GetAllMaterialNormByConstructionItemAsync(int id)
+        {
+            var materialNorm = await _context.MaterialNorms
+                .Include(c => c.Material)
+                    .ThenInclude(w => w.UnitOfMeasurement)
+                .Include(c => c.WorkSubTypeVariant)
+                    .ThenInclude(w => w.ConstructionItems)
+                .Where(c => c.WorkSubTypeVariant.ConstructionItems
+                .Any(ci => ci.ID == id))
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<MaterialNormItemDTO>>(materialNorm);
+        }
     }
 }

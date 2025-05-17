@@ -36,7 +36,12 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.ConstructionID,
                     opt => opt.MapFrom(src => src.ConstructionItem.Construction.ID))
                 .ForMember(dest => dest.StatusName,
-                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)));
+                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
+                .ForMember(dest => dest.UnitOfMeasurementName,
+                    opt => opt.MapFrom(src => src.ConstructionItem.UnitOfMeasurement.ShortName))
+                .ForMember(dest => dest.TotalWorkload,
+                    opt => opt.MapFrom(src => src.ConstructionItem.TotalVolume))
+                ;
 
             CreateMap<ConstructionPlanDTOPOST, ConstructionPlan>().ReverseMap();
             CreateMap<ConstructionPlanDTOPUT, ConstructionPlan>().ReverseMap();
@@ -49,8 +54,18 @@ namespace dotnet_api.Mapping
                 ;
             CreateMap<ConstructionTask, ConstructionTaskDTO>()
                 .ForMember(dest => dest.StatusName,
-                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)));
+                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
+                .ForMember(dest => dest.UnitOfMeasurementName,
+                    opt => opt.MapFrom(src => src.ConstructionPlan.ConstructionItem.UnitOfMeasurement.ShortName))
+                .ForMember(dest => dest.totalWorkload,
+                    opt => opt.MapFrom(src => src.ConstructionPlan.ConstructionItem.TotalVolume))
+                .ForMember(dest => dest.ConstructionItemID,
+                    opt => opt.MapFrom(src => src.ConstructionPlan.ConstructionItem.ID))
+                ;
             ;
+            CreateMap<ConstructionTaskDTOPOST, ConstructionTask>().ReverseMap();
+            CreateMap<ConstructionTaskDTOPUT, ConstructionTask>();
+
             CreateMap<ConstructionType, ConstructionTypeDTO>();
             CreateMap<ApplicationUser, EmployeeDTO>();
             CreateMap<ExportOrder, ExportOrderDTO>()

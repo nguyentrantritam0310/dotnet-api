@@ -26,6 +26,13 @@ namespace dotnet_api.Controllers
             return Ok(importOrders);
         }
 
+        [HttpGet("director")]
+        public async Task<ActionResult<IEnumerable<ImportOrderDTO>>> GetAllImportOrdersByDirector()
+        {
+            var importOrders = await _ImportOrderService.GetAllImportOrdersByDirector();
+            return Ok(importOrders);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ImportOrderDTO>> GetImportOrderById(int id)
         {

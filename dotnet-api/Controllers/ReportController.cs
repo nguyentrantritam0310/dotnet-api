@@ -22,6 +22,20 @@ namespace dotnet_api.Controllers
             return Ok(Reports);
         }
 
+        [HttpGet("thicong")]
+        public async Task<IActionResult> GetAllByThiCong()
+        {
+            var Reports = await _ReportService.GetAllReportByThiCongAsync();
+            return Ok(Reports);
+        }
+
+        [HttpGet("kithuat")]
+        public async Task<IActionResult> GetAllByKiThuat()
+        {
+            var Reports = await _ReportService.GetAllReportByKiThuatAsync();
+            return Ok(Reports);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

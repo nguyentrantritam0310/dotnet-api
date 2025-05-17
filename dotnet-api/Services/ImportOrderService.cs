@@ -32,6 +32,15 @@ namespace dotnet_api.Services
             return _mapper.Map<IEnumerable<ImportOrderDTO>>(importOrders);
         }
 
+        public async Task<IEnumerable<ImportOrderDTO>> GetAllImportOrdersByDirector()
+        {
+            var importOrders = await _context.ImportOrders
+                .Include(io => io.ImportOrderEmployees)
+                .ThenInclude(io => io.Employee)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<ImportOrderDTO>>(importOrders);
+        }
+
         public async Task<ImportOrderDTO> GetImportOrderById(int id)
         {
             var ImportOrder = await _context.ImportOrders

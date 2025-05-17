@@ -9,6 +9,8 @@ namespace dotnet_api.Services.Interfaces
         Task<ReportDTO> CreateReportAsync(ReportDTO report);
         Task<ReportDTO> GetReportByIdAsync(int id);
         Task<IEnumerable<ReportDTO>> GetAllReportAsync();
+        Task<IEnumerable<ReportDTO>> GetAllReportByThiCongAsync();
+        Task<IEnumerable<ReportDTO>> GetAllReportByKiThuatAsync();
         Task<ReportDTO> UpdateReportAsync(ReportDTO report);
         Task<bool> DeleteReportAsync(int id);
     }

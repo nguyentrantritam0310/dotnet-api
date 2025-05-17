@@ -45,9 +45,31 @@ namespace dotnet_api.Services
                 .Include(c => c.Employee)
                 .Include(c => c.ReportAttachments)
                 .Include(c => c.ReportStatusLogs)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<ReportDTO>>(Reports);
+        }
+
+        public async Task<IEnumerable<ReportDTO>> GetAllReportByKiThuatAsync()
+        {
+            var Reports = await _context.Reports
+                .Include(c => c.Construction)
+                .Include(c => c.Employee)
+                .Include(c => c.ReportAttachments)
+                .Include(c => c.ReportStatusLogs)
                 .Where(c => c.ReportType != "Sự cố kĩ thuật")
                 .ToListAsync();
+            return _mapper.Map<IEnumerable<ReportDTO>>(Reports);
+        }
 
+        public async Task<IEnumerable<ReportDTO>> GetAllReportByThiCongAsync()
+        {
+            var Reports = await _context.Reports
+                .Include(c => c.Construction)
+                .Include(c => c.Employee)
+                .Include(c => c.ReportAttachments)
+                .Include(c => c.ReportStatusLogs)
+                .Where(c => c.ReportType != "Sự cố thi công")
+                .ToListAsync();
             return _mapper.Map<IEnumerable<ReportDTO>>(Reports);
         }
 

@@ -20,30 +20,34 @@ namespace dotnet_api.Services
             _mapper = mapper;
         }
 
-        //public async Task<ConstructionTaskDTO> CreateConstructionTaskAsync(ConstructionTaskDTOPOST constructionTaskDTO)
-        //{
-        //    var constructionTask = _mapper.Map<ConstructionTask>(constructionTaskDTO);
-        //    _context.ConstructionTasks.Add(constructionTask);
-        //    await _context.SaveChangesAsync();
-        //    return _mapper.Map<ConstructionTaskDTO>(constructionTask);
-        //}
+        public async Task<ConstructionTaskDTO> CreateConstructionTaskAsync(ConstructionTaskDTOPOST constructionTaskDTO)
+        {
+            var constructionTask = _mapper.Map<ConstructionTask>(constructionTaskDTO);
+            _context.ConstructionTasks.Add(constructionTask);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ConstructionTaskDTO>(constructionTask);
+        }
 
-        //public async Task<ConstructionTaskDTO> GetConstructionTaskByIdAsync(int id)
-        //{
-        //    var constructionTask = await _context.ConstructionTasks
-        //        .Include(c => c.Employee)
-        //        .Include(c => c.ConstructionItem)
-        //        .ThenInclude(ci => ci.Construction)
-        //        .Include(c => c.ConstructionStatus)
-        //        .FirstOrDefaultAsync(c => c.ID == id);
+        public async Task<ConstructionTaskDTO> GetConstructionTaskByIdAsync(int id)
+        {
+            var constructionTask = await _context.ConstructionTasks
+                .Include(c => c.ConstructionStatus)
+                .Include(c => c.ConstructionPlan)
+                .ThenInclude(cp => cp.ConstructionItem)
+                .ThenInclude(ci => ci.UnitOfMeasurement)
+                .Include(c => c.ConstructionStatus)
+                .FirstOrDefaultAsync(c => c.ID == id);
 
-        //    return constructionTask == null ? null : _mapper.Map<ConstructionTaskDTO>(constructionTask);
-        //}
+            return constructionTask == null ? null : _mapper.Map<ConstructionTaskDTO>(constructionTask);
+        }
 
         public async Task<IEnumerable<ConstructionTaskDTO>> GetAllConstructionsTaskByPlanAsync(int id)
         {
             var constructionsTask = await _context.ConstructionTasks
                 .Include(c => c.ConstructionStatus)
+                .Include(c => c.ConstructionPlan)
+                .ThenInclude(cp => cp.ConstructionItem)
+                .ThenInclude(ci => ci.UnitOfMeasurement)
                  .OrderByDescending(c => c.ID)
                  .Where(c => c.ConstructionPlanID == id)
                 .ToListAsync();
@@ -51,52 +55,72 @@ namespace dotnet_api.Services
             return _mapper.Map<IEnumerable<ConstructionTaskDTO>>(constructionsTask);
         }
 
-        //public async Task<ConstructionTaskDTO> UpdateConstructionTaskAsync(ConstructionTaskDTOPUT constructionTaskDTO)
-        //{
+        public async Task<IEnumerable<ConstructionTaskDTO>> GetAllConstructionsTaskByItemAsync(int id)
+        {
+            var constructionsTask = await _context.ConstructionTasks
+                .Include(c => c.ConstructionStatus)
+                .Include(c => c.ConstructionPlan)
+                .ThenInclude(cp => cp.ConstructionItem)
+                .ThenInclude(ci => ci.UnitOfMeasurement)
+                 .OrderByDescending(c => c.ID)
+                 .Where(c => c.ConstructionPlan.ConstructionItem.ID == id)
+                .ToListAsync();
 
-        //    var existingConstructionTask = await _context.ConstructionTasks
-        //        .FirstOrDefaultAsync(c => c.ID == constructionTaskDTO.ID);
+            return _mapper.Map<IEnumerable<ConstructionTaskDTO>>(constructionsTask);
+        }
 
-        //    if (existingConstructionTask == null)
-        //    {
-        //        return null;
-        //    }
+        public async Task<ConstructionTaskDTO> UpdateConstructionTaskAsync(ConstructionTaskDTOPOST constructionTaskDTO)
+        {
 
-        //    _mapper.Map(constructionTaskDTO, existingConstructionTask);
-        //    await _context.SaveChangesAsync();
-        //    return _mapper.Map<ConstructionTaskDTO>(existingConstructionTask);
-        //}
+            var existingConstructionTask = await _context.ConstructionTasks
+                .FirstOrDefaultAsync(c => c.ID == constructionTaskDTO.ID);
 
-        //public async Task<ConstructionTaskDTO> UpdateConstructionTaskStatusAsync(int id, int status)
-        //{
-        //    var existingConstructionTask = await _context.ConstructionTasks
-        //        .Include(c => c.Employee)
-        //        .Include(c => c.ConstructionItem)
-        //        .ThenInclude(ci => ci.Construction)
-        //        .Include(c => c.ConstructionStatus)
-        //        .FirstOrDefaultAsync(c => c.ID == id);
+            if (existingConstructionTask == null)
+            {
+                return null;
+            }
 
-        //    if (existingConstructionTask == null)
-        //    {
-        //        return null;
-        //    }
+            _mapper.Map(constructionTaskDTO, existingConstructionTask);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ConstructionTaskDTO>(existingConstructionTask);
+        }
 
-        //    existingConstructionTask.ConstructionStatusID = status;
-        //    await _context.SaveChangesAsync();
-        //    return _mapper.Map<ConstructionTaskDTO>(existingConstructionTask);
-        //}
+        public async Task<ConstructionTaskDTO> UpdateConstructionTaskStatusAsync(int id, int status)
+        {
+            var existingConstructionTask = await _context.ConstructionTasks
+                 .Include(c => c.ConstructionStatus)
+                .Include(c => c.ConstructionPlan)
+                .ThenInclude(cp => cp.ConstructionItem)
+                .ThenInclude(ci => ci.UnitOfMeasurement)
+                .FirstOrDefaultAsync(c => c.ID == id);
 
-        //public async Task<bool> DeleteConstructionTaskAsync(int id)
-        //{
-        //    var constructionTask = await _context.ConstructionTasks.FindAsync(id);
-        //    if (constructionTask == null)
-        //    {
-        //        return false;
-        //    }
+            if (existingConstructionTask == null)
+            {
+                return null;
+            }
 
-        //    _context.ConstructionTasks.Remove(constructionTask);
-        //    await _context.SaveChangesAsync();
-        //    return true;
-        //}
+            existingConstructionTask.ConstructionStatusID = status;
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ConstructionTaskDTO>(existingConstructionTask);
+        }
+
+        public async Task<ConstructionTaskDTO> UpdateConstructionTaskActualAsync(int id, float? actualWorkload)
+        {
+            var existingConstructionTask = await _context.ConstructionTasks
+              .Include(c => c.ConstructionStatus)
+             .Include(c => c.ConstructionPlan)
+             .ThenInclude(cp => cp.ConstructionItem)
+             .ThenInclude(ci => ci.UnitOfMeasurement)
+             .FirstOrDefaultAsync(c => c.ID == id);
+
+            if (existingConstructionTask == null)
+            {
+                return null;
+            }
+
+            existingConstructionTask.ActualWorkload = actualWorkload;
+            await _context.SaveChangesAsync();
+            return _mapper.Map<ConstructionTaskDTO>(existingConstructionTask);
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace dotnet_api.DTOs
         public string ConstructionName { get; set; }
         public string ConstructionID { get; set; }
         public string StatusName { get; set; }
+        public float TotalWorkload { get; set; }
+        public string UnitOfMeasurementName { get; set; }
     }
 }
 

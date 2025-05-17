@@ -46,6 +46,8 @@ namespace dotnet_api.Services
                 .Include(c => c.Employee)
                 .Include(c => c.ConstructionItem)
                 .ThenInclude(ci => ci.Construction)
+                .Include(c => c.ConstructionItem)
+                .ThenInclude(ci => ci.UnitOfMeasurement)
                 .Include(c => c.ConstructionStatus)
                  .OrderByDescending(c => c.ID)
                 .ToListAsync();

@@ -6,6 +6,7 @@ namespace dotnet_api.Data.Entities
         public int ConstructionStatusID { get; set; }
         public int ConstructionPlanID { get; set; }
         public float Workload { get; set; }
+        public float? ActualWorkload { get; set; }
 
         // Navigation properties
         public ConstructionPlan ConstructionPlan { get; set; }

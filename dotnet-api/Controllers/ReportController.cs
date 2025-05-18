@@ -1,80 +1,103 @@
 ﻿using dotnet_api.DTOs;
 using dotnet_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace dotnet_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[Authorize]
     public class ReportController : ControllerBase
     {
-        private readonly IReportService _ReportService;
+        private readonly IReportService _reportService;
 
-        public ReportController(IReportService ReportService)
+        public ReportController(IReportService reportService)
         {
-            _ReportService = ReportService;
+            _reportService = reportService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var Reports = await _ReportService.GetAllReportAsync();
-            return Ok(Reports);
+            var reports = await _reportService.GetAllReportAsync();
+            return Ok(reports);
         }
 
         [HttpGet("thicong")]
         public async Task<IActionResult> GetAllByThiCong()
         {
-            var Reports = await _ReportService.GetAllReportByThiCongAsync();
-            return Ok(Reports);
+            var reports = await _reportService.GetAllReportByThiCongAsync();
+            return Ok(reports);
         }
 
         [HttpGet("kithuat")]
         public async Task<IActionResult> GetAllByKiThuat()
         {
-            var Reports = await _ReportService.GetAllReportByKiThuatAsync();
-            return Ok(Reports);
+            var reports = await _reportService.GetAllReportByKiThuatAsync();
+            return Ok(reports);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var Report = await _ReportService.GetReportByIdAsync(id);
-            if (Report == null)
+            var report = await _reportService.GetReportByIdAsync(id);
+            if (report == null)
             {
                 return NotFound();
             }
-            return Ok(Report);
+            return Ok(report);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ReportDTO ReportDTO)
+        public async Task<IActionResult> Create([FromForm] ReportCreateDTO reportDTO)
         {
-            var createdReport = await _ReportService.CreateReportAsync(ReportDTO);
-            return CreatedAtAction(nameof(GetById), new { id = createdReport.ID }, createdReport);
+            try
+            {
+                //var employeeId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                //if (string.IsNullOrEmpty(employeeId))
+                //{
+                //    return Unauthorized();
+                //}
+
+                var createdReport = await _reportService.CreateReportAsync(reportDTO, "tech1-id");
+                return CreatedAtAction(nameof(GetById), new { id = createdReport.ID }, createdReport);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ReportDTO ReportDTO)
+        public async Task<IActionResult> Update(int id, [FromForm] ReportUpdateDTO reportDTO)
         {
-            if (id != ReportDTO.ID)
+            if (id != reportDTO.ID)
             {
                 return BadRequest();
             }
 
-            var updatedReport = await _ReportService.UpdateReportAsync(ReportDTO);
-            if (updatedReport == null)
+            try
             {
-                return NotFound();
-            }
+                var updatedReport = await _reportService.UpdateReportAsync(reportDTO);
+                if (updatedReport == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(updatedReport);
+                return Ok(updatedReport);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _ReportService.DeleteReportAsync(id);
+            var result = await _reportService.DeleteReportAsync(id);
             if (!result)
             {
                 return NotFound();

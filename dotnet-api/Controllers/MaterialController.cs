@@ -34,7 +34,7 @@ namespace dotnet_api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MaterialDTO MaterialDTO)
+        public async Task<IActionResult> Create([FromBody] MaterialDTOPOST MaterialDTO)
         {
             var createdMaterial = await _MaterialService.CreateMaterialAsync(MaterialDTO);
             return CreatedAtAction(nameof(GetById), new { id = createdMaterial.ID }, createdMaterial);

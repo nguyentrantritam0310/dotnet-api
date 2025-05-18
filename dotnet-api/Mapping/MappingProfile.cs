@@ -170,6 +170,11 @@ namespace dotnet_api.Mapping
 
             CreateMap<Material_ExportOrderDTO, Material_ExportOrder>().ReverseMap();
             CreateMap<ExportOrderDTOPOST, ExportOrder>().ReverseMap();
+            CreateMap<MaterialDTOPOST, Material>().ReverseMap();
+            CreateMap<MaterialType, MaterialTypeDTO>()
+                    .ForMember(dest => dest.MaterialTypeName,
+        opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialTypeName)));
+            ;
 
         }
     }

@@ -18,7 +18,7 @@ namespace dotnet_api.Services
             _mapper = mapper;
         }
 
-        public async Task<MaterialDTO> CreateMaterialAsync(MaterialDTO MaterialDTO)
+        public async Task<MaterialDTO> CreateMaterialAsync(MaterialDTOPOST MaterialDTO)
         {
             var Material = _mapper.Map<Material>(MaterialDTO);
             _context.Materials.Add(Material);

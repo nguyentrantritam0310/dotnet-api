@@ -6,7 +6,7 @@ namespace dotnet_api.Services.Interfaces
 
     public interface IMaterialService
     {
-        Task<MaterialDTO> CreateMaterialAsync(MaterialDTO Material);
+        Task<MaterialDTO> CreateMaterialAsync(MaterialDTOPOST Material);
         Task<MaterialDTO> GetMaterialByIdAsync(int id);
         Task<IEnumerable<MaterialDTO>> GetAllMaterialAsync();
         Task<MaterialDTO> UpdateMaterialAsync(MaterialDTO Material);

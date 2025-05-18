@@ -27,9 +27,6 @@ namespace dotnet_api.Data.Configurations
             builder.Property(x => x.Level)
                 .HasMaxLength(50); 
 
-            builder.Property(x => x.ProblemType)
-                .HasMaxLength(100); 
-
             builder.HasOne(x => x.Employee)
                 .WithMany(e => e.Reports)
                 .HasForeignKey(x => x.EmployeeID)

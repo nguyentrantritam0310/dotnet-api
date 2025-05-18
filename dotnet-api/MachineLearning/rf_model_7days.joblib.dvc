@@ -1,0 +1,5 @@
+outs:
+- md5: 4789f61ff44a0e83178901d0fcced461
+  size: 985805676
+  hash: md5
+  path: rf_model_7days.joblib

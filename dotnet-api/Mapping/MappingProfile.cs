@@ -175,6 +175,8 @@ namespace dotnet_api.Mapping
                     .ForMember(dest => dest.MaterialTypeName,
         opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialTypeName)));
             ;
+            CreateMap<UnitofMeasurement, UnitofMeasurementDTO>();
+
 
         }
     }

@@ -42,6 +42,7 @@ builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<IConstructionTemplateItemService, ConstructionTemplateItemService>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IExportOrderService, ExportOrderService>();
+builder.Services.AddScoped<IMaterialTypeService, MaterialTypeService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 

@@ -65,7 +65,10 @@ namespace dotnet_api.Mapping
 
             CreateMap<MaterialNorm, MaterialNormDTO>();
             CreateMap<MaterialPlan, MaterialPlanDTO>();
-            CreateMap<MaterialType, MaterialTypeDTO>();
+            CreateMap<MaterialType, MaterialTypeDTO>()
+                                .ForMember(dest => dest.MaterialTypeName,
+                    opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.MaterialTypeName)));
+            ;
             CreateMap<ReportAttachment, ReportAttachmentDTO>();
             CreateMap<Report, ReportDTO>()
                  .ForMember(dest => dest.StatusLogs,

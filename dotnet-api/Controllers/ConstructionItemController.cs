@@ -15,58 +15,100 @@ namespace dotnet_api.Controllers
             _constructionItemService = constructionItemService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ConstructionItemDTO>> GetById(int id)
         {
-            var constructionItem = await _constructionItemService.GetAllConstructionsItemAsync();
-            return Ok(constructionItem);
+            try
+            {
+                var constructionItem = await _constructionItemService.GetConstructionItemByIdAsync(id);
+                if (constructionItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(constructionItem);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        [HttpGet("construction/{constructionId}")]
+        public async Task<ActionResult<IEnumerable<ConstructionItemDTO>>> GetByConstructionId(int constructionId)
         {
-            var constructionItem = await _constructionItemService.GetConstructionItemByIdAsync(id);
-            if (constructionItem == null)
+            try
             {
-                return NotFound();
+                var items = await _constructionItemService.GetConstructionItemsByConstructionIdAsync(constructionId);
+                return Ok(items);
             }
-            return Ok(constructionItem);
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ConstructionItemDTO constructionItemDTO)
+        public async Task<ActionResult<ConstructionItemDTO>> Create([FromBody] ConstructionItemCreateDTO createDTO)
         {
-            var createdConstructionItem = await _constructionItemService.CreateConstructionItemAsync(constructionItemDTO);
-            return CreatedAtAction(nameof(GetById), new { id = createdConstructionItem.ID }, createdConstructionItem);
+            try
+            {
+                var createdItem = await _constructionItemService.CreateConstructionItemAsync(createDTO);
+                return CreatedAtAction(nameof(GetById), new { id = createdItem.ID }, createdItem);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ConstructionItemDTO constructionItemDTO)
+        public async Task<ActionResult<ConstructionItemDTO>> Update([FromBody] ConstructionItemUpdateDTO updateDTO)
         {
-            if (id != constructionItemDTO.ID)
+            try
             {
-                return BadRequest();
+                var updatedItem = await _constructionItemService.UpdateConstructionItemAsync(updateDTO);
+                if (updatedItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(updatedItem);
             }
-
-            var updatedConstructionItem = await _constructionItemService.UpdateConstructionItemAsync(constructionItemDTO);
-            if (updatedConstructionItem == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(new { message = ex.Message });
             }
+        }
 
-            return Ok(updatedConstructionItem);
+        [HttpPatch("{id}/status")]
+        public async Task<ActionResult<ConstructionItemDTO>> UpdateStatus(int id, [FromBody] UpdateConstructionItemStatusDTO statusDTO)
+        {
+            try
+            {
+                var updatedItem = await _constructionItemService.UpdateConstructionItemStatusAsync(id, statusDTO.Status);
+                if (updatedItem == null)
+                {
+                    return NotFound();
+                }
+                return Ok(updatedItem);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _constructionItemService.DeleteConstructionItemAsync(id);
-            if (!result)
+            try
             {
-                return NotFound();
+                await _constructionItemService.DeleteConstructionItemAsync(id);
+                return NoContent();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

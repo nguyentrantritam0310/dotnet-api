@@ -66,6 +66,8 @@ builder.Services.AddScoped<IMaterialPlanService, MaterialPlanService>();
 builder.Services.AddScoped<IMaterial_ExportOrderService, Material_ExportOrderService>();
 builder.Services.AddScoped<IMaterialTypeService, MaterialTypeService>();
 builder.Services.AddScoped<IUnitofMeasurementService, UnitofMeasurementService>();
+builder.Services.AddScoped<IWorkSubTypeVariantService, WorkSubTypeVariantService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 

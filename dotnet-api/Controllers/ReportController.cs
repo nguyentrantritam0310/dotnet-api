@@ -75,7 +75,12 @@ namespace dotnet_api.Controllers
         {
             if (id != reportDTO.ID)
             {
-                return BadRequest();
+                return BadRequest(new { message = "ID mismatch" });
+            }
+
+            if (string.IsNullOrEmpty(reportDTO.Content) || string.IsNullOrEmpty(reportDTO.Level))
+            {
+                return BadRequest(new { message = "Content and Level are required fields" });
             }
 
             try
@@ -83,7 +88,7 @@ namespace dotnet_api.Controllers
                 var updatedReport = await _reportService.UpdateReportAsync(reportDTO);
                 if (updatedReport == null)
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Report not found" });
                 }
 
                 return Ok(updatedReport);

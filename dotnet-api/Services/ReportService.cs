@@ -98,9 +98,8 @@ namespace dotnet_api.Services
             report.Content = reportDTO.Content;
             report.Level = reportDTO.Level;
 
-
-            // Handle deleted images
-            if (reportDTO.DeletedImagePaths != null)
+            // Handle deleted images only if DeletedImagePaths is provided
+            if (reportDTO.DeletedImagePaths != null && reportDTO.DeletedImagePaths.Any())
             {
                 foreach (var imagePath in reportDTO.DeletedImagePaths)
                 {
@@ -113,8 +112,8 @@ namespace dotnet_api.Services
                 }
             }
 
-            // Handle new images
-            if (reportDTO.NewImages != null)
+            // Handle new images only if NewImages is provided
+            if (reportDTO.NewImages != null && reportDTO.NewImages.Any())
             {
                 foreach (var image in reportDTO.NewImages)
                 {

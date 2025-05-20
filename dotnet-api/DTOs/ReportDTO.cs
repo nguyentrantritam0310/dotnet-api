@@ -24,7 +24,7 @@ namespace dotnet_api.DTOs
         public string ReportType { get; set; }
         public string Content { get; set; }
         public string Level { get; set; }
-        public List<IFormFile> Images { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 
     public class ReportUpdateDTO
@@ -32,7 +32,7 @@ namespace dotnet_api.DTOs
         public int ID { get; set; }
         public string Content { get; set; }
         public string Level { get; set; }
-        public List<IFormFile> NewImages { get; set; }
-        public List<string> DeletedImagePaths { get; set; }
+        public List<IFormFile>? NewImages { get; set; } = null;
+        public List<string>? DeletedImagePaths { get; set; } = null;
     }
 }

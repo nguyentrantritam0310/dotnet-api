@@ -23,6 +23,8 @@ namespace dotnet_api.Mapping
             CreateMap<ConstructionItem, ConstructionItemDTO>()
                 .ForMember(dest => dest.UnitName,
         opt => opt.MapFrom(src => src.UnitOfMeasurement.ShortName))
+                .ForMember(dest => dest.ConstructionItemStatusID,
+        opt => opt.MapFrom(src => src.ConstructionStatus.ID))
     .ForMember(dest => dest.ConstructionItemStatusName,
         opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
                 ;
@@ -177,6 +179,59 @@ namespace dotnet_api.Mapping
             ;
             CreateMap<UnitofMeasurement, UnitofMeasurementDTO>();
 
+            CreateMap<Attendance, AttendanceDTO>();
+            CreateMap<Attendance, AttendanceDTOGET>()
+                 .ForMember(dest => dest.EmployeeName,
+                    opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
+                 .ForMember(dest => dest.Email,
+                    opt => opt.MapFrom(src => src.Employee.Email))
+                ;
+
+            CreateMap<AttendanceDTO, Attendance>().ReverseMap();
+            CreateMap<WorkSubTypeVariant, WorkSubTypeVariantDTO>();
+
+            CreateMap<ConstructionItemCreateDTO, ConstructionItem>();
+
+            CreateMap<ConstructionItemUpdateDTO, ConstructionItem>();
+
+            // Add mapping for ConstructionCreateDTO to ConstructionDTOPOST
+            CreateMap<ConstructionCreateDTO, ConstructionDTOPOST>()
+                .ForMember(dest => dest.ConstructionTypeID, opt => opt.MapFrom(src => src.ConstructionTypeID))
+                .ForMember(dest => dest.ConstructionName, opt => opt.MapFrom(src => src.ConstructionName))
+                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+                .ForMember(dest => dest.TotalArea, opt => opt.MapFrom(src => src.TotalArea))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+                .ForMember(dest => dest.ExpectedCompletionDate, opt => opt.MapFrom(src => src.ExpectedCompletionDate));
+
+            // Add mapping for ConstructionUpdateDTO to ConstructionDTO
+            CreateMap<ConstructionUpdateDTO, ConstructionDTO>()
+                .ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.ID))
+                .ForMember(dest => dest.ConstructionTypeID, opt => opt.MapFrom(src => src.ConstructionTypeID))
+                .ForMember(dest => dest.ConstructionName, opt => opt.MapFrom(src => src.ConstructionName))
+                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+                .ForMember(dest => dest.TotalArea, opt => opt.MapFrom(src => src.TotalArea))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+                .ForMember(dest => dest.ExpectedCompletionDate, opt => opt.MapFrom(src => src.ExpectedCompletionDate));
+
+            CreateMap<ConstructionDTO, Construction>()
+                .ForMember(dest => dest.ConstructionType, 
+                    opt => opt.MapFrom(src => new ConstructionType { ID = src.ConstructionTypeID }))
+                .ForMember(dest => dest.ConstructionStatus, 
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.ConstructionItems, 
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.DesignBlueprint, 
+                    opt => opt.Ignore());
+
+            CreateMap<ConstructionCreateDTO, Construction>()
+                .ForMember(dest => dest.ConstructionStatus, 
+                    opt => opt.MapFrom(src => new ConstructionStatus { ID = src.ConstructionStatusID }))
+                .ForMember(dest => dest.ConstructionType, 
+                    opt => opt.MapFrom(src => new ConstructionType { ID = src.ConstructionTypeID }))
+                .ForMember(dest => dest.ConstructionItems, 
+                    opt => opt.Ignore())
+                .ForMember(dest => dest.DesignBlueprint, 
+                    opt => opt.Ignore());
 
         }
     }

@@ -18,62 +18,90 @@ namespace dotnet_api.Services
             _mapper = mapper;
         }
 
-        public async Task<ConstructionItemDTO> CreateConstructionItemAsync(ConstructionItemDTO constructionItemDTO)
+        public async Task<ConstructionItemDTO> CreateConstructionItemAsync(ConstructionItemCreateDTO itemDTO)
         {
-            var constructionItem = _mapper.Map<ConstructionItem>(constructionItemDTO);
+            var constructionItem = _mapper.Map<ConstructionItem>(itemDTO);
+            
+            // Set default status if not provided
+            constructionItem.ConstructionStatusID = 1; // Default to "Chờ khởi công"
+
             _context.ConstructionItems.Add(constructionItem);
             await _context.SaveChangesAsync();
-            return _mapper.Map<ConstructionItemDTO>(constructionItem);
+
+            // Fetch the complete item with related data
+            var createdItem = await GetCompleteConstructionItem(constructionItem.ID);
+            return _mapper.Map<ConstructionItemDTO>(createdItem);
         }
 
         public async Task<ConstructionItemDTO> GetConstructionItemByIdAsync(int id)
         {
-            var constructionItem = await _context.ConstructionItems
-                .Include(c => c.Construction)
-                .Include(c => c.ConstructionPlans)
-
-                .Include(c => c.ConstructionStatus)
-                .FirstOrDefaultAsync(c => c.ID == id);
-
-            return constructionItem == null ? null : _mapper.Map<ConstructionItemDTO>(constructionItem);
+            var item = await GetCompleteConstructionItem(id);
+            return item == null ? null : _mapper.Map<ConstructionItemDTO>(item);
         }
 
-        public async Task<IEnumerable<ConstructionItemDTO>> GetAllConstructionsItemAsync()
+        public async Task<IEnumerable<ConstructionItemDTO>> GetConstructionItemsByConstructionIdAsync(int constructionId)
         {
-            var constructionsItem = await _context.ConstructionItems
-                .Include(c => c.ConstructionPlans)
-                .Include(c => c.Construction)
-
-                .Include(c => c.ConstructionStatus)
+            var items = await _context.ConstructionItems
+                .Include(i => i.UnitOfMeasurement)
+                .Include(i => i.WorkSubTypeVariant)
+                .Include(i => i.ConstructionStatus)
+                .Where(i => i.ConstructionID == constructionId)
                 .ToListAsync();
 
-            return _mapper.Map<IEnumerable<ConstructionItemDTO>>(constructionsItem);
+            return _mapper.Map<IEnumerable<ConstructionItemDTO>>(items);
         }
 
-        public async Task<ConstructionItemDTO> UpdateConstructionItemAsync(ConstructionItemDTO constructionItemDTO)
+        public async Task<ConstructionItemDTO> UpdateConstructionItemAsync(ConstructionItemUpdateDTO itemDTO)
         {
-            var existingConstructionItem = await _context.ConstructionItems.FindAsync(constructionItemDTO.ID);
-            if (existingConstructionItem == null)
+            var existingItem = await _context.ConstructionItems.FindAsync(itemDTO.ID);
+            if (existingItem == null)
             {
-                return null;
+                throw new Exception("Không tìm thấy hạng mục để cập nhật");
             }
 
-            _mapper.Map(constructionItemDTO, existingConstructionItem);
+            _mapper.Map(itemDTO, existingItem);
             await _context.SaveChangesAsync();
-            return _mapper.Map<ConstructionItemDTO>(existingConstructionItem);
+
+            // Fetch the updated item with related data
+            var updatedItem = await GetCompleteConstructionItem(existingItem.ID);
+            return _mapper.Map<ConstructionItemDTO>(updatedItem);
         }
 
-        public async Task<bool> DeleteConstructionItemAsync(int id)
+        public async Task<ConstructionItemDTO> UpdateConstructionItemStatusAsync(int id, int status)
         {
-            var constructionItem = await _context.ConstructionItems.FindAsync(id);
-            if (constructionItem == null)
+            var existingItem = await _context.ConstructionItems.FindAsync(id);
+            if (existingItem == null)
             {
-                return false;
+                throw new Exception("Không tìm thấy hạng mục để cập nhật trạng thái");
             }
 
-            _context.ConstructionItems.Remove(constructionItem);
+            existingItem.ConstructionStatusID = status;
             await _context.SaveChangesAsync();
-            return true;
+
+            // Fetch the updated item with related data
+            var updatedItem = await GetCompleteConstructionItem(id);
+            return _mapper.Map<ConstructionItemDTO>(updatedItem);
+        }
+
+        public async Task DeleteConstructionItemAsync(int id)
+        {
+            var item = await _context.ConstructionItems.FindAsync(id);
+            if (item == null)
+            {
+                throw new Exception("Không tìm thấy hạng mục để xóa");
+            }
+
+            _context.ConstructionItems.Remove(item);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<ConstructionItem> GetCompleteConstructionItem(int id)
+        {
+            return await _context.ConstructionItems
+                .Include(i => i.UnitOfMeasurement)
+                .Include(i => i.WorkSubTypeVariant)
+                .Include(i => i.ConstructionStatus)
+                .FirstOrDefaultAsync(i => i.ID == id);
         }
     }
 }

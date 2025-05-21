@@ -263,5 +263,29 @@ namespace dotnet_api.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ReportDTO> UpdateReportStatusAsync(int id, ReportUpdateStatusDTO statusDTO)
+        {
+            var report = await _context.Reports
+                .Include(r => r.ReportStatusLogs)
+                .FirstOrDefaultAsync(r => r.ID == id);
+
+            if (report == null)
+                return null;
+
+            // Add new status log
+            var statusLog = new ReportStatusLog
+            {
+                ReportID = report.ID,
+                Status = statusDTO.Status,
+                ReportDate = DateTime.UtcNow,
+                Note = statusDTO.Note ?? $"Trạng thái đã được cập nhật thành {statusDTO.Status}"
+            };
+
+            _context.ReportStatusLogs.Add(statusLog);
+            await _context.SaveChangesAsync();
+
+            return await GetReportByIdAsync(report.ID);
+        }
     }
 }

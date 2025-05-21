@@ -35,4 +35,11 @@ namespace dotnet_api.DTOs
         public List<IFormFile>? NewImages { get; set; } = null;
         public List<string>? DeletedImagePaths { get; set; } = null;
     }
+
+    public class ReportUpdateStatusDTO
+    {
+        public int ID { get; set; }
+        public ReportStatusEnum Status { get; set; }
+        public string Note { get; set; }
+    }
 }

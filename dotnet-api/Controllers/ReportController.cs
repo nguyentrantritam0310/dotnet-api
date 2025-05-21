@@ -99,6 +99,30 @@ namespace dotnet_api.Controllers
             }
         }
 
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] ReportUpdateStatusDTO statusDTO)
+        {
+            if (id != statusDTO.ID)
+            {
+                return BadRequest(new { message = "ID mismatch" });
+            }
+
+            try
+            {
+                var updatedReport = await _reportService.UpdateReportStatusAsync(id, statusDTO);
+                if (updatedReport == null)
+                {
+                    return NotFound(new { message = "Report not found" });
+                }
+
+                return Ok(updatedReport);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

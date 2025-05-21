@@ -9,7 +9,7 @@ namespace dotnet_api.Services.Interfaces
         Task<MaterialDTO> CreateMaterialAsync(MaterialDTOPOST Material);
         Task<MaterialDTO> GetMaterialByIdAsync(int id);
         Task<IEnumerable<MaterialDTO>> GetAllMaterialAsync();
-        Task<MaterialDTO> UpdateMaterialAsync(MaterialDTO Material);
+        Task<MaterialDTO> UpdateMaterialAsync(MaterialDTOPOST Material);
         Task<MaterialUpdateStockQuantityDTO> UpdateStockQuantityMaterialAsync(MaterialUpdateStockQuantityDTO materialUpdateStockQuantityDTO);
         Task<bool> DeleteMaterialAsync(int id);
     }

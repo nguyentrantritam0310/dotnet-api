@@ -98,9 +98,8 @@ namespace dotnet_api.Services
             report.Content = reportDTO.Content;
             report.Level = reportDTO.Level;
 
-
-            // Handle deleted images
-            if (reportDTO.DeletedImagePaths != null)
+            // Handle deleted images only if DeletedImagePaths is provided
+            if (reportDTO.DeletedImagePaths != null && reportDTO.DeletedImagePaths.Any())
             {
                 foreach (var imagePath in reportDTO.DeletedImagePaths)
                 {
@@ -113,8 +112,8 @@ namespace dotnet_api.Services
                 }
             }
 
-            // Handle new images
-            if (reportDTO.NewImages != null)
+            // Handle new images only if NewImages is provided
+            if (reportDTO.NewImages != null && reportDTO.NewImages.Any())
             {
                 foreach (var image in reportDTO.NewImages)
                 {
@@ -263,6 +262,30 @@ namespace dotnet_api.Services
             _context.Reports.Remove(report);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<ReportDTO> UpdateReportStatusAsync(int id, ReportUpdateStatusDTO statusDTO)
+        {
+            var report = await _context.Reports
+                .Include(r => r.ReportStatusLogs)
+                .FirstOrDefaultAsync(r => r.ID == id);
+
+            if (report == null)
+                return null;
+
+            // Add new status log
+            var statusLog = new ReportStatusLog
+            {
+                ReportID = report.ID,
+                Status = statusDTO.Status,
+                ReportDate = DateTime.UtcNow,
+                Note = statusDTO.Note ?? $"Trạng thái đã được cập nhật thành {statusDTO.Status}"
+            };
+
+            _context.ReportStatusLogs.Add(statusLog);
+            await _context.SaveChangesAsync();
+
+            return await GetReportByIdAsync(report.ID);
         }
     }
 }

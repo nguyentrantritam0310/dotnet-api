@@ -12,8 +12,8 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250515090018_FixExportOrder")]
-    partial class FixExportOrder
+    [Migration("20250520092446_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -342,7 +342,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1aa20e01-2c13-4aa6-a88d-01f5cb3db9de",
+                            ConcurrencyStamp = "9b49fe6a-c98e-4ecc-9ae2-98b982ece97d",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -364,7 +364,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cc940a6d-5547-435a-87ca-7ebe0fa754d5",
+                            ConcurrencyStamp = "99973de2-2483-4312-8aa7-b2ffadaa232e",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -386,7 +386,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f28b037e-50ce-4a70-895e-f7a65979b864",
+                            ConcurrencyStamp = "cda1d267-00de-429c-8b6f-e0d724715104",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -408,7 +408,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "be36e66e-73cf-4830-ab48-e29e60295004",
+                            ConcurrencyStamp = "e0f393c8-f2ee-48be-b86f-a4c48dfe2ee1",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -430,7 +430,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "03dc839a-5d95-4944-9be8-ffa49a279d1e",
+                            ConcurrencyStamp = "c3ed808c-036f-4f23-8710-cbf6ad3a3943",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -452,7 +452,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b526228c-f1ba-43a2-a2d7-94e9dd6fdce4",
+                            ConcurrencyStamp = "8cde40de-21e2-4f76-80af-fd9df353605c",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -474,7 +474,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "292be499-0af6-45e1-a62e-657ac539314a",
+                            ConcurrencyStamp = "f811d542-31a6-4018-8a2c-0a86f3cb3217",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -496,7 +496,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ff90b683-631e-4ca5-bb1e-758daa0ef005",
+                            ConcurrencyStamp = "495f9dda-00ab-424d-abe5-e159e6ec6f81",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -517,7 +517,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c46695fb-dad1-402c-87de-c9e62698cd01",
+                            ConcurrencyStamp = "d96c1224-d714-4ee9-bcea-b4ef0cf809e7",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -538,7 +538,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ee4461b3-b2e9-4ac2-bbcc-7108e783ee75",
+                            ConcurrencyStamp = "6e639e64-62b3-41e5-80ef-e90fd781ac65",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -559,7 +559,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d2c2e51-e8f3-4bdf-8124-c7125892a5ef",
+                            ConcurrencyStamp = "4f1122ef-230a-4b98-bcd1-14c6fd70fb77",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -580,7 +580,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09def347-5d6d-4432-bd98-abfc3783f994",
+                            ConcurrencyStamp = "80ced72a-0350-4673-9aad-75b7eece1d4c",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -615,7 +615,7 @@ namespace dotnet_api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("EmployeeID", "ConstructionTaskID");
+                    b.HasKey("EmployeeID", "ConstructionTaskID", "AttendanceDate");
 
                     b.HasIndex("ConstructionTaskID");
 
@@ -2502,6 +2502,9 @@ namespace dotnet_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<float?>("ActualWorkload")
+                        .HasColumnType("real");
+
                     b.Property<int>("ConstructionPlanID")
                         .HasColumnType("int");
 
@@ -4010,9 +4013,6 @@ namespace dotnet_api.Migrations
                     b.Property<int>("ConstructionItemID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ConstructionPlanID")
-                        .HasColumnType("int");
-
                     b.Property<string>("EmployeeID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -4023,8 +4023,6 @@ namespace dotnet_api.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("ConstructionItemID");
-
-                    b.HasIndex("ConstructionPlanID");
 
                     b.HasIndex("EmployeeID");
 
@@ -6933,10 +6931,6 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.ConstructionPlan", null)
-                        .WithMany("ExportOrders")
-                        .HasForeignKey("ConstructionPlanID");
-
                     b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
                         .WithMany("ExportOrders")
                         .HasForeignKey("EmployeeID")
@@ -7185,8 +7179,6 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.ConstructionPlan", b =>
                 {
                     b.Navigation("ConstructionTasks");
-
-                    b.Navigation("ExportOrders");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ConstructionStatus", b =>

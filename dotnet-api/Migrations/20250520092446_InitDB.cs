@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace dotnet_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -651,6 +651,33 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ExportOrders",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConstructionItemID = table.Column<int>(type: "int", nullable: false),
+                    ExportDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExportOrders", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ExportOrders_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ExportOrders_ConstructionItems_ConstructionItemID",
+                        column: x => x.ConstructionItemID,
+                        principalTable: "ConstructionItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MaterialPlans",
                 columns: table => new
                 {
@@ -691,7 +718,8 @@ namespace dotnet_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ConstructionStatusID = table.Column<int>(type: "int", nullable: false),
                     ConstructionPlanID = table.Column<int>(type: "int", nullable: false),
-                    Workload = table.Column<float>(type: "real", nullable: false)
+                    Workload = table.Column<float>(type: "real", nullable: false),
+                    ActualWorkload = table.Column<float>(type: "real", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -708,59 +736,6 @@ namespace dotnet_api.Migrations
                         principalTable: "ConstructionStatuses",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ExportOrders",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ConstructionPlanID = table.Column<int>(type: "int", nullable: false),
-                    ExportDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ExportOrders", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ExportOrders_AspNetUsers_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ExportOrders_ConstructionPlans_ConstructionPlanID",
-                        column: x => x.ConstructionPlanID,
-                        principalTable: "ConstructionPlans",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Attendances",
-                columns: table => new
-                {
-                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ConstructionTaskID = table.Column<int>(type: "int", nullable: false),
-                    AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Attendances", x => new { x.EmployeeID, x.ConstructionTaskID });
-                    table.ForeignKey(
-                        name: "FK_Attendances_AspNetUsers_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Attendances_ConstructionTasks_ConstructionTaskID",
-                        column: x => x.ConstructionTaskID,
-                        principalTable: "ConstructionTasks",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -784,6 +759,32 @@ namespace dotnet_api.Migrations
                         name: "FK_Material_ExportOrders_Materials_MaterialID",
                         column: x => x.MaterialID,
                         principalTable: "Materials",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attendances",
+                columns: table => new
+                {
+                    EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConstructionTaskID = table.Column<int>(type: "int", nullable: false),
+                    AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attendances", x => new { x.EmployeeID, x.ConstructionTaskID, x.AttendanceDate });
+                    table.ForeignKey(
+                        name: "FK_Attendances_AspNetUsers_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attendances_ConstructionTasks_ConstructionTaskID",
+                        column: x => x.ConstructionTaskID,
+                        principalTable: "ConstructionTasks",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -894,18 +895,18 @@ namespace dotnet_api.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Phone", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "RoleID", "SecurityStamp", "Status", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin-id", 0, "4eb2f307-1017-4f57-8842-836d60dcfc5d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
-                    { "manager1-id", 0, "b5e88aec-7d75-4bca-87f0-05aec2338226", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
-                    { "manager2-id", 0, "f4a27c44-6140-4b4a-88c5-ff14c090d8eb", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
-                    { "manager3-id", 0, "6aa84b27-89dd-4b93-8e22-164dca078c68", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
-                    { "tech1-id", 0, "2eebf210-9fb1-477a-bc6d-8d502f164373", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
-                    { "tech2-id", 0, "61e7754f-15c5-4a63-81d4-8c808871110e", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
-                    { "tech3-id", 0, "be7dbaeb-a2e3-43de-9e4c-ef812a0f3f18", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
-                    { "worker1-id", 0, "6081b318-93a7-4460-97a9-a14716cd12d5", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
-                    { "worker2-id", 0, "645213ab-e71c-49d0-ac4a-ab16caf3e477", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
-                    { "worker3-id", 0, "666168cd-42aa-48e6-827a-a5170dc7ea9d", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
-                    { "worker4-id", 0, "b88ca5fa-7bd9-45f8-9020-112230e658db", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
-                    { "worker5-id", 0, "572c92fd-ea8d-4251-bd61-b1cdf1b24213", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
+                    { "admin-id", 0, "9b49fe6a-c98e-4ecc-9ae2-98b982ece97d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
+                    { "manager1-id", 0, "99973de2-2483-4312-8aa7-b2ffadaa232e", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
+                    { "manager2-id", 0, "cda1d267-00de-429c-8b6f-e0d724715104", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
+                    { "manager3-id", 0, "e0f393c8-f2ee-48be-b86f-a4c48dfe2ee1", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
+                    { "tech1-id", 0, "c3ed808c-036f-4f23-8710-cbf6ad3a3943", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
+                    { "tech2-id", 0, "8cde40de-21e2-4f76-80af-fd9df353605c", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
+                    { "tech3-id", 0, "f811d542-31a6-4018-8a2c-0a86f3cb3217", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
+                    { "worker1-id", 0, "495f9dda-00ab-424d-abe5-e159e6ec6f81", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
+                    { "worker2-id", 0, "d96c1224-d714-4ee9-bcea-b4ef0cf809e7", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
+                    { "worker3-id", 0, "6e639e64-62b3-41e5-80ef-e90fd781ac65", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
+                    { "worker4-id", 0, "4f1122ef-230a-4b98-bcd1-14c6fd70fb77", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
+                    { "worker5-id", 0, "80ced72a-0350-4673-9aad-75b7eece1d4c", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -1476,6 +1477,15 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ExportOrders",
+                columns: new[] { "ID", "ConstructionItemID", "EmployeeID", "ExportDate" },
+                values: new object[,]
+                {
+                    { 1, 1, "manager1-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 2, "manager2-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
+
+            migrationBuilder.InsertData(
                 table: "MaterialPlans",
                 columns: new[] { "ConstructionItemID", "ImportOrderID", "MaterialID", "ImportQuantity", "Note" },
                 values: new object[,]
@@ -1488,194 +1498,176 @@ namespace dotnet_api.Migrations
 
             migrationBuilder.InsertData(
                 table: "ConstructionTasks",
-                columns: new[] { "ID", "ConstructionPlanID", "ConstructionStatusID", "Workload" },
+                columns: new[] { "ID", "ActualWorkload", "ConstructionPlanID", "ConstructionStatusID", "Workload" },
                 values: new object[,]
                 {
-                    { 1, 1, 3, 150f },
-                    { 2, 1, 3, 100f },
-                    { 3, 2, 3, 150f },
-                    { 4, 2, 3, 100f },
-                    { 5, 3, 3, 300f },
-                    { 6, 3, 3, 300f },
-                    { 7, 4, 3, 300f },
-                    { 8, 4, 3, 300f },
-                    { 9, 5, 3, 15000f },
-                    { 10, 5, 3, 15000f },
-                    { 11, 6, 3, 1250f },
-                    { 12, 7, 3, 1250f },
-                    { 13, 8, 3, 900f },
-                    { 14, 8, 3, 900f },
-                    { 15, 9, 3, 1100f },
-                    { 16, 9, 3, 1100f },
-                    { 17, 11, 3, 150f },
-                    { 18, 11, 3, 150f },
-                    { 19, 12, 3, 5f },
-                    { 20, 12, 3, 5f },
-                    { 21, 13, 3, 100f },
-                    { 22, 13, 3, 50f },
-                    { 23, 14, 3, 500f },
-                    { 24, 14, 3, 500f },
-                    { 25, 15, 3, 600f },
-                    { 26, 15, 3, 200f },
-                    { 27, 16, 3, 200f },
-                    { 28, 17, 3, 400f },
-                    { 29, 17, 3, 200f },
-                    { 30, 17, 3, 200f },
-                    { 31, 18, 3, 500f },
-                    { 32, 18, 3, 300f },
-                    { 33, 19, 3, 200f },
-                    { 34, 19, 3, 100f },
-                    { 35, 20, 3, 600f },
-                    { 36, 20, 3, 600f },
-                    { 37, 21, 3, 12000f },
-                    { 38, 22, 3, 13000f },
-                    { 39, 23, 3, 900f },
-                    { 40, 24, 3, 300f },
-                    { 41, 24, 3, 600f },
-                    { 42, 25, 3, 1500f },
-                    { 43, 25, 3, 500f },
-                    { 44, 26, 3, 1500f },
-                    { 45, 26, 3, 1000f },
-                    { 46, 27, 3, 1000f },
-                    { 47, 28, 3, 40f },
-                    { 48, 28, 3, 20f },
-                    { 49, 29, 3, 400f },
-                    { 50, 29, 3, 500f },
-                    { 51, 30, 3, 350f },
-                    { 52, 30, 3, 350f },
-                    { 53, 31, 2, 400f },
-                    { 54, 31, 2, 300f },
-                    { 55, 31, 2, 250f },
-                    { 56, 31, 2, 150f },
-                    { 57, 31, 2, 100f },
-                    { 58, 32, 2, 300f },
-                    { 59, 32, 2, 200f },
-                    { 60, 32, 2, 250f },
-                    { 61, 32, 2, 150f },
-                    { 62, 33, 2, 500f },
-                    { 63, 33, 2, 400f },
-                    { 64, 33, 2, 300f },
-                    { 65, 33, 2, 300f },
-                    { 66, 33, 2, 300f },
-                    { 67, 34, 2, 8000f },
-                    { 68, 34, 2, 7000f },
-                    { 69, 34, 2, 6000f },
-                    { 70, 34, 2, 5000f },
-                    { 71, 34, 2, 4000f },
-                    { 72, 35, 2, 500f },
-                    { 73, 35, 2, 400f },
-                    { 74, 35, 2, 400f },
-                    { 75, 35, 2, 400f },
-                    { 76, 35, 2, 300f },
-                    { 77, 36, 2, 600f },
-                    { 78, 36, 2, 600f },
-                    { 79, 36, 2, 500f },
-                    { 80, 36, 2, 400f },
-                    { 81, 36, 2, 400f },
-                    { 82, 37, 2, 1000f },
-                    { 83, 37, 2, 1000f },
-                    { 84, 37, 2, 800f },
-                    { 85, 37, 2, 700f },
-                    { 86, 37, 2, 500f },
-                    { 87, 38, 2, 20f },
-                    { 88, 38, 2, 20f },
-                    { 89, 38, 2, 15f },
-                    { 90, 38, 2, 15f },
-                    { 91, 39, 2, 300f },
-                    { 92, 39, 2, 250f },
-                    { 93, 39, 2, 200f },
-                    { 94, 39, 2, 150f },
-                    { 95, 39, 2, 100f },
-                    { 96, 40, 2, 300f },
-                    { 97, 40, 2, 200f },
-                    { 98, 40, 2, 200f },
-                    { 99, 40, 2, 100f },
-                    { 100, 41, 3, 1300f },
-                    { 101, 41, 3, 200f },
-                    { 102, 42, 3, 600f },
-                    { 103, 42, 3, 400f },
-                    { 104, 43, 3, 700f },
-                    { 105, 44, 3, 300f },
-                    { 106, 44, 3, 200f },
-                    { 107, 45, 2, 400f },
-                    { 108, 45, 2, 300f },
-                    { 109, 46, 2, 500f },
-                    { 110, 46, 2, 300f },
-                    { 111, 47, 2, 150f },
-                    { 112, 47, 2, 200f },
-                    { 113, 47, 2, 150f },
-                    { 114, 48, 2, 300f },
-                    { 115, 48, 2, 150f },
-                    { 116, 49, 2, 250f },
-                    { 117, 49, 2, 100f },
-                    { 118, 50, 2, 300f },
-                    { 119, 50, 2, 300f },
-                    { 200, 50, 2, 300f },
-                    { 201, 50, 2, 300f },
-                    { 202, 51, 2, 250f },
-                    { 203, 51, 2, 250f },
-                    { 204, 51, 2, 300f },
-                    { 205, 52, 2, 20f },
-                    { 206, 52, 2, 15f },
-                    { 207, 52, 2, 15f },
-                    { 208, 53, 3, 1800f },
-                    { 209, 53, 3, 200f },
-                    { 210, 54, 3, 1500f },
-                    { 211, 54, 3, 500f },
-                    { 212, 55, 3, 2300f },
-                    { 213, 56, 3, 1800f },
-                    { 214, 56, 3, 900f },
-                    { 215, 57, 3, 400f },
-                    { 216, 57, 3, 300f },
-                    { 217, 57, 3, 300f },
-                    { 218, 57, 3, 250f },
-                    { 219, 57, 3, 250f },
-                    { 220, 58, 3, 300f },
-                    { 221, 59, 3, 300f },
-                    { 222, 60, 3, 60f },
-                    { 223, 61, 3, 40f },
-                    { 224, 62, 3, 0.5f },
-                    { 225, 63, 3, 0.5f },
-                    { 226, 64, 3, 6000f },
-                    { 227, 65, 3, 6000f },
-                    { 228, 66, 3, 2500f },
-                    { 229, 67, 3, 2500f },
-                    { 230, 68, 2, 175f },
-                    { 231, 69, 2, 175f },
-                    { 232, 70, 4, 22.5f },
-                    { 233, 70, 4, 22.5f },
-                    { 234, 71, 1, 900f },
-                    { 235, 71, 1, 900f },
-                    { 236, 72, 1, 1f },
-                    { 237, 72, 1, 1f },
-                    { 238, 73, 3, 1f },
-                    { 239, 75, 3, 5000f },
-                    { 240, 76, 3, 5000f },
-                    { 241, 77, 2, 3500f },
-                    { 242, 78, 2, 3500f },
-                    { 243, 79, 4, 3f },
-                    { 244, 80, 1, 7500f },
-                    { 245, 81, 1, 7500f },
-                    { 246, 82, 1, 1250f },
-                    { 247, 82, 1, 1250f }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ExportOrders",
-                columns: new[] { "ID", "ConstructionPlanID", "EmployeeID", "ExportDate" },
-                values: new object[,]
-                {
-                    { 1, 1, "manager1-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 2, "manager2-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Attendances",
-                columns: new[] { "ConstructionTaskID", "EmployeeID", "AttendanceDate", "Status" },
-                values: new object[,]
-                {
-                    { 1, "manager2-id", new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "có mặt" },
-                    { 2, "manager2-id", new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "vắng mặt" }
+                    { 1, null, 1, 3, 150f },
+                    { 2, null, 1, 3, 100f },
+                    { 3, null, 2, 3, 150f },
+                    { 4, null, 2, 3, 100f },
+                    { 5, null, 3, 3, 300f },
+                    { 6, null, 3, 3, 300f },
+                    { 7, null, 4, 3, 300f },
+                    { 8, null, 4, 3, 300f },
+                    { 9, null, 5, 3, 15000f },
+                    { 10, null, 5, 3, 15000f },
+                    { 11, null, 6, 3, 1250f },
+                    { 12, null, 7, 3, 1250f },
+                    { 13, null, 8, 3, 900f },
+                    { 14, null, 8, 3, 900f },
+                    { 15, null, 9, 3, 1100f },
+                    { 16, null, 9, 3, 1100f },
+                    { 17, null, 11, 3, 150f },
+                    { 18, null, 11, 3, 150f },
+                    { 19, null, 12, 3, 5f },
+                    { 20, null, 12, 3, 5f },
+                    { 21, null, 13, 3, 100f },
+                    { 22, null, 13, 3, 50f },
+                    { 23, null, 14, 3, 500f },
+                    { 24, null, 14, 3, 500f },
+                    { 25, null, 15, 3, 600f },
+                    { 26, null, 15, 3, 200f },
+                    { 27, null, 16, 3, 200f },
+                    { 28, null, 17, 3, 400f },
+                    { 29, null, 17, 3, 200f },
+                    { 30, null, 17, 3, 200f },
+                    { 31, null, 18, 3, 500f },
+                    { 32, null, 18, 3, 300f },
+                    { 33, null, 19, 3, 200f },
+                    { 34, null, 19, 3, 100f },
+                    { 35, null, 20, 3, 600f },
+                    { 36, null, 20, 3, 600f },
+                    { 37, null, 21, 3, 12000f },
+                    { 38, null, 22, 3, 13000f },
+                    { 39, null, 23, 3, 900f },
+                    { 40, null, 24, 3, 300f },
+                    { 41, null, 24, 3, 600f },
+                    { 42, null, 25, 3, 1500f },
+                    { 43, null, 25, 3, 500f },
+                    { 44, null, 26, 3, 1500f },
+                    { 45, null, 26, 3, 1000f },
+                    { 46, null, 27, 3, 1000f },
+                    { 47, null, 28, 3, 40f },
+                    { 48, null, 28, 3, 20f },
+                    { 49, null, 29, 3, 400f },
+                    { 50, null, 29, 3, 500f },
+                    { 51, null, 30, 3, 350f },
+                    { 52, null, 30, 3, 350f },
+                    { 53, null, 31, 2, 400f },
+                    { 54, null, 31, 2, 300f },
+                    { 55, null, 31, 2, 250f },
+                    { 56, null, 31, 2, 150f },
+                    { 57, null, 31, 2, 100f },
+                    { 58, null, 32, 2, 300f },
+                    { 59, null, 32, 2, 200f },
+                    { 60, null, 32, 2, 250f },
+                    { 61, null, 32, 2, 150f },
+                    { 62, null, 33, 2, 500f },
+                    { 63, null, 33, 2, 400f },
+                    { 64, null, 33, 2, 300f },
+                    { 65, null, 33, 2, 300f },
+                    { 66, null, 33, 2, 300f },
+                    { 67, null, 34, 2, 8000f },
+                    { 68, null, 34, 2, 7000f },
+                    { 69, null, 34, 2, 6000f },
+                    { 70, null, 34, 2, 5000f },
+                    { 71, null, 34, 2, 4000f },
+                    { 72, null, 35, 2, 500f },
+                    { 73, null, 35, 2, 400f },
+                    { 74, null, 35, 2, 400f },
+                    { 75, null, 35, 2, 400f },
+                    { 76, null, 35, 2, 300f },
+                    { 77, null, 36, 2, 600f },
+                    { 78, null, 36, 2, 600f },
+                    { 79, null, 36, 2, 500f },
+                    { 80, null, 36, 2, 400f },
+                    { 81, null, 36, 2, 400f },
+                    { 82, null, 37, 2, 1000f },
+                    { 83, null, 37, 2, 1000f },
+                    { 84, null, 37, 2, 800f },
+                    { 85, null, 37, 2, 700f },
+                    { 86, null, 37, 2, 500f },
+                    { 87, null, 38, 2, 20f },
+                    { 88, null, 38, 2, 20f },
+                    { 89, null, 38, 2, 15f },
+                    { 90, null, 38, 2, 15f },
+                    { 91, null, 39, 2, 300f },
+                    { 92, null, 39, 2, 250f },
+                    { 93, null, 39, 2, 200f },
+                    { 94, null, 39, 2, 150f },
+                    { 95, null, 39, 2, 100f },
+                    { 96, null, 40, 2, 300f },
+                    { 97, null, 40, 2, 200f },
+                    { 98, null, 40, 2, 200f },
+                    { 99, null, 40, 2, 100f },
+                    { 100, null, 41, 3, 1300f },
+                    { 101, null, 41, 3, 200f },
+                    { 102, null, 42, 3, 600f },
+                    { 103, null, 42, 3, 400f },
+                    { 104, null, 43, 3, 700f },
+                    { 105, null, 44, 3, 300f },
+                    { 106, null, 44, 3, 200f },
+                    { 107, null, 45, 2, 400f },
+                    { 108, null, 45, 2, 300f },
+                    { 109, null, 46, 2, 500f },
+                    { 110, null, 46, 2, 300f },
+                    { 111, null, 47, 2, 150f },
+                    { 112, null, 47, 2, 200f },
+                    { 113, null, 47, 2, 150f },
+                    { 114, null, 48, 2, 300f },
+                    { 115, null, 48, 2, 150f },
+                    { 116, null, 49, 2, 250f },
+                    { 117, null, 49, 2, 100f },
+                    { 118, null, 50, 2, 300f },
+                    { 119, null, 50, 2, 300f },
+                    { 200, null, 50, 2, 300f },
+                    { 201, null, 50, 2, 300f },
+                    { 202, null, 51, 2, 250f },
+                    { 203, null, 51, 2, 250f },
+                    { 204, null, 51, 2, 300f },
+                    { 205, null, 52, 2, 20f },
+                    { 206, null, 52, 2, 15f },
+                    { 207, null, 52, 2, 15f },
+                    { 208, null, 53, 3, 1800f },
+                    { 209, null, 53, 3, 200f },
+                    { 210, null, 54, 3, 1500f },
+                    { 211, null, 54, 3, 500f },
+                    { 212, null, 55, 3, 2300f },
+                    { 213, null, 56, 3, 1800f },
+                    { 214, null, 56, 3, 900f },
+                    { 215, null, 57, 3, 400f },
+                    { 216, null, 57, 3, 300f },
+                    { 217, null, 57, 3, 300f },
+                    { 218, null, 57, 3, 250f },
+                    { 219, null, 57, 3, 250f },
+                    { 220, null, 58, 3, 300f },
+                    { 221, null, 59, 3, 300f },
+                    { 222, null, 60, 3, 60f },
+                    { 223, null, 61, 3, 40f },
+                    { 224, null, 62, 3, 0.5f },
+                    { 225, null, 63, 3, 0.5f },
+                    { 226, null, 64, 3, 6000f },
+                    { 227, null, 65, 3, 6000f },
+                    { 228, null, 66, 3, 2500f },
+                    { 229, null, 67, 3, 2500f },
+                    { 230, null, 68, 2, 175f },
+                    { 231, null, 69, 2, 175f },
+                    { 232, null, 70, 4, 22.5f },
+                    { 233, null, 70, 4, 22.5f },
+                    { 234, null, 71, 1, 900f },
+                    { 235, null, 71, 1, 900f },
+                    { 236, null, 72, 1, 1f },
+                    { 237, null, 72, 1, 1f },
+                    { 238, null, 73, 3, 1f },
+                    { 239, null, 75, 3, 5000f },
+                    { 240, null, 76, 3, 5000f },
+                    { 241, null, 77, 2, 3500f },
+                    { 242, null, 78, 2, 3500f },
+                    { 243, null, 79, 4, 3f },
+                    { 244, null, 80, 1, 7500f },
+                    { 245, null, 81, 1, 7500f },
+                    { 246, null, 82, 1, 1250f },
+                    { 247, null, 82, 1, 1250f }
                 });
 
             migrationBuilder.InsertData(
@@ -1686,6 +1678,15 @@ namespace dotnet_api.Migrations
                     { 1, 1, 20 },
                     { 1, 2, 10 },
                     { 2, 3, 15 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Attendances",
+                columns: new[] { "AttendanceDate", "ConstructionTaskID", "EmployeeID", "Status" },
+                values: new object[,]
+                {
+                    { new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "manager2-id", "có mặt" },
+                    { new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "manager2-id", "vắng mặt" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1803,9 +1804,9 @@ namespace dotnet_api.Migrations
                 column: "WorkSubTypeVarientID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExportOrders_ConstructionPlanID",
+                name: "IX_ExportOrders_ConstructionItemID",
                 table: "ExportOrders",
-                column: "ConstructionPlanID");
+                column: "ConstructionItemID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExportOrders_EmployeeID",

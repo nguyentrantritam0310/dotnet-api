@@ -75,7 +75,12 @@ namespace dotnet_api.Controllers
         {
             if (id != reportDTO.ID)
             {
-                return BadRequest();
+                return BadRequest(new { message = "ID mismatch" });
+            }
+
+            if (string.IsNullOrEmpty(reportDTO.Content) || string.IsNullOrEmpty(reportDTO.Level))
+            {
+                return BadRequest(new { message = "Content and Level are required fields" });
             }
 
             try
@@ -83,7 +88,31 @@ namespace dotnet_api.Controllers
                 var updatedReport = await _reportService.UpdateReportAsync(reportDTO);
                 if (updatedReport == null)
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Report not found" });
+                }
+
+                return Ok(updatedReport);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] ReportUpdateStatusDTO statusDTO)
+        {
+            if (id != statusDTO.ID)
+            {
+                return BadRequest(new { message = "ID mismatch" });
+            }
+
+            try
+            {
+                var updatedReport = await _reportService.UpdateReportStatusAsync(id, statusDTO);
+                if (updatedReport == null)
+                {
+                    return NotFound(new { message = "Report not found" });
                 }
 
                 return Ok(updatedReport);

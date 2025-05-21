@@ -41,14 +41,14 @@ namespace dotnet_api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] MaterialDTO MaterialDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] MaterialDTOPOST materialDTO)
         {
-            if (id != MaterialDTO.ID)
+            if (id != materialDTO.ID)
             {
                 return BadRequest();
             }
 
-            var updatedMaterial = await _MaterialService.UpdateMaterialAsync(MaterialDTO);
+            var updatedMaterial = await _MaterialService.UpdateMaterialAsync(materialDTO);
             if (updatedMaterial == null)
             {
                 return NotFound();

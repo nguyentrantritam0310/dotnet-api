@@ -48,7 +48,7 @@ namespace dotnet_api.Services
             return _mapper.Map<IEnumerable<MaterialDTO>>(Materials);
         }
 
-        public async Task<MaterialDTO> UpdateMaterialAsync(MaterialDTO MaterialDTO)
+        public async Task<MaterialDTO> UpdateMaterialAsync(MaterialDTOPOST MaterialDTO)
         {
             var existingMaterial = await _context.Materials.FindAsync(MaterialDTO.ID);
             if (existingMaterial == null)

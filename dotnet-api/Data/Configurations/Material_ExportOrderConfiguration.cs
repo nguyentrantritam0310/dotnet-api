@@ -16,7 +16,7 @@ namespace dotnet_api.Data.Configurations
                 .IsRequired(); 
 
             builder.HasOne(x => x.ExportOrder)
-                .WithMany(eo => eo.Material_ExportOrder)
+                .WithMany(eo => eo.Material_ExportOrders)
                 .HasForeignKey(x => x.ExportOrderID)
                 .OnDelete(DeleteBehavior.Cascade); 
 

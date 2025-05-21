@@ -10,7 +10,7 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("Attendances");
 
-            builder.HasKey(x => new { x.EmployeeID, x.ConstructionTaskID });
+            builder.HasKey(x => new { x.EmployeeID, x.ConstructionTaskID, x.AttendanceDate });
 
             builder.Property(x => x.AttendanceDate)
                    .IsRequired();

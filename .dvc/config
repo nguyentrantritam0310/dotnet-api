@@ -1,0 +1,8 @@
+[core]
+    remote = mygdrive
+['remote "myremote"']
+    url = gdrive://1ZR8GEddbQyJpU5lpBZKnZpOvoEL8-amV
+['remote "mygdrive"']
+    url = gdrive://1ZR8GEddbQyJpU5lpBZKnZpOvoEL8-amV
+    gdrive_use_service_account = true
+    gdrive_service_account_json_file_path = C:\Users\nguye\Downloads\dvc-storage-project-a6934619ccf5.json

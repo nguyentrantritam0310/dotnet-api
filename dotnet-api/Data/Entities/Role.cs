@@ -6,6 +6,6 @@ namespace dotnet_api.Data.Entities
         public string RoleName { get; set; }
 
         // Navigation properties
-        public ICollection<Employee> Employees { get; set; }
+        public ICollection<ApplicationUser> Users { get; set; }
     }
 }

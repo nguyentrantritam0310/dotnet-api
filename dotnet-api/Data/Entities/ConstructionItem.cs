@@ -8,7 +8,6 @@ namespace dotnet_api.Data.Entities
         public int ConstructionID { get; set; }
         public int UnitOfMeasurementID { get; set; }
         public string ConstructionItemName { get; set; }
-        public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime ExpectedCompletionDate { get; set; }
         public DateTime? ActualCompletionDate { get; set; }
@@ -19,7 +18,9 @@ namespace dotnet_api.Data.Entities
         public UnitofMeasurement UnitOfMeasurement { get; set; }
         public ConstructionStatus ConstructionStatus { get; set; }
         public WorkSubTypeVariant WorkSubTypeVariant { get; set; }
+        public ICollection<MaterialPlan> MaterialPlans { get; set; }
         public ICollection<ConstructionPlan> ConstructionPlans { get; set; }
+        public ICollection<ExportOrder> ExportOrders { get; set; }
 
     }
 }

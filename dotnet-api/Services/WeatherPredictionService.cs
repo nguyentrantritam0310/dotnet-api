@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace dotnet_api.Services
 {
@@ -10,10 +11,12 @@ namespace dotnet_api.Services
         {
             try
             {
+                var latStr = lat.ToString(CultureInfo.InvariantCulture);
+                var lngStr = lng.ToString(CultureInfo.InvariantCulture);
                 var psi = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"../dotnet-api/MachineLearning/predict_rf_7days.py {lat} {lng}",
+                    Arguments = $"../dotnet-api/MachineLearning/predict_rf_7days.py {latStr} {lngStr}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,

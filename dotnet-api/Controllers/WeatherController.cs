@@ -21,6 +21,8 @@ namespace dotnet_api.Controllers
         [HttpGet("predict")]
         public ActionResult<JObject> Predict([FromQuery] double lat, [FromQuery] double lng)
         {
+            Console.WriteLine(lat);
+            Console.WriteLine(lng);
             try
             {
                 // Call the weather prediction service with coordinates

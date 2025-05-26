@@ -173,12 +173,13 @@ def fetch_weather_data(lat: float, lng: float) -> Tuple[Optional[pd.DataFrame], 
     try:
         today = datetime.now().date()
         five_years_ago = today - timedelta(days=MAX_HISTORY_DAYS)
+        end_date = today - timedelta(days=1)
         
         params = {
             "latitude": lat,
             "longitude": lng,
             "start_date": five_years_ago.strftime('%Y-%m-%d'),
-            "end_date": today.strftime('%Y-%m-%d'),
+            "end_date": end_date.strftime('%Y-%m-%d'),
             "daily": ",".join([
                 "temperature_2m_max", "temperature_2m_min", "apparent_temperature_max",
                 "apparent_temperature_min", "precipitation_sum", "rain_sum",

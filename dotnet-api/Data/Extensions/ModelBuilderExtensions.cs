@@ -75,7 +75,9 @@ namespace dotnet_api.Data.Extensions
                 SecurityStamp = Guid.Parse("427bafc5-bab1-42e5-a5d2-5974daf31890").ToString()
             };
             //giamdoc@123
-            adminUser.PasswordHash = "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==";
+            var password = "giamdoc1@123";
+            //adminUser.PasswordHash = "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==";
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, password); ;
 
             // Add static DateTime values for RefreshTokenExpiryTime
             adminUser.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);

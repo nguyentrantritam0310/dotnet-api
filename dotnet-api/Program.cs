@@ -19,6 +19,7 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://*:80");
 
 // Add services to the container.
 builder.Services.AddControllers();

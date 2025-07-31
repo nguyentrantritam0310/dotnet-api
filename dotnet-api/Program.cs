@@ -19,7 +19,8 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://*:80");
+var port = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "5244" : "5000";
+builder.WebHost.UseUrls($"http://localhost:{port}");
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -117,15 +118,30 @@ builder.Services.AddAuthentication(options =>
 // Register JwtService
 builder.Services.AddScoped<JwtService>();
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll",
+//        builder =>
+//        {
+//            builder.AllowAnyOrigin()
+//                   .AllowAnyMethod()
+//                   .AllowAnyHeader();
+//        });
+//});
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowFrontendDomains", policy =>
+    {
+        policy.WithOrigins(
+            "https://nhansu.xaydungvipro.id.vn",
+            "https://congtrinh.xaydungvipro.id.vn",
+            "http://localhost:5173"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials(); // nếu có gửi cookie, auth...
+    });
 });
 
 builder.Services.AddScoped<DataInitializer>();
@@ -142,7 +158,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontendDomains");
 
 app.UseAuthentication();
 app.UseAuthorization();

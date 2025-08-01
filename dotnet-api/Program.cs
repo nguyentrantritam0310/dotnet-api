@@ -129,19 +129,31 @@ builder.Services.AddScoped<JwtService>();
 //        });
 //});
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowFrontendDomains", policy =>
+//    {
+//        policy.WithOrigins(
+//            "https://nhansu.xaydungvipro.id.vn",
+//            "https://congtrinh.xaydungvipro.id.vn",
+//            "http://localhost:5173",
+//            "160.250.132.226"
+//        )
+//        .AllowAnyHeader()
+//        .AllowAnyMethod()
+//        .AllowCredentials(); // nếu có gửi cookie, auth...
+//    });
+//});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendDomains", policy =>
     {
-        policy.WithOrigins(
-            "https://nhansu.xaydungvipro.id.vn",
-            "https://congtrinh.xaydungvipro.id.vn",
-            "http://localhost:5173",
-            "160.250.132.226"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials(); // nếu có gửi cookie, auth...
+        policy
+            .SetIsOriginAllowed(origin => true) // chấp tất cả domain (test tạm)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "5244" : "5000";
@@ -35,6 +36,13 @@ builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = int.MaxValue;
 });
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -118,44 +126,44 @@ builder.Services.AddAuthentication(options =>
 // Register JwtService
 builder.Services.AddScoped<JwtService>();
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAll",
-//        builder =>
-//        {
-//            builder.AllowAnyOrigin()
-//                   .AllowAnyMethod()
-//                   .AllowAnyHeader();
-//        });
-//});
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowFrontendDomains", policy =>
-//    {
-//        policy.WithOrigins(
-//            "https://nhansu.xaydungvipro.id.vn",
-//            "https://congtrinh.xaydungvipro.id.vn",
-//            "http://localhost:5173",
-//            "160.250.132.226"
-//        )
-//        .AllowAnyHeader()
-//        .AllowAnyMethod()
-//        .AllowCredentials(); // nếu có gửi cookie, auth...
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendDomains", policy =>
     {
-        policy
-            .SetIsOriginAllowed(origin => true) // chấp tất cả domain (test tạm)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        policy.WithOrigins(
+            "https://nhansu.xaydungvipro.id.vn",
+            "https://congtrinh.xaydungvipro.id.vn",
+            "http://localhost:5173",
+            "160.250.132.226"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials(); // nếu có gửi cookie, auth...
     });
 });
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowFrontendDomains", policy =>
+//    {
+//        policy
+//            .SetIsOriginAllowed(origin => true) // chấp tất cả domain (test tạm)
+//            .AllowAnyHeader()
+//            .AllowAnyMethod()
+//            .AllowCredentials();
+//    });
+//});
 
 builder.Services.AddScoped<DataInitializer>();
 
@@ -170,6 +178,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+app.UseForwardedHeaders();
 
 app.UseCors("AllowFrontendDomains");
 

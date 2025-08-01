@@ -38,9 +38,8 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: root
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "dotnet-api/publish/**"
+        source: "dotnet-api/publish/*"
         target: "/var/www/backend"
-        strip_components: 1
 
     - name: Restart backend service
       uses: appleboy/ssh-action@master

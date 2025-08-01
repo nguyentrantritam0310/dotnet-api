@@ -79,7 +79,7 @@ builder.Services.AddScoped<IUnitofMeasurementService, UnitofMeasurementService>(
 builder.Services.AddScoped<IWorkSubTypeVariantService, WorkSubTypeVariantService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
-builder.Services.AddScoped<WeatherPredictionService>();
+builder.Services.AddScoped<WeatherPredictionService>(); 
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

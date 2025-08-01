@@ -7,6 +7,11 @@ namespace dotnet_api.Services
 {
     public class WeatherPredictionService
     {
+        private readonly string _pythonScriptPath;
+        public WeatherPredictionService(IConfiguration configuration)
+        {
+            _pythonScriptPath = configuration["ML:PythonScriptPath"];
+        }
         public string PredictWeather7Days(double lat, double lng)
         {
             try
@@ -16,7 +21,7 @@ namespace dotnet_api.Services
                 var psi = new ProcessStartInfo
                 {
                     FileName = "python",
-                    Arguments = $"../dotnet-api/MachineLearning/predict_rf_7days.py {latStr} {lngStr}",
+                    Arguments = $"{_pythonScriptPath} {latStr} {lngStr}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,

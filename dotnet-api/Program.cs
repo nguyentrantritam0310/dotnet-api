@@ -20,7 +20,7 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "5244" : "5000";
-builder.WebHost.UseUrls($"http://localhost:{port}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Add services to the container.
 builder.Services.AddControllers();

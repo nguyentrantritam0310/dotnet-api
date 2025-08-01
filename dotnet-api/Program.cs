@@ -136,7 +136,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://nhansu.xaydungvipro.id.vn",
             "https://congtrinh.xaydungvipro.id.vn",
-            "http://localhost:5173"
+            "http://localhost:5173",
+            "http://160.250.132.226/"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()

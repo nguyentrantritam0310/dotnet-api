@@ -8,9 +8,11 @@ namespace dotnet_api.Services
     public class WeatherPredictionService
     {
         private readonly string _pythonScriptPath;
+        private readonly string _pythonInterpreter;
         public WeatherPredictionService(IConfiguration configuration)
         {
             _pythonScriptPath = configuration["ML:PythonScriptPath"];
+            _pythonInterpreter = configuration["ML:PythonInterpreter"];
         }
         public string PredictWeather7Days(double lat, double lng)
         {
@@ -20,7 +22,7 @@ namespace dotnet_api.Services
                 var lngStr = lng.ToString(CultureInfo.InvariantCulture);
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "python",
+                    FileName = _pythonInterpreter,
                     Arguments = $"{_pythonScriptPath} {latStr} {lngStr}",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

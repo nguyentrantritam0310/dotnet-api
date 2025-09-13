@@ -34,8 +34,10 @@ namespace dotnet_api.Data
         public DbSet<ReportAttachment> ReportAttachments { get; set; }
         public DbSet<ReportStatusLog> ReportStatusLogs { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<ShiftDetail> ShiftDetails { get; set; }
         public DbSet<UnitofMeasurement> UnitofMeasuremens { get; set; }
         public DbSet<WorkAttribute> WorkAttributes { get; set; }
+        public DbSet<WorkShift> WorkShifts { get; set; }
         public DbSet<WorkSubType> WorkSubTypes { get; set; }
         public DbSet<WorkSubTypeVariant_WorkAttribute> WorkSubTypeVariant_WorkAttributes { get; set; }
         public DbSet<WorkSubTypeVariant> WorkSubTypeVariants { get; set; }

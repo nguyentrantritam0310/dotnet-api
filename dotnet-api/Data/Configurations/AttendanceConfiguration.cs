@@ -10,7 +10,7 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("Attendances");
 
-            builder.HasKey(x => new { x.EmployeeID, x.ConstructionTaskID, x.AttendanceDate });
+            builder.HasKey(x => new { x.EmployeeID, x.WorkShiftID, x.AttendanceDate });
 
             builder.Property(x => x.AttendanceDate)
                    .IsRequired();
@@ -22,9 +22,9 @@ namespace dotnet_api.Data.Configurations
                    .WithMany(e => e.Attendances)
                    .HasForeignKey(x => x.EmployeeID);
             
-            builder.HasOne(x => x.ConstructionTask)
+            builder.HasOne(x => x.WorkShift)
                    .WithMany(t => t.Attendances)
-                   .HasForeignKey(x => x.ConstructionTaskID);
+                   .HasForeignKey(x => x.WorkShiftID);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace dotnet_api.Data.Entities
         // Navigation properties
         public ConstructionPlan ConstructionPlan { get; set; }
         public ConstructionStatus ConstructionStatus { get; set; }
-        public ICollection<Attendance> Attendances { get; set; }
+        public ICollection<ShiftAssignment> Attendances { get; set; }
 
     }
 }

@@ -13,8 +13,9 @@ namespace dotnet_api.Data
         {
         }
 
-        public DbSet<Attendance> Attendances { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<AttendanceMachine> AttendanceMachines { get; set; }
         public DbSet<Construction> Constructions { get; set; }
         public DbSet<ConstructionItem> ConstructionItems { get; set; }
         public DbSet<ConstructionPlan> ConstructionPlans { get; set; }
@@ -34,8 +35,11 @@ namespace dotnet_api.Data
         public DbSet<ReportAttachment> ReportAttachments { get; set; }
         public DbSet<ReportStatusLog> ReportStatusLogs { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<ShiftAssignment> ShiftAssignments { get; set; }
+        public DbSet<ShiftDetail> ShiftDetails { get; set; }
         public DbSet<UnitofMeasurement> UnitofMeasuremens { get; set; }
         public DbSet<WorkAttribute> WorkAttributes { get; set; }
+        public DbSet<WorkShift> WorkShifts { get; set; }
         public DbSet<WorkSubType> WorkSubTypes { get; set; }
         public DbSet<WorkSubTypeVariant_WorkAttribute> WorkSubTypeVariant_WorkAttributes { get; set; }
         public DbSet<WorkSubTypeVariant> WorkSubTypeVariants { get; set; }
@@ -94,6 +98,7 @@ namespace dotnet_api.Data
 
             // Apply configurations
             modelBuilder.ApplyConfiguration(new AttendanceConfiguration());
+            modelBuilder.ApplyConfiguration(new AttendanceMachineConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionItemConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionPlanConfiguration());
@@ -113,8 +118,11 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ReportAttachmentConfiguration());
             modelBuilder.ApplyConfiguration(new ReportStatusLogConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new ShiftAssignmentConfiguration());
+            modelBuilder.ApplyConfiguration(new ShiftDetailConfiguration());
             modelBuilder.ApplyConfiguration(new UnitofMeasurementConfiguration());
             modelBuilder.ApplyConfiguration(new WorkAttributeConfiguration());
+            modelBuilder.ApplyConfiguration(new WorkShiftConfiguration());
             modelBuilder.ApplyConfiguration(new WorkSubTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkSubTypeVariant_WorkAttributeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkSubTypeVariantConfiguration());

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace dotnet_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -92,6 +92,19 @@ namespace dotnet_api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UnitofMeasurements", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkShifts",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ShiftName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkShifts", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -247,6 +260,30 @@ namespace dotnet_api.Migrations
                         name: "FK_WorkAttributes_UnitofMeasurements_UnitOfMeasurementID",
                         column: x => x.UnitOfMeasurementID,
                         principalTable: "UnitofMeasurements",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShiftDetails",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkShiftID = table.Column<int>(type: "int", nullable: false),
+                    DayOfWeek = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    BreakStart = table.Column<TimeSpan>(type: "time", nullable: false),
+                    BreakEnd = table.Column<TimeSpan>(type: "time", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftDetails", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ShiftDetails_WorkShifts_WorkShiftID",
+                        column: x => x.WorkShiftID,
+                        principalTable: "WorkShifts",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -764,29 +801,59 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Attendances",
+                name: "ShiftAssignments",
                 columns: table => new
                 {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeID = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ConstructionTaskID = table.Column<int>(type: "int", nullable: false),
-                    AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    WorkShiftID = table.Column<int>(type: "int", nullable: false),
+                    WorkDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ConstructionTaskID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Attendances", x => new { x.EmployeeID, x.ConstructionTaskID, x.AttendanceDate });
+                    table.PrimaryKey("PK_ShiftAssignments", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Attendances_AspNetUsers_EmployeeID",
+                        name: "FK_ShiftAssignments_AspNetUsers_EmployeeID",
                         column: x => x.EmployeeID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Attendances_ConstructionTasks_ConstructionTaskID",
+                        name: "FK_ShiftAssignments_ConstructionTasks_ConstructionTaskID",
                         column: x => x.ConstructionTaskID,
                         principalTable: "ConstructionTasks",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_ShiftAssignments_WorkShifts_WorkShiftID",
+                        column: x => x.WorkShiftID,
+                        principalTable: "WorkShifts",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attendances",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ShiftAssignmentID = table.Column<int>(type: "int", nullable: true),
+                    CheckIn = table.Column<TimeSpan>(type: "time", nullable: true),
+                    CheckOut = table.Column<TimeSpan>(type: "time", nullable: true),
+                    ImageCheckIn = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageCheckOut = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attendances", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Attendances_ShiftAssignments_ShiftAssignmentID",
+                        column: x => x.ShiftAssignmentID,
+                        principalTable: "ShiftAssignments",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.InsertData(
@@ -877,6 +944,11 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "WorkShifts",
+                columns: new[] { "ID", "ShiftName" },
+                values: new object[] { 1, "Ca Hành Chính" });
+
+            migrationBuilder.InsertData(
                 table: "WorkTypeItems",
                 columns: new[] { "ID", "WorkTypeName" },
                 values: new object[,]
@@ -895,18 +967,18 @@ namespace dotnet_api.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "Phone", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "RoleID", "SecurityStamp", "Status", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin-id", 0, "9b49fe6a-c98e-4ecc-9ae2-98b982ece97d", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAEMdV6GUkfs6qwgt02YnxYDhvTinyv50xpvMUpXyuO9m3sGtqIVUTHtZPUp1rJiRVow==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
-                    { "manager1-id", 0, "99973de2-2483-4312-8aa7-b2ffadaa232e", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
-                    { "manager2-id", 0, "cda1d267-00de-429c-8b6f-e0d724715104", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
-                    { "manager3-id", 0, "e0f393c8-f2ee-48be-b86f-a4c48dfe2ee1", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
-                    { "tech1-id", 0, "c3ed808c-036f-4f23-8710-cbf6ad3a3943", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
-                    { "tech2-id", 0, "8cde40de-21e2-4f76-80af-fd9df353605c", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
-                    { "tech3-id", 0, "f811d542-31a6-4018-8a2c-0a86f3cb3217", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
-                    { "worker1-id", 0, "495f9dda-00ab-424d-abe5-e159e6ec6f81", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
-                    { "worker2-id", 0, "d96c1224-d714-4ee9-bcea-b4ef0cf809e7", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
-                    { "worker3-id", 0, "6e639e64-62b3-41e5-80ef-e90fd781ac65", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
-                    { "worker4-id", 0, "4f1122ef-230a-4b98-bcd1-14c6fd70fb77", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
-                    { "worker5-id", 0, "80ced72a-0350-4673-9aad-75b7eece1d4c", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
+                    { "admin-id", 0, "39e5bef2-3e80-4a35-8f94-37853adf8309", "giamdoc@company.com", true, "Phạm", "Văn Đốc", false, null, "GIAMDOC@COMPANY.COM", "GIAMDOC@COMPANY.COM", "AQAAAAIAAYagAAAAECUN4pmhpE38IQFhnqBkCy9nIABQCdFvv0/Q+WKQ6G+DtSmsslD0npfKSLNal7X+7Q==", "0901234567", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "427bafc5-bab1-42e5-a5d2-5974daf31890", "Active", false, "giamdoc@company.com" },
+                    { "manager1-id", 0, "c5502e20-abe2-4d69-8bc9-c3039a81a381", "chihuy1@company.com", true, "Nguyễn", "Chỉ Huy", false, null, "CHIHUY1@COMPANY.COM", "CHIHUY1@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0912345678", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "227cd1d8-ed74-4f96-9851-ee15b48f8cf2", "Active", false, "chihuy1@company.com" },
+                    { "manager2-id", 0, "02acfdfd-677d-4785-82db-d42acc99a125", "chihuy2@company.com", true, "Trần", "Công Trình", false, null, "CHIHUY2@COMPANY.COM", "CHIHUY2@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0923456789", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "f6ab69f9-8a13-4414-81bd-77603126dc4d", "Active", false, "chihuy2@company.com" },
+                    { "manager3-id", 0, "755c7449-e07d-4c90-abc5-f9a4fd2c8d6f", "chihuy3@company.com", true, "Lê", "Xây Dựng", false, null, "CHIHUY3@COMPANY.COM", "CHIHUY3@COMPANY.COM", "AQAAAAIAAYagAAAAELES7SRaXmuGGtS6MEV0kzUq5SDOWE6ecydmGrGSbAOdCl60MK87guvf2UERMAi9zg==", "0934567890", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e", "Active", false, "chihuy3@company.com" },
+                    { "tech1-id", 0, "2183c146-ef9b-4f12-8340-28bea9caf25e", "kythuat1@company.com", true, "Hoàng", "Kỹ Thuật", false, null, "KYTHUAT1@COMPANY.COM", "KYTHUAT1@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0945678901", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "6ffe7424-9000-41e1-871b-e744671266a6", "Active", false, "kythuat1@company.com" },
+                    { "tech2-id", 0, "a4c64207-cca1-4000-9cdc-65a236201407", "kythuat2@company.com", true, "Phan", "Thiết Kế", false, null, "KYTHUAT2@COMPANY.COM", "KYTHUAT2@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0956789012", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "18d4d1bc-78ea-445f-a362-d544e9ea1a9d", "Active", false, "kythuat2@company.com" },
+                    { "tech3-id", 0, "2bf44071-603f-4db2-acaa-7b2d3affeb49", "kythuat3@company.com", true, "Vũ", "Vận Hành", false, null, "KYTHUAT3@COMPANY.COM", "KYTHUAT3@COMPANY.COM", "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==", "0967890123", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "5f694007-36b9-4dbe-8a38-196c05e82cb2", "Active", false, "kythuat3@company.com" },
+                    { "worker1-id", 0, "d0624342-dc7e-4b5d-a6e4-77bfbbb574e3", "tho1@company.com", true, "Đinh", "Văn Thợ", false, null, "THO1@COMPANY.COM", "THO1@COMPANY.COM", null, "0978901234", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "2180abeb-5218-4df0-b695-2be63b8b8cd1", "Active", false, "tho1@company.com" },
+                    { "worker2-id", 0, "7fe06cf4-cbc6-4f0d-b9ae-2157d4724a81", "tho2@company.com", true, "Mai", "Thị Hàn", false, null, "THO2@COMPANY.COM", "THO2@COMPANY.COM", null, "0989012345", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "eba6051e-c6ac-4847-baca-1f886c385128", "Active", false, "tho2@company.com" },
+                    { "worker3-id", 0, "df74b2df-0255-487e-af29-9e1fc878f06c", "tho3@company.com", true, "Lý", "Văn Xây", false, null, "THO3@COMPANY.COM", "THO3@COMPANY.COM", null, "0990123456", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "4933e54c-c4fd-4875-9508-edc952ae52e3", "Active", false, "tho3@company.com" },
+                    { "worker4-id", 0, "09737faa-2be7-4ec2-b443-8085cf372781", "tho4@company.com", true, "Trịnh", "Công Mộc", false, null, "THO4@COMPANY.COM", "THO4@COMPANY.COM", null, "0911223344", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "f9757b33-c60a-4995-b62f-d0c899b42c68", "Active", false, "tho4@company.com" },
+                    { "worker5-id", 0, "c4317237-3ce4-4eaa-845a-f4f30e21759f", "tho5@company.com", true, "Võ", "Thị Sơn", false, null, "THO5@COMPANY.COM", "THO5@COMPANY.COM", null, "0922334455", null, false, null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d", "Active", false, "tho5@company.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -976,6 +1048,19 @@ namespace dotnet_api.Migrations
                     { 46, "Biển báo an toàn công trình", 5, "Theo tiêu chuẩn ISO 7010", "Nhựa PVC dày 3mm, kích thước 30x40cm", "Còn hàng", 50, 3, 120000m },
                     { 47, "Que hàn điện YAWATA-50", 5, "Dùng cho hàn kết cấu thép", "Điện cực thép cacbon E6013, Φ3.2mm", "Còn hàng", 500, 1, 48000m },
                     { 48, "Răng cào máy đào", 5, "Phụ tùng cho máy cào bóc", "Hợp kim thép chịu mài mòn cao", "Còn hàng", 100, 3, 650000m }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ShiftDetails",
+                columns: new[] { "ID", "BreakEnd", "BreakStart", "DayOfWeek", "EndTime", "StartTime", "WorkShiftID" },
+                values: new object[,]
+                {
+                    { 1, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 2", new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 },
+                    { 2, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 3", new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 },
+                    { 3, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 4", new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 },
+                    { 4, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 5", new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 },
+                    { 5, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 6", new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 },
+                    { 6, new TimeSpan(0, 12, 0, 0, 0), new TimeSpan(0, 12, 0, 0, 0), "Thứ 7", new TimeSpan(0, 12, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0), 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -1087,6 +1172,16 @@ namespace dotnet_api.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "ShiftAssignments",
+                columns: new[] { "ID", "ConstructionTaskID", "EmployeeID", "WorkDate", "WorkShiftID" },
+                values: new object[,]
+                {
+                    { 1, null, "manager1-id", new DateTime(2025, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 2, null, "manager1-id", new DateTime(2025, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 3, null, "manager1-id", new DateTime(2025, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "WorkSubTypeVariants",
                 columns: new[] { "ID", "Description", "WorkSubTypeID" },
                 values: new object[,]
@@ -1128,6 +1223,11 @@ namespace dotnet_api.Migrations
                     { 35, "Chiếu sáng công viên", 18 },
                     { 36, "Chiếu sáng đường phố", 18 }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Attendances",
+                columns: new[] { "ID", "CheckIn", "CheckOut", "ImageCheckIn", "ImageCheckOut", "ShiftAssignmentID", "Status" },
+                values: new object[] { 1, new TimeSpan(0, 8, 0, 0, 0), new TimeSpan(0, 17, 0, 0, 0), "/uploads/attendace/worker1-20240912-checkin.jpg", "/uploads/attendace/worker1-20240912-checkin.jpg", 1, 0 });
 
             migrationBuilder.InsertData(
                 table: "ConstructionItems",
@@ -1680,15 +1780,6 @@ namespace dotnet_api.Migrations
                     { 2, 3, 15 }
                 });
 
-            migrationBuilder.InsertData(
-                table: "Attendances",
-                columns: new[] { "AttendanceDate", "ConstructionTaskID", "EmployeeID", "Status" },
-                values: new object[,]
-                {
-                    { new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "manager2-id", "có mặt" },
-                    { new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "manager2-id", "vắng mặt" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -1734,9 +1825,11 @@ namespace dotnet_api.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attendances_ConstructionTaskID",
+                name: "IX_Attendances_ShiftAssignmentID",
                 table: "Attendances",
-                column: "ConstructionTaskID");
+                column: "ShiftAssignmentID",
+                unique: true,
+                filter: "[ShiftAssignmentID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConstructionItems_ConstructionID",
@@ -1874,6 +1967,26 @@ namespace dotnet_api.Migrations
                 column: "ReportID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShiftAssignments_ConstructionTaskID",
+                table: "ShiftAssignments",
+                column: "ConstructionTaskID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShiftAssignments_EmployeeID",
+                table: "ShiftAssignments",
+                column: "EmployeeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShiftAssignments_WorkShiftID",
+                table: "ShiftAssignments",
+                column: "WorkShiftID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShiftDetails_WorkShiftID",
+                table: "ShiftDetails",
+                column: "WorkShiftID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkAttributes_UnitOfMeasurementID",
                 table: "WorkAttributes",
                 column: "UnitOfMeasurementID");
@@ -1937,13 +2050,16 @@ namespace dotnet_api.Migrations
                 name: "ReportStatusLogs");
 
             migrationBuilder.DropTable(
+                name: "ShiftDetails");
+
+            migrationBuilder.DropTable(
                 name: "WorkSubTypeVariant_WorkAttributes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "ConstructionTasks");
+                name: "ShiftAssignments");
 
             migrationBuilder.DropTable(
                 name: "ExportOrders");
@@ -1961,10 +2077,16 @@ namespace dotnet_api.Migrations
                 name: "WorkAttributes");
 
             migrationBuilder.DropTable(
-                name: "ConstructionPlans");
+                name: "ConstructionTasks");
+
+            migrationBuilder.DropTable(
+                name: "WorkShifts");
 
             migrationBuilder.DropTable(
                 name: "MaterialTypes");
+
+            migrationBuilder.DropTable(
+                name: "ConstructionPlans");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

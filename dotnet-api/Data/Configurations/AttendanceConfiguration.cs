@@ -10,22 +10,15 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("Attendances");
 
-            builder.HasKey(x => new { x.EmployeeID, x.ConstructionTaskID, x.AttendanceDate });
-
-            builder.Property(x => x.AttendanceDate)
-                   .IsRequired();
-
-            builder.Property(x => x.Status)
-                   .HasMaxLength(100); 
-        
-            builder.HasOne(x => x.Employee)
-                   .WithMany(e => e.Attendances)
-                   .HasForeignKey(x => x.EmployeeID);
+            builder.HasKey(x => x.ID);
             
-            builder.HasOne(x => x.ConstructionTask)
-                   .WithMany(t => t.Attendances)
-                   .HasForeignKey(x => x.ConstructionTaskID);
+            builder.Property(x => x.ID)
+                   .ValueGeneratedOnAdd();
+
+
+            builder.HasOne(x => x.ShiftAssignment)
+                .WithOne(t => t.Attendance)
+                     .HasForeignKey<Attendance>(x => x.ShiftAssignmentID);
         }
     }
 }
-

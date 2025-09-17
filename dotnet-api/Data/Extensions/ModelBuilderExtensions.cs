@@ -1,8 +1,10 @@
 ﻿using dotnet_api.Data.Entities;
 using dotnet_api.Data.Enums;
-using Microsoft.EntityFrameworkCore;
+using dotnet_api.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace dotnet_api.Data.Extensions
 {
@@ -2608,12 +2610,6 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
                 new Material_ExportOrder { ExportOrderID = 2, MaterialID = 3, Quantity = 15 }
             );
 
-            // Seed data for Attendance
-            modelBuilder.Entity<Attendance>().HasData(
-                new Attendance { EmployeeID = "manager2-id", ConstructionTaskID = 1, AttendanceDate = new DateTime(2023, 01, 01), Status = "có mặt" },
-                new Attendance { EmployeeID = "manager2-id", ConstructionTaskID = 2, AttendanceDate = new DateTime(2024, 01, 01), Status = "vắng mặt" }
-            );
-
             // Seed data for ImportOrder
             modelBuilder.Entity<ImportOrder>().HasData(
                 new ImportOrder { ID = 1, ImportDate = new DateTime(2024, 01, 01), Status = ImportOrderStatusEnum.Approved },
@@ -2844,12 +2840,141 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
                // Link ImportOrder 1 to Plan 1 for Material 1 (Xi măng)
                new MaterialPlan { ImportOrderID = 1, ConstructionItemID = 1, MaterialID = 1, ImportQuantity = 50 },
                // Link ImportOrder 1 to Plan 1 for Material 3 (Cát vàng)
-               new MaterialPlan { ImportOrderID = 1, ConstructionItemID = 1, MaterialID = 3, ImportQuantity = 100},
+               new MaterialPlan { ImportOrderID = 1, ConstructionItemID = 1, MaterialID = 3, ImportQuantity = 100 },
                // Link ImportOrder 2 to Plan 3 for Material 10 (Thép phi 14)
                new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 10, ImportQuantity = 500 },
                // Link ImportOrder 2 to Plan 77 (Dam - Đào móng) for Material 48 (Răng cào) - Assuming Răng cào comes from ImportOrder 2
-               new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 48, ImportQuantity = 2,  }
+               new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 48, ImportQuantity = 2, }
            );
+
+            modelBuilder.Entity<WorkShift>().HasData(
+                new WorkShift { ID = 1, ShiftName = "Ca Hành Chính" }
+                );
+            modelBuilder.Entity<ShiftDetail>().HasData(
+                new ShiftDetail
+                {
+                    ID = 1,
+                    DayOfWeek = "Thứ 2",
+                    StartTime = new TimeSpan(8, 0, 0),
+                    EndTime = new TimeSpan(17, 0, 0),
+                    BreakStart = new TimeSpan(12, 0, 0),
+                    BreakEnd = new TimeSpan(13, 0, 0),
+                    WorkShiftID = 1
+                },
+                new ShiftDetail
+                {
+                    ID = 2,
+                    DayOfWeek = "Thứ 3",
+                    StartTime = new TimeSpan(8, 0, 0),
+                    EndTime = new TimeSpan(17, 0, 0),
+                    BreakStart = new TimeSpan(12, 0, 0),
+                    BreakEnd = new TimeSpan(13, 0, 0),
+                    WorkShiftID = 1
+                },
+                 new ShiftDetail
+                 {
+                     ID = 3,
+                     DayOfWeek = "Thứ 4",
+                     StartTime = new TimeSpan(8, 0, 0),
+                     EndTime = new TimeSpan(17, 0, 0),
+                     BreakStart = new TimeSpan(12, 0, 0),
+                     BreakEnd = new TimeSpan(13, 0, 0),
+                     WorkShiftID = 1
+                 },
+                 new ShiftDetail
+                 {
+                     ID = 4,
+                     DayOfWeek = "Thứ 5",
+                     StartTime = new TimeSpan(8, 0, 0),
+                     EndTime = new TimeSpan(17, 0, 0),
+                     BreakStart = new TimeSpan(12, 0, 0),
+                     BreakEnd = new TimeSpan(13, 0, 0),
+                     WorkShiftID = 1
+                 },
+                 new ShiftDetail
+                 {
+                     ID = 5,
+                     DayOfWeek = "Thứ 6",
+                     StartTime = new TimeSpan(8, 0, 0),
+                     EndTime = new TimeSpan(17, 0, 0),
+                     BreakStart = new TimeSpan(12, 0, 0),
+                     BreakEnd = new TimeSpan(13, 0, 0),
+                     WorkShiftID = 1
+                 },
+                 new ShiftDetail
+                 {
+                     ID = 6,
+                     DayOfWeek = "Thứ 7",
+                     StartTime = new TimeSpan(8, 0, 0),
+                     EndTime = new TimeSpan(12, 0, 0),
+                     BreakStart = new TimeSpan(12, 0, 0),
+                     BreakEnd = new TimeSpan(12, 0, 0),
+                     WorkShiftID = 1
+                 }
+             );
+
+            modelBuilder.Entity<ShiftAssignment>().HasData(
+                new ShiftAssignment
+                {
+                    ID = 1,
+                    EmployeeID = "manager1-id",
+                    WorkShiftID = 1,
+                    WorkDate = new DateTime(2025, 9, 12)
+                },
+                new ShiftAssignment
+                {
+                    ID = 2,
+                    EmployeeID = "manager1-id",
+                    WorkShiftID = 1,
+                    WorkDate = new DateTime(2025, 9, 11)
+                },
+                 new ShiftAssignment
+                 {
+                     ID = 3,
+                     EmployeeID = "manager1-id",
+                     WorkShiftID = 1,
+                     WorkDate = new DateTime(2025, 9, 10)
+                 }
+             );
+
+            modelBuilder.Entity<Attendance>().HasData(
+    new Attendance
+    {
+        ID = 1,
+        ShiftAssignmentID = 1,
+        CheckIn = new TimeSpan(8, 0, 0),
+        CheckOut = new TimeSpan(17, 0, 0),
+        ImageCheckIn = "/uploads/attendace/worker1-20240912-checkin.jpg",
+        ImageCheckOut = "/uploads/attendace/worker1-20240912-checkin.jpg",
+        Status = AttendanceStatusEnum.Present
+    }
+ );
+            modelBuilder.Entity<AttendanceMachine>().HasData(
+                new AttendanceMachine
+                {
+                    ID = 1,
+                    AttendanceMachineName = "Máy chấm công Văn Phòng 1",
+                    Longitude = "108.234567",
+                    Latitude = "16.123456",
+                    AllowedRadius = "50" // mét
+                },
+                new AttendanceMachine
+                {
+                    ID = 2,
+                    AttendanceMachineName = "Máy chấm công Văn Phòng 2",
+                    Longitude = "108.235678",
+                    Latitude = "16.124567",
+                    AllowedRadius = "50"
+                },
+                new AttendanceMachine
+                {
+                    ID = 3,
+                    AttendanceMachineName = "Máy chấm công Nhà Xưởng",
+                    Longitude = "108.236789",
+                    Latitude = "16.125678",
+                    AllowedRadius = "100"
+                }
+            );
         }
     }
 }

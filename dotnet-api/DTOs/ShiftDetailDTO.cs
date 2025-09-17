@@ -1,6 +1,6 @@
-﻿namespace dotnet_api.Data.Entities
+namespace dotnet_api.DTOs
 {
-    public class ShiftDetail
+    public class ShiftDetailDTO
     {
         public int ID { get; set; }
         public int WorkShiftID { get; set; }
@@ -9,6 +9,5 @@
         public TimeSpan EndTime { get; set; }
         public TimeSpan BreakStart { get; set; }
         public TimeSpan BreakEnd { get; set; }
-        public WorkShift WorkShift { get; set; }
     }
 }

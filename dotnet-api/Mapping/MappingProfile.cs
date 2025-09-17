@@ -11,7 +11,7 @@ namespace dotnet_api.Mapping
     {
         public MappingProfile()
         {
-            CreateMap<Attendance, AttendanceDTO>();
+            CreateMap<ShiftAssignment, AttendanceDTO>();
             CreateMap<Construction, ConstructionDTO>()
             .ForMember(dest => dest.StatusName,
                 opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ConstructionStatus.Name)))
@@ -179,15 +179,9 @@ namespace dotnet_api.Mapping
             ;
             CreateMap<UnitofMeasurement, UnitofMeasurementDTO>();
 
-            CreateMap<Attendance, AttendanceDTO>();
-            CreateMap<Attendance, AttendanceDTOGET>()
-                 .ForMember(dest => dest.EmployeeName,
-                    opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
-                 .ForMember(dest => dest.Email,
-                    opt => opt.MapFrom(src => src.Employee.Email))
-                ;
+            CreateMap<ShiftAssignment, AttendanceDTO>();
 
-            CreateMap<AttendanceDTO, Attendance>().ReverseMap();
+            CreateMap<AttendanceDTO, ShiftAssignment>().ReverseMap();
             CreateMap<WorkSubTypeVariant, WorkSubTypeVariantDTO>();
 
             CreateMap<ConstructionItemCreateDTO, ConstructionItem>();
@@ -232,6 +226,11 @@ namespace dotnet_api.Mapping
                     opt => opt.Ignore())
                 .ForMember(dest => dest.DesignBlueprint, 
                     opt => opt.Ignore());
+            CreateMap<WorkShift, WorkShiftDTO>();
+            CreateMap<ShiftDetail, ShiftDetailDTO>();
+            CreateMap<AttendanceMachine, AttendanceMachineDTO>();
+            CreateMap<AttendanceMachineDTO, AttendanceMachine>().ReverseMap();
+
 
         }
     }

@@ -339,7 +339,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fd9e987f-8719-42ee-b466-8820b152d88c",
+                            ConcurrencyStamp = "b6682d7a-7f04-4700-9820-b8f6fa5b6389",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -347,7 +347,7 @@ namespace dotnet_api.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJoc38hFy52ESEnSDE9z9k7Ma1qklNvSYdvI/HJq0Iv62mV2YwC5Ic+YF9772Zz09g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECt7mVfEirbO3Mt34bIyXvq30zMOeWWOWegWL1t8G5cmAUwJcRcuvtusx0XlkEeEDg==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -361,7 +361,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "eefd645b-06c2-4037-b87e-11bb4b79932c",
+                            ConcurrencyStamp = "2acc9f96-4a84-42af-a835-ccfd1e75b486",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -383,7 +383,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "799f28a5-8890-4a9f-8c73-8ec537c838e8",
+                            ConcurrencyStamp = "69e5e1f3-64f1-4931-bd5b-6449a18a37a3",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -405,7 +405,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "461e883a-a054-4d1f-bf04-1398738b5a99",
+                            ConcurrencyStamp = "da6f2550-e908-402f-ae54-9036dbbf5500",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -427,7 +427,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e568eee-f01d-40e6-8ab6-6c3dd98b664e",
+                            ConcurrencyStamp = "deba8060-0990-49ca-9073-440fb053081a",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -449,7 +449,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "da0c54b0-02e8-4348-99bb-07c1983f9e33",
+                            ConcurrencyStamp = "de66db6a-26ff-4fea-8480-d6ba86bf7014",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -471,7 +471,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "497aab0f-07d5-4fa1-8b12-fcea0e8827d0",
+                            ConcurrencyStamp = "fd327bfd-0090-45cf-a3dd-cb0fb5bd27ce",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -493,7 +493,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "68751fc1-72c0-4686-8341-3aa35c181aa3",
+                            ConcurrencyStamp = "720120b3-08d7-4b50-be2b-3d3cc0aeb053",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -514,7 +514,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8093e364-b24a-4de8-8888-ae097547e76d",
+                            ConcurrencyStamp = "63680edb-7047-4db6-bbf9-4dda2b1dc11e",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -535,7 +535,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7be29465-f62a-446c-b2a6-e35260d597dd",
+                            ConcurrencyStamp = "b2b7d44d-3e0c-444a-9624-665117c1d8eb",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -556,7 +556,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "005a3fa6-a3c2-4e2d-b1eb-29d8d13e045b",
+                            ConcurrencyStamp = "b966921c-3dac-477c-83bd-7bd0ebb5f3ba",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -577,7 +577,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0517ba1b-0572-4099-a234-a27c63f6fe68",
+                            ConcurrencyStamp = "8329936d-052e-42a1-a74d-affc9660ca41",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -598,40 +598,103 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Attendance", b =>
                 {
-                    b.Property<string>("EmployeeID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ConstructionTaskID")
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AttendanceDate")
-                        .HasColumnType("datetime2");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<TimeSpan?>("CheckIn")
+                        .HasColumnType("time");
 
-                    b.HasKey("EmployeeID", "ConstructionTaskID", "AttendanceDate");
+                    b.Property<TimeSpan?>("CheckOut")
+                        .HasColumnType("time");
 
-                    b.HasIndex("ConstructionTaskID");
+                    b.Property<string>("ImageCheckIn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageCheckOut")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShiftAssignmentID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ShiftAssignmentID")
+                        .IsUnique()
+                        .HasFilter("[ShiftAssignmentID] IS NOT NULL");
 
                     b.ToTable("Attendances", (string)null);
 
                     b.HasData(
                         new
                         {
-                            EmployeeID = "manager2-id",
-                            ConstructionTaskID = 1,
-                            AttendanceDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "có mặt"
+                            ID = 1,
+                            CheckIn = new TimeSpan(0, 8, 0, 0, 0),
+                            CheckOut = new TimeSpan(0, 17, 0, 0, 0),
+                            ImageCheckIn = "/uploads/attendace/worker1-20240912-checkin.jpg",
+                            ImageCheckOut = "/uploads/attendace/worker1-20240912-checkin.jpg",
+                            ShiftAssignmentID = 1,
+                            Status = 0
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.AttendanceMachine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("AllowedRadius")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttendanceMachineName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Longitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("AttendanceMachines", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AllowedRadius = "50",
+                            AttendanceMachineName = "Máy chấm công Văn Phòng 1",
+                            Latitude = "16.123456",
+                            Longitude = "108.234567"
                         },
                         new
                         {
-                            EmployeeID = "manager2-id",
-                            ConstructionTaskID = 2,
-                            AttendanceDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Status = "vắng mặt"
+                            ID = 2,
+                            AllowedRadius = "50",
+                            AttendanceMachineName = "Máy chấm công Văn Phòng 2",
+                            Latitude = "16.124567",
+                            Longitude = "108.235678"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            AllowedRadius = "100",
+                            AttendanceMachineName = "Máy chấm công Nhà Xưởng",
+                            Latitude = "16.125678",
+                            Longitude = "108.236789"
                         });
                 });
 
@@ -5510,6 +5573,157 @@ namespace dotnet_api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int?>("ConstructionTaskID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("WorkDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WorkShiftID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ConstructionTaskID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("WorkShiftID");
+
+                    b.ToTable("ShiftAssignments", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            EmployeeID = "manager1-id",
+                            WorkDate = new DateTime(2025, 9, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 2,
+                            EmployeeID = "manager1-id",
+                            WorkDate = new DateTime(2025, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 3,
+                            EmployeeID = "manager1-id",
+                            WorkDate = new DateTime(2025, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            WorkShiftID = 1
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ShiftDetail", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<TimeSpan>("BreakEnd")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("BreakStart")
+                        .HasColumnType("time");
+
+                    b.Property<string>("DayOfWeek")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("WorkShiftID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("WorkShiftID");
+
+                    b.ToTable("ShiftDetails", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            BreakEnd = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 2",
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 2,
+                            BreakEnd = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 3",
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 3,
+                            BreakEnd = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 4",
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 4,
+                            BreakEnd = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 5",
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 5,
+                            BreakEnd = new TimeSpan(0, 13, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 6",
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        },
+                        new
+                        {
+                            ID = 6,
+                            BreakEnd = new TimeSpan(0, 12, 0, 0, 0),
+                            BreakStart = new TimeSpan(0, 12, 0, 0, 0),
+                            DayOfWeek = "Thứ 7",
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0),
+                            WorkShiftID = 1
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.UnitofMeasurement", b =>
                 {
                     b.Property<int>("ID")
@@ -5846,6 +6060,30 @@ namespace dotnet_api.Migrations
                             ID = 31,
                             UnitOfMeasurementID = 2,
                             WorkAttributeName = "Chiều dày lớp trát"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.WorkShift", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ShiftName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("WorkShifts", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ShiftName = "Ca Hành Chính"
                         });
                 });
 
@@ -6784,21 +7022,11 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Attendance", b =>
                 {
-                    b.HasOne("dotnet_api.Data.Entities.ConstructionTask", "ConstructionTask")
-                        .WithMany("Attendances")
-                        .HasForeignKey("ConstructionTaskID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("dotnet_api.Data.Entities.ShiftAssignment", "ShiftAssignment")
+                        .WithOne("Attendance")
+                        .HasForeignKey("dotnet_api.Data.Entities.Attendance", "ShiftAssignmentID");
 
-                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
-                        .WithMany("Attendances")
-                        .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ConstructionTask");
-
-                    b.Navigation("Employee");
+                    b.Navigation("ShiftAssignment");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Construction", b =>
@@ -7090,6 +7318,40 @@ namespace dotnet_api.Migrations
                     b.Navigation("Report");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ConstructionTask", null)
+                        .WithMany("Attendances")
+                        .HasForeignKey("ConstructionTaskID");
+
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("ShiftAssignments")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.WorkShift", "WorkShift")
+                        .WithMany("ShiftAssignments")
+                        .HasForeignKey("WorkShiftID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("WorkShift");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ShiftDetail", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.WorkShift", "WorkShift")
+                        .WithMany("ShiftDetails")
+                        .HasForeignKey("WorkShiftID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WorkShift");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkAttribute", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.UnitofMeasurement", "UnitOfMeasurement")
@@ -7144,8 +7406,6 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("Attendances");
-
                     b.Navigation("ConstructionPlans");
 
                     b.Navigation("ExportOrders");
@@ -7155,6 +7415,8 @@ namespace dotnet_api.Migrations
                     b.Navigation("ImportOrders");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("ShiftAssignments");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Construction", b =>
@@ -7239,6 +7501,12 @@ namespace dotnet_api.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
+                {
+                    b.Navigation("Attendance")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.UnitofMeasurement", b =>
                 {
                     b.Navigation("ConstructionItems");
@@ -7251,6 +7519,13 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkAttribute", b =>
                 {
                     b.Navigation("WorkSubTypeVariant_WorkAttributes");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.WorkShift", b =>
+                {
+                    b.Navigation("ShiftAssignments");
+
+                    b.Navigation("ShiftDetails");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkSubType", b =>

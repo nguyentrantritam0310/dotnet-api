@@ -4,18 +4,15 @@ namespace dotnet_api.Data.Entities
 {
     public class Attendance
     {
-        public string EmployeeID { get; set; }
-        public int WorkShiftID { get; set; }
-        public DateTime AttendanceDate { get; set; }
-        public string Status { get; set; }
-        public DateTime CheckInOut { get; set; }
-        public string Image { get; set; }
+        public int? ID { get; set; }
+        public int? ShiftAssignmentID { get; set; }
+        public TimeSpan? CheckIn { get; set; }
+        public TimeSpan? CheckOut { get; set; }
+        public string? ImageCheckIn { get; set; }
+        public string? ImageCheckOut { get; set; }
+        public AttendanceStatusEnum? Status { get; set; } 
 
         // Navigation properties
-        public ApplicationUser Employee { get; set; }
-        public WorkShift WorkShift { get; set; }
- 
-
-
+        public ShiftAssignment ShiftAssignment { get; set; }
     }
 }

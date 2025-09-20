@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace dotnet_api.Data.Configurations
 {
-    public class WorkShiftConfiguration : IEntityTypeConfiguration<WorkShift>
+    public class WorkShiftConfiguration : IEntityTypeConfiguration<EmployeeRequest>
     {
-        public void Configure(EntityTypeBuilder<WorkShift> builder)
+        public void Configure(EntityTypeBuilder<EmployeeRequest> builder)
         {
             builder.ToTable("WorkShifts");
 
-            builder.HasKey(x => new { x.ID });
+            builder.HasKey(x => x.ID);
             builder.Property(x => x.ID)
        .ValueGeneratedOnAdd();
 

@@ -2847,8 +2847,8 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
                new MaterialPlan { ImportOrderID = 2, ConstructionItemID = 2, MaterialID = 48, ImportQuantity = 2, }
            );
 
-            modelBuilder.Entity<WorkShift>().HasData(
-                new WorkShift { ID = 1, ShiftName = "Ca Hành Chính" }
+            modelBuilder.Entity<EmployeeRequest>().HasData(
+                new EmployeeRequest { ID = 1, ShiftName = "Ca Hành Chính" }
                 );
             modelBuilder.Entity<ShiftDetail>().HasData(
                 new ShiftDetail
@@ -2975,6 +2975,115 @@ new WorkSubTypeVariant_WorkAttribute { WorkSubTypeVariantID = 36, WorkAttributeI
                     AllowedRadius = "100"
                 }
             );
+
+            modelBuilder.Entity<OvertimeType>().HasData(
+                new OvertimeType
+                {
+                    ID = 1,
+                    OvertimeTypeName = "Tăng ca ngày thường",
+                    coefficient = 1.5
+                },
+                new OvertimeType
+                {
+                    ID = 2,
+                    OvertimeTypeName = "Tăng ca ngày nghỉ",
+                    coefficient = 2.0
+                },
+                new OvertimeType
+                {
+                    ID = 3,
+                    OvertimeTypeName = "Tăng ca ngày lễ",
+                    coefficient = 3.0
+                }
+            );
+            modelBuilder.Entity<OvertimeForm>().HasData(
+                new OvertimeForm
+                {
+                    ID = 1,
+                    OvertimeFormName = "Tăng ca tính lương"
+                },
+                new OvertimeForm
+                {
+                    ID = 2,
+                    OvertimeFormName = "Tăng ca nghỉ bù"
+                }
+            );
+            modelBuilder.Entity<LeaveType>().HasData(
+                new LeaveType
+                {
+                    ID = 1,
+                    LeaveTypeName = "Phép năm"
+                },
+                new LeaveType
+                {
+                    ID = 2,
+                    LeaveTypeName = "Nghỉ bù"
+                }
+            );
+            modelBuilder.Entity<EmployeeRequests>().HasData(
+                // 🔹 ĐƠN TĂNG CA 1
+                new EmployeeRequests
+                {
+                    VoucherCode = "OT001",
+                    RequestType = "Tăng ca",
+                    StartDateTime = new DateTime(2025, 09, 21, 18, 0, 0),
+                    EndDateTime = new DateTime(2025, 09, 21, 22, 0, 0),
+                    Reason = "Hoàn thành báo cáo dự án",
+                    ApproveStatus = ApproveStatusEnum.Created,
+                    CreatedAt = DateTime.Now,
+                    OvertimeTypeID = 1,  // Tăng ca ngày thường
+                    OvertimeFormID = 1,  // Tăng ca tính lương
+                    LeaveTypeID = null,     // Không nghỉ phép
+                    EmployeeID = "tech1-id"
+                },
+                // 🔹 ĐƠN TĂNG CA 2
+                new EmployeeRequests
+                {
+                    VoucherCode = "OT002",
+                    RequestType = "Tăng ca",
+                    StartDateTime = new DateTime(2025, 09, 22, 19, 0, 0),
+                    EndDateTime = new DateTime(2025, 09, 22, 23, 0, 0),
+                    Reason = "Bảo trì hệ thống ngoài giờ",
+                    ApproveStatus = ApproveStatusEnum.Created,
+                    CreatedAt = DateTime.Now,
+                    OvertimeTypeID = 2,  // Tăng ca ngày nghỉ
+                    OvertimeFormID = 2,  // Tăng ca nghỉ bù
+                    LeaveTypeID = null,
+                    EmployeeID = "tech1-id"
+                },
+                // 🔹 ĐƠN NGHỈ PHÉP 1
+                new EmployeeRequests
+                {
+                    VoucherCode = "LV001",
+                    RequestType = "Nghỉ phép",
+                    StartDateTime = new DateTime(2025, 09, 25, 8, 0, 0),
+                    EndDateTime = new DateTime(2025, 09, 27, 17, 0, 0),
+                    Reason = "Về quê thăm gia đình",
+                    ApproveStatus = ApproveStatusEnum.Created,
+                    CreatedAt = DateTime.Now,
+                    OvertimeTypeID = null,  // Không tăng ca
+                    OvertimeFormID = null,
+                    LeaveTypeID = 1,     // Phép năm
+                    EmployeeID = "tech1-id"
+                },
+                // 🔹 ĐƠN NGHỈ PHÉP 2
+                new EmployeeRequests
+                {
+                    VoucherCode = "LV002",
+                    RequestType = "Nghỉ phép",
+                    StartDateTime = new DateTime(2025, 09, 30, 8, 0, 0),
+                    EndDateTime = new DateTime(2025, 09, 30, 17, 0, 0),
+                    Reason = "Nghỉ bù sau khi tăng ca",
+                    ApproveStatus = ApproveStatusEnum.Created,
+                    CreatedAt = DateTime.Now,
+                    OvertimeTypeID = null,
+                    OvertimeFormID = null,
+                    LeaveTypeID = 2,     // Nghỉ bù
+                    EmployeeID = "tech1-id"
+                }
+            );
+
+
         }
     }
 }

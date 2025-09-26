@@ -1,6 +1,6 @@
 ﻿namespace dotnet_api.Data.Entities
 {
-    public class WorkShift
+    public class EmployeeRequest
     {
         public int ID { get; set; }
         public string ShiftName { get; set; }

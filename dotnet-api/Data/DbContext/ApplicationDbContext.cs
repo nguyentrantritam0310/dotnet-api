@@ -23,6 +23,7 @@ namespace dotnet_api.Data
         public DbSet<ConstructionTask> ConstructionTasks { get; set; }
         public DbSet<ConstructionTemplateItem> ConstructionTemplateItems { get; set; }
         public DbSet<ConstructionType> ConstructionTypes { get; set; }
+        public DbSet<EmployeeRequests> EmployeeRequests { get; set; }
         public DbSet<ExportOrder> ExportOrders { get; set; }
         public DbSet<ImportOrder> ImportOrders { get; set; }
         public DbSet<ImportOrderEmployee> ImportOrderEmployees { get; set; }
@@ -39,7 +40,7 @@ namespace dotnet_api.Data
         public DbSet<ShiftDetail> ShiftDetails { get; set; }
         public DbSet<UnitofMeasurement> UnitofMeasuremens { get; set; }
         public DbSet<WorkAttribute> WorkAttributes { get; set; }
-        public DbSet<WorkShift> WorkShifts { get; set; }
+        public DbSet<EmployeeRequest> WorkShifts { get; set; }
         public DbSet<WorkSubType> WorkSubTypes { get; set; }
         public DbSet<WorkSubTypeVariant_WorkAttribute> WorkSubTypeVariant_WorkAttributes { get; set; }
         public DbSet<WorkSubTypeVariant> WorkSubTypeVariants { get; set; }
@@ -106,6 +107,7 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ConstructionTaskConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionTemplateItemConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new EmployeeRequestConfiguration());
             modelBuilder.ApplyConfiguration(new ExportOrderConfiguration());
             modelBuilder.ApplyConfiguration(new ImportOrderConfiguration());
             modelBuilder.ApplyConfiguration(new ImportOrderEmployeeConfiguration());

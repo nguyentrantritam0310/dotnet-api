@@ -23,5 +23,6 @@ namespace dotnet_api.Data.Entities
         public ICollection<ConstructionPlan> ConstructionPlans { get; set; }
         public ICollection<ImportOrder> ImportOrders { get; set; }
         public ICollection<ImportOrderEmployee> ImportOrderEmployees { get; set; }
+        public ICollection<EmployeeRequests> EmployeeRequests { get; set; }
     }
 } 

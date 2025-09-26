@@ -12,7 +12,7 @@ namespace dotnet_api.Data.Entities
 
         // Navigation properties
         public ApplicationUser Employee { get; set; }
-        public WorkShift WorkShift { get; set; }
+        public EmployeeRequest WorkShift { get; set; }
         public Attendance Attendance { get; set; }
  
 

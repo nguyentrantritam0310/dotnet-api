@@ -226,7 +226,7 @@ namespace dotnet_api.Mapping
                     opt => opt.Ignore())
                 .ForMember(dest => dest.DesignBlueprint, 
                     opt => opt.Ignore());
-            CreateMap<WorkShift, WorkShiftDTO>();
+            CreateMap<EmployeeRequest, WorkShiftDTO>();
             CreateMap<ShiftDetail, ShiftDetailDTO>();
             CreateMap<AttendanceMachine, AttendanceMachineDTO>();
             CreateMap<AttendanceMachineDTO, AttendanceMachine>().ReverseMap();

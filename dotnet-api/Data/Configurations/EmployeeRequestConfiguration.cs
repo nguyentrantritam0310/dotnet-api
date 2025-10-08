@@ -24,6 +24,11 @@ namespace dotnet_api.Data.Configurations
             builder.HasOne(x => x.Employee)
                            .WithMany(e => e.EmployeeRequests)
                                        .HasForeignKey(x => x.EmployeeID);
+
+            builder.HasOne(x => x.WorkShift)
+                           .WithMany(ws => ws.EmployeeRequests)
+                                       .HasForeignKey(x => x.WorkShiftID)
+                                       .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

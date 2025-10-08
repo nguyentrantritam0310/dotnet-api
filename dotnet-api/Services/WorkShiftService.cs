@@ -38,9 +38,50 @@ namespace dotnet_api.Services
             return _mapper.Map<IEnumerable<WorkShiftDTO>>(workshifts);
         }
 
-        public Task<WorkShiftDTO> GetWorkShiftByIdAsync(int id)
+        public async Task<WorkShiftDTO> GetWorkShiftByIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<WorkShiftDTO> CreateWorkShiftAsync(WorkShiftDTOPOST workShiftDTO)
+        {
+            var entity = _mapper.Map<WorkShift>(workShiftDTO);
+            _context.WorkShifts.Add(entity);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<WorkShiftDTO>(entity);
+        }
+
+        public async Task<WorkShiftDTO> UpdateWorkShiftAsync(WorkShiftDTOPUT dto)
+        {
+            var entity = await _context.WorkShifts
+                .Include(w => w.ShiftDetails)
+                .FirstOrDefaultAsync(w => w.ID == dto.ID);
+
+            if (entity == null) return null;
+
+            entity.ShiftName = dto.ShiftName;
+
+            // Xoá chi tiết cũ
+            _context.ShiftDetails.RemoveRange(entity.ShiftDetails);
+            // Thêm chi tiết mới
+            entity.ShiftDetails = _mapper.Map<List<ShiftDetail>>(dto.ShiftDetails);
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<WorkShiftDTO>(entity);
+        }
+
+        public async Task<bool> DeleteWorkShiftAsync(int id)
+        {
+            var entity = await _context.WorkShifts
+                .Include(w => w.ShiftDetails)
+                .FirstOrDefaultAsync(w => w.ID == id);
+
+            if (entity == null) return false;
+
+            _context.ShiftDetails.RemoveRange(entity.ShiftDetails);
+            _context.WorkShifts.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

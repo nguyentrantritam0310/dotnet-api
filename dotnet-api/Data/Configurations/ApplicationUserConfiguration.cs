@@ -10,6 +10,10 @@ namespace dotnet_api.Data.Configurations
         {
             builder.ToTable("AspNetUsers");
 
+            builder.Property(x => x.EmployeeCode)
+                .IsRequired()
+                .HasMaxLength(20);
+
             builder.Property(x => x.FirstName)
                 .IsRequired()
                 .HasMaxLength(200);

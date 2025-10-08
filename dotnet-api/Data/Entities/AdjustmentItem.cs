@@ -6,7 +6,10 @@ namespace dotnet_api.Data.Entities
     {
         
         public int ID { get; set; }
-        public string adjustmentItemName { get; set; }
+        public string AdjustmentItemName { get; set; }
+        public int AdjustmentTypeID { get; set; }
+        public AdjustmentType adjustmentType { get; set; }
+
 
     }
 }

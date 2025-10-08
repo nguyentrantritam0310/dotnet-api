@@ -4,7 +4,7 @@
     {
         public int ID { get; set; }
         public string OvertimeTypeName { get; set; }
-        public double coefficient { get; set; } 
+        public float coefficient { get; set; } 
         public ICollection<EmployeeRequests>? EmployeeRequests { get; set; }
     }
 }

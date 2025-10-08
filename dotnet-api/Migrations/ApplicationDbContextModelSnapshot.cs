@@ -243,6 +243,156 @@ namespace dotnet_api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.AdjustmentItem", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("AdjustmentItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AdjustmentTypeID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AdjustmentTypeID");
+
+                    b.ToTable("AdjustmentItems", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AdjustmentItemName = "Thưởng năng suất",
+                            AdjustmentTypeID = 1
+                        },
+                        new
+                        {
+                            ID = 2,
+                            AdjustmentItemName = "Thưởng dự án",
+                            AdjustmentTypeID = 1
+                        },
+                        new
+                        {
+                            ID = 3,
+                            AdjustmentItemName = "Tạm ứng lương",
+                            AdjustmentTypeID = 2
+                        },
+                        new
+                        {
+                            ID = 4,
+                            AdjustmentItemName = "Tạm ứng công tác phí",
+                            AdjustmentTypeID = 2
+                        },
+                        new
+                        {
+                            ID = 5,
+                            AdjustmentItemName = "Đi trễ",
+                            AdjustmentTypeID = 3
+                        },
+                        new
+                        {
+                            ID = 6,
+                            AdjustmentItemName = "Nghỉ không phép",
+                            AdjustmentTypeID = 3
+                        },
+                        new
+                        {
+                            ID = 7,
+                            AdjustmentItemName = "Truy thu bảo hiểm",
+                            AdjustmentTypeID = 4
+                        },
+                        new
+                        {
+                            ID = 8,
+                            AdjustmentItemName = "Truy lãnh tăng lương",
+                            AdjustmentTypeID = 5
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.AdjustmentType", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("AdjustmentTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("AdjustmentTypes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AdjustmentTypeName = "Khen thưởng"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            AdjustmentTypeName = "Tạm ứng"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            AdjustmentTypeName = "Kỷ luật"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            AdjustmentTypeName = "Truy thu"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            AdjustmentTypeName = "Truy lãnh"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Allowance", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("AllowanceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Allowances");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AllowanceName = "Phụ cấp ăn trưa"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            AllowanceName = "Phụ cấp xăng xe"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            AllowanceName = "Phụ cấp điện thoại"
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -262,7 +412,15 @@ namespace dotnet_api.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("EmployeeCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -320,6 +478,12 @@ namespace dotnet_api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<DateTime>("birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("joinDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -339,15 +503,17 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "60dab946-a52f-4771-96d0-91d65b98ebf7",
+                            ConcurrencyStamp = "b28e0c72-ca49-4d07-ac96-2706909445a9",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "GD001",
                             FirstName = "Phạm",
+                            Gender = "Nam",
                             LastName = "Văn Đốc",
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGTCQKgZqsB9d4NgVlgq7lGTqE1QqkQBlirV42pyDtHAwToG8BpLsZmp6pwSvg+hcQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL2QQC618mx/QBxyrTLsObVkuTjOf1L5P400w7olBCTya52hCBwqoumkJg46KAg2gw==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -355,16 +521,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "427bafc5-bab1-42e5-a5d2-5974daf31890",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "giamdoc@company.com"
+                            UserName = "giamdoc@company.com",
+                            birthday = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "10686254-3617-4fa1-a959-6adbae24f42d",
+                            ConcurrencyStamp = "2cbb884c-17cf-4278-ba78-553b4fedbdc0",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH001",
                             FirstName = "Nguyễn",
+                            Gender = "Nam",
                             LastName = "Chỉ Huy",
                             LockoutEnabled = false,
                             NormalizedEmail = "CHIHUY1@COMPANY.COM",
@@ -377,16 +547,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "227cd1d8-ed74-4f96-9851-ee15b48f8cf2",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "chihuy1@company.com"
+                            UserName = "chihuy1@company.com",
+                            birthday = new DateTime(1980, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2021, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ddfaff9c-e950-4177-a515-a9e82611fd09",
+                            ConcurrencyStamp = "8104c57c-0ae4-4618-a0c5-2bdd5a774b3f",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH002",
                             FirstName = "Trần",
+                            Gender = "Nam",
                             LastName = "Công Trình",
                             LockoutEnabled = false,
                             NormalizedEmail = "CHIHUY2@COMPANY.COM",
@@ -399,16 +573,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "f6ab69f9-8a13-4414-81bd-77603126dc4d",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "chihuy2@company.com"
+                            UserName = "chihuy2@company.com",
+                            birthday = new DateTime(1980, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2022, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "af1eb258-c24f-46f9-9324-f26d4b50dc66",
+                            ConcurrencyStamp = "d9d8b2ba-c857-4f87-8f07-11eac9d886d4",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH003",
                             FirstName = "Lê",
+                            Gender = "Nam",
                             LastName = "Xây Dựng",
                             LockoutEnabled = false,
                             NormalizedEmail = "CHIHUY3@COMPANY.COM",
@@ -421,16 +599,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "7a7a5d4b-8ebd-4d56-b8b3-fdf964a80a4e",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "chihuy3@company.com"
+                            UserName = "chihuy3@company.com",
+                            birthday = new DateTime(1980, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "213e2d94-9fc1-4c51-9409-f6eb1048de4a",
+                            ConcurrencyStamp = "50531371-8b90-4d69-95e3-e6f289da46df",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT001",
                             FirstName = "Hoàng",
+                            Gender = "Nam",
                             LastName = "Kỹ Thuật",
                             LockoutEnabled = false,
                             NormalizedEmail = "KYTHUAT1@COMPANY.COM",
@@ -443,16 +625,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "6ffe7424-9000-41e1-871b-e744671266a6",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "kythuat1@company.com"
+                            UserName = "kythuat1@company.com",
+                            birthday = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "491c4593-f11b-40a7-9953-1608b6b8890f",
+                            ConcurrencyStamp = "593cca53-245a-4bc8-b7b1-3aee65f68523",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT002",
                             FirstName = "Phan",
+                            Gender = "Nữ",
                             LastName = "Thiết Kế",
                             LockoutEnabled = false,
                             NormalizedEmail = "KYTHUAT2@COMPANY.COM",
@@ -465,16 +651,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "18d4d1bc-78ea-445f-a362-d544e9ea1a9d",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "kythuat2@company.com"
+                            UserName = "kythuat2@company.com",
+                            birthday = new DateTime(1990, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "46ad31fd-8f52-4c4c-a401-027eb9129c99",
+                            ConcurrencyStamp = "39b2cc9b-1a50-40d5-975b-29846accc594",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT003",
                             FirstName = "Vũ",
+                            Gender = "Nam",
                             LastName = "Vận Hành",
                             LockoutEnabled = false,
                             NormalizedEmail = "KYTHUAT3@COMPANY.COM",
@@ -487,16 +677,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "5f694007-36b9-4dbe-8a38-196c05e82cb2",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "kythuat3@company.com"
+                            UserName = "kythuat3@company.com",
+                            birthday = new DateTime(1990, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b9d3ffb7-c825-4046-9a49-e7cbe985092f",
+                            ConcurrencyStamp = "84d02d8b-6aff-4cb7-9796-4417ac7e4735",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T001",
                             FirstName = "Đinh",
+                            Gender = "Nam",
                             LastName = "Văn Thợ",
                             LockoutEnabled = false,
                             NormalizedEmail = "THO1@COMPANY.COM",
@@ -508,16 +702,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "2180abeb-5218-4df0-b695-2be63b8b8cd1",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "tho1@company.com"
+                            UserName = "tho1@company.com",
+                            birthday = new DateTime(1995, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "50a6d3a9-fdea-4b0e-8af4-7aef3b906b33",
+                            ConcurrencyStamp = "d186eeb9-dc84-4626-9fda-0adc4368090b",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T002",
                             FirstName = "Mai",
+                            Gender = "Nữ",
                             LastName = "Thị Hàn",
                             LockoutEnabled = false,
                             NormalizedEmail = "THO2@COMPANY.COM",
@@ -529,16 +727,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "eba6051e-c6ac-4847-baca-1f886c385128",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "tho2@company.com"
+                            UserName = "tho2@company.com",
+                            birthday = new DateTime(1995, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "78d8e365-542f-4def-84b5-5dcb8d9b2c26",
+                            ConcurrencyStamp = "8a818258-291a-4b4d-be5f-2e2dcac4e1d8",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T003",
                             FirstName = "Lý",
+                            Gender = "Nam",
                             LastName = "Văn Xây",
                             LockoutEnabled = false,
                             NormalizedEmail = "THO3@COMPANY.COM",
@@ -550,16 +752,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "4933e54c-c4fd-4875-9508-edc952ae52e3",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "tho3@company.com"
+                            UserName = "tho3@company.com",
+                            birthday = new DateTime(1995, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5de6f526-2580-4ce6-81b6-00873eead4c5",
+                            ConcurrencyStamp = "2f90d8aa-1091-4b46-8e6d-63eb0ad264ca",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T004",
                             FirstName = "Trịnh",
+                            Gender = "Nam",
                             LastName = "Công Mộc",
                             LockoutEnabled = false,
                             NormalizedEmail = "THO4@COMPANY.COM",
@@ -571,16 +777,20 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "f9757b33-c60a-4995-b62f-d0c899b42c68",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "tho4@company.com"
+                            UserName = "tho4@company.com",
+                            birthday = new DateTime(1995, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "962f6bf5-4126-4aa0-bb2a-1d9839c6912e",
+                            ConcurrencyStamp = "60818620-9506-450e-a435-6d29ced6fdd6",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T005",
                             FirstName = "Võ",
+                            Gender = "Nữ",
                             LastName = "Thị Sơn",
                             LockoutEnabled = false,
                             NormalizedEmail = "THO5@COMPANY.COM",
@@ -592,7 +802,52 @@ namespace dotnet_api.Migrations
                             SecurityStamp = "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d",
                             Status = "Active",
                             TwoFactorEnabled = false,
-                            UserName = "tho5@company.com"
+                            UserName = "tho5@company.com",
+                            birthday = new DateTime(1995, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            joinDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser_PayrollAdjustment", b =>
+                {
+                    b.Property<string>("PayrollAdjustmentID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PayrollAdjustmentvoucherNo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.HasKey("PayrollAdjustmentID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("PayrollAdjustmentvoucherNo");
+
+                    b.ToTable("ApplicationUser_PayrollAdjustments", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            PayrollAdjustmentID = "PA-001",
+                            EmployeeID = "tech1-id",
+                            Value = 2000000f
+                        },
+                        new
+                        {
+                            PayrollAdjustmentID = "PA-002",
+                            EmployeeID = "tech1-id",
+                            Value = 3000000f
+                        },
+                        new
+                        {
+                            PayrollAdjustmentID = "PA-003",
+                            EmployeeID = "tech1-id",
+                            Value = 500000f
                         });
                 });
 
@@ -4062,7 +4317,7 @@ namespace dotnet_api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("dotnet_api.Data.Entities.EmployeeRequest", b =>
+            modelBuilder.Entity("dotnet_api.Data.Entities.Contract", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -4070,19 +4325,164 @@ namespace dotnet_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("ShiftName")
+                    b.Property<string>("ApproveStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ContractFormID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContractNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ContractSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ContractTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("InsuranceSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("WorkShifts", (string)null);
+                    b.HasIndex("ContractFormID");
+
+                    b.HasIndex("ContractTypeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Contracts");
 
                     b.HasData(
                         new
                         {
                             ID = 1,
-                            ShiftName = "Ca Hành Chính"
+                            ApproveStatus = "Đã duyệt",
+                            ContractFormID = 1,
+                            ContractNumber = "HD001",
+                            ContractSalary = 20000000m,
+                            ContractTypeID = 1,
+                            EmployeeID = "admin-id",
+                            EndDate = new DateTime(2025, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsuranceSalary = 18000000m,
+                            StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Status = "Đã ký"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ContractForm", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ContractFormName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ContractForms");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ContractFormName = "Chính thức"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            ContractFormName = "Thử việc"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            ContractFormName = "Khoán việc"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ContractType", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ContractTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("ContractTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ContractTypeName = "Hợp đồng lao động"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            ContractTypeName = "Hợp đồng thử việc"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            ContractTypeName = "Hợp đồng khoán việc"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Contract_Allowance", b =>
+                {
+                    b.Property<int>("AllowanceID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContractID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("AllowanceID", "ContractID");
+
+                    b.HasIndex("ContractID");
+
+                    b.ToTable("Contract_Allowances");
+
+                    b.HasData(
+                        new
+                        {
+                            AllowanceID = 1,
+                            ContractID = 1,
+                            Value = 500000m
+                        },
+                        new
+                        {
+                            AllowanceID = 2,
+                            ContractID = 1,
+                            Value = 300000m
                         });
                 });
 
@@ -4124,6 +4524,9 @@ namespace dotnet_api.Migrations
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("WorkShiftID")
+                        .HasColumnType("int");
+
                     b.HasKey("VoucherCode");
 
                     b.HasIndex("EmployeeID");
@@ -4134,6 +4537,8 @@ namespace dotnet_api.Migrations
 
                     b.HasIndex("OvertimeTypeID");
 
+                    b.HasIndex("WorkShiftID");
+
                     b.ToTable("EmployeeRequests", (string)null);
 
                     b.HasData(
@@ -4141,7 +4546,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 9, 19, 22, 47, 42, 680, DateTimeKind.Local).AddTicks(9395),
+                            CreatedAt = new DateTime(2025, 10, 8, 10, 22, 44, 700, DateTimeKind.Local).AddTicks(9003),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 21, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 1,
@@ -4154,7 +4559,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 9, 19, 22, 47, 42, 681, DateTimeKind.Local).AddTicks(8007),
+                            CreatedAt = new DateTime(2025, 10, 8, 10, 22, 44, 701, DateTimeKind.Local).AddTicks(6556),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 22, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 2,
@@ -4167,25 +4572,61 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 9, 19, 22, 47, 42, 681, DateTimeKind.Local).AddTicks(8027),
+                            CreatedAt = new DateTime(2025, 10, 8, 10, 22, 44, 701, DateTimeKind.Local).AddTicks(6586),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 27, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 1,
                             Reason = "Về quê thăm gia đình",
                             RequestType = "Nghỉ phép",
-                            StartDateTime = new DateTime(2025, 9, 25, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDateTime = new DateTime(2025, 9, 25, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            WorkShiftID = 1
                         },
                         new
                         {
                             VoucherCode = "LV002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 9, 19, 22, 47, 42, 681, DateTimeKind.Local).AddTicks(8030),
+                            CreatedAt = new DateTime(2025, 10, 8, 10, 22, 44, 701, DateTimeKind.Local).AddTicks(6690),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 30, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 2,
                             Reason = "Nghỉ bù sau khi tăng ca",
                             RequestType = "Nghỉ phép",
-                            StartDateTime = new DateTime(2025, 9, 30, 8, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDateTime = new DateTime(2025, 9, 30, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            WorkShiftID = 1
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Employee_FamilyRelation", b =>
+                {
+                    b.Property<int>("FamilyRelationID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RelationShipName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("FamilyRelationID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Employee_FamilyRelations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FamilyRelationID = 1,
+                            EmployeeID = "admin-id",
+                            RelationShipName = "Cha"
+                        },
+                        new
+                        {
+                            FamilyRelationID = 2,
+                            EmployeeID = "admin-id",
+                            RelationShipName = "Mẹ"
                         });
                 });
 
@@ -4229,6 +4670,46 @@ namespace dotnet_api.Migrations
                             ConstructionItemID = 2,
                             EmployeeID = "manager2-id",
                             ExportDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.FamilyRelation", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RelativeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("FamilyRelations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            EndDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RelativeName = "Nguyễn Văn A",
+                            StartDate = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            ID = 2,
+                            EndDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RelativeName = "Trần Thị B",
+                            StartDate = new DateTime(2005, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -4319,7 +4800,7 @@ namespace dotnet_api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("LeaveType");
+                    b.ToTable("LeaveTypes");
 
                     b.HasData(
                         new
@@ -5348,7 +5829,7 @@ namespace dotnet_api.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("OvertimeForm");
+                    b.ToTable("OvertimeForms");
 
                     b.HasData(
                         new
@@ -5375,31 +5856,289 @@ namespace dotnet_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("coefficient")
-                        .HasColumnType("float");
+                    b.Property<float>("coefficient")
+                        .HasColumnType("real");
 
                     b.HasKey("ID");
 
-                    b.ToTable("OvertimeType");
+                    b.ToTable("OvertimeTypes");
 
                     b.HasData(
                         new
                         {
                             ID = 1,
                             OvertimeTypeName = "Tăng ca ngày thường",
-                            coefficient = 1.5
+                            coefficient = 1.5f
                         },
                         new
                         {
                             ID = 2,
                             OvertimeTypeName = "Tăng ca ngày nghỉ",
-                            coefficient = 2.0
+                            coefficient = 2f
                         },
                         new
                         {
                             ID = 3,
                             OvertimeTypeName = "Tăng ca ngày lễ",
-                            coefficient = 3.0
+                            coefficient = 3f
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Payroll", b =>
+                {
+                    b.Property<int>("ID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ActualSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Bonus")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ContractSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ContractType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DailySalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DependentDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EatAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("GrossIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HealthInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HealthInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("InsuranceSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("LeaveSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MealAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetPay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OtherIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OvertimeSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("PayrollClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayrollNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PersonalDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PersonalIncomeTax")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PetrolAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SocialInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SocialInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxableIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalContractSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnemploymentInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnemploymentInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnionFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Payrolls");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ActualSalary = 20000000m,
+                            Bonus = 2000000m,
+                            ContractSalary = 20000000m,
+                            ContractType = "Hợp đồng lao động",
+                            DailySalary = 800000m,
+                            DependentDeduction = 4400000m,
+                            EatAllowance = 500000m,
+                            EmployeeID = "admin-id",
+                            GrossIncome = 22000000m,
+                            HealthInsuranceEmployee = 360000m,
+                            HealthInsuranceEmployer = 720000m,
+                            InsuranceSalary = 18000000m,
+                            LeaveSalary = 0m,
+                            MealAllowance = 200000m,
+                            NetIncome = 18800000m,
+                            NetPay = 18800000m,
+                            OtherIncome = 500000m,
+                            OvertimeSalary = 1000000m,
+                            PayrollClosingDate = new DateTime(2025, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PayrollNotes = "Lương tháng 9/2025",
+                            PersonalDeduction = 11000000m,
+                            PersonalIncomeTax = 1200000m,
+                            PetrolAllowance = 300000m,
+                            SocialInsuranceEmployee = 1800000m,
+                            SocialInsuranceEmployer = 3600000m,
+                            TaxableIncome = 20000000m,
+                            TotalAllowance = 1000000m,
+                            TotalContractSalary = 20000000m,
+                            TotalDeduction = 3200000m,
+                            UnemploymentInsuranceEmployee = 180000m,
+                            UnemploymentInsuranceEmployer = 360000m,
+                            UnionFee = 100000m
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollAdjustment", b =>
+                {
+                    b.Property<string>("voucherNo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("AdjustmentItemID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AdjustmentTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApproveStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("decisionDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("voucherNo");
+
+                    b.HasIndex("AdjustmentItemID");
+
+                    b.HasIndex("AdjustmentTypeID");
+
+                    b.ToTable("PayrollAdjustments", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            voucherNo = "PA-001",
+                            AdjustmentItemID = 1,
+                            AdjustmentTypeID = 1,
+                            ApproveStatus = 2,
+                            Month = 9,
+                            Reason = "Thưởng dự án A",
+                            Year = 2025,
+                            decisionDate = new DateTime(2025, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            voucherNo = "PA-002",
+                            AdjustmentItemID = 2,
+                            AdjustmentTypeID = 2,
+                            ApproveStatus = 2,
+                            Month = 9,
+                            Reason = "Tạm ứng lương tháng 9",
+                            Year = 2025,
+                            decisionDate = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            voucherNo = "PA-003",
+                            AdjustmentItemID = 2,
+                            AdjustmentTypeID = 3,
+                            ApproveStatus = 2,
+                            Month = 9,
+                            Reason = "Kỷ luật đi trễ nhiều lần",
+                            Year = 2025,
+                            decisionDate = new DateTime(2025, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollFeedback", b =>
+                {
+                    b.Property<int>("PayrollID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PayrollFeedbackDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PayrollID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("PayrollFeedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            PayrollID = 1,
+                            EmployeeID = "manager1-id",
+                            Content = "Lương chưa tính đủ phụ cấp xăng xe.",
+                            PayrollFeedbackDate = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Phản ánh lương tháng 9"
                         });
                 });
 
@@ -5949,6 +6688,122 @@ namespace dotnet_api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<decimal>("CompensatedOvertime")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EarlyLeaveCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LateArrivalCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PayableOvertime")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("TimeSheetClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TimeSheetNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalActualWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalPaidLeave")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalStandardWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalUnpaidLeave")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UnexcusedAbsenceCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("TimeSheets");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            CompensatedOvertime = 2m,
+                            EarlyLeaveCount = 0,
+                            EmployeeID = "admin-id",
+                            EmployeeName = "Phạm Văn Đốc",
+                            LateArrivalCount = 0,
+                            PayableOvertime = 2m,
+                            TimeSheetClosingDate = new DateTime(2025, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TimeSheetNotes = "Bảng công tháng 9/2025",
+                            TotalActualWorkdays = 24m,
+                            TotalPaidLeave = 2m,
+                            TotalStandardWorkdays = 22m,
+                            TotalUnpaidLeave = 0m,
+                            TotalWorkdays = 24m,
+                            UnexcusedAbsenceCount = 0
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheetFeedback", b =>
+                {
+                    b.Property<int>("TimeSheetID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeSheetFeedbackDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TimeSheetID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("TimeSheetFeedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            TimeSheetID = 1,
+                            EmployeeID = "manager1-id",
+                            Content = "Thiếu ngày công do lỗi chấm công.",
+                            TimeSheetFeedbackDate = new DateTime(2025, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Phản ánh bảng công tháng 9"
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.UnitofMeasurement", b =>
                 {
                     b.Property<int>("ID")
@@ -6285,6 +7140,30 @@ namespace dotnet_api.Migrations
                             ID = 31,
                             UnitOfMeasurementID = 2,
                             WorkAttributeName = "Chiều dày lớp trát"
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.WorkShift", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("ShiftName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("WorkShifts", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ShiftName = "Ca Hành Chính"
                         });
                 });
 
@@ -7210,6 +8089,17 @@ namespace dotnet_api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.AdjustmentItem", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.AdjustmentType", "adjustmentType")
+                        .WithMany("AdjustmentItems")
+                        .HasForeignKey("AdjustmentTypeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("adjustmentType");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.Role", "Role")
@@ -7219,6 +8109,29 @@ namespace dotnet_api.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser_PayrollAdjustment", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "applicationUser")
+                        .WithMany("applicationUser_PayrollAdjustment")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.PayrollAdjustment", "PayrollAdjustment")
+                        .WithMany("applicationUser_PayrollAdjustment")
+                        .HasForeignKey("PayrollAdjustmentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.PayrollAdjustment", null)
+                        .WithMany("applicationUser")
+                        .HasForeignKey("PayrollAdjustmentvoucherNo");
+
+                    b.Navigation("PayrollAdjustment");
+
+                    b.Navigation("applicationUser");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Attendance", b =>
@@ -7349,6 +8262,52 @@ namespace dotnet_api.Migrations
                     b.Navigation("WorkSubTypeVariant");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.Contract", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ContractForm", "ContractFormEntity")
+                        .WithMany()
+                        .HasForeignKey("ContractFormID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.ContractType", "ContractType")
+                        .WithMany()
+                        .HasForeignKey("ContractTypeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("Contracts")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ContractFormEntity");
+
+                    b.Navigation("ContractType");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Contract_Allowance", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.Allowance", "Allowance")
+                        .WithMany()
+                        .HasForeignKey("AllowanceID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.Contract", "Contract")
+                        .WithMany("ContractAllowances")
+                        .HasForeignKey("ContractID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Allowance");
+
+                    b.Navigation("Contract");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.EmployeeRequests", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
@@ -7369,6 +8328,11 @@ namespace dotnet_api.Migrations
                         .WithMany("EmployeeRequests")
                         .HasForeignKey("OvertimeTypeID");
 
+                    b.HasOne("dotnet_api.Data.Entities.WorkShift", "WorkShift")
+                        .WithMany("EmployeeRequests")
+                        .HasForeignKey("WorkShiftID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Employee");
 
                     b.Navigation("LeaveType");
@@ -7376,6 +8340,27 @@ namespace dotnet_api.Migrations
                     b.Navigation("OvertimeForm");
 
                     b.Navigation("OvertimeType");
+
+                    b.Navigation("WorkShift");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Employee_FamilyRelation", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.FamilyRelation", "FamilyRelation")
+                        .WithMany("EmployeeFamilyRelations")
+                        .HasForeignKey("FamilyRelationID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("FamilyRelation");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ExportOrder", b =>
@@ -7507,6 +8492,60 @@ namespace dotnet_api.Migrations
                     b.Navigation("Material");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.Payroll", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("Payrolls")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.TimeSheet", null)
+                        .WithOne("Payroll")
+                        .HasForeignKey("dotnet_api.Data.Entities.Payroll", "ID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollAdjustment", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.AdjustmentItem", "AdjustmentItem")
+                        .WithMany()
+                        .HasForeignKey("AdjustmentItemID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("dotnet_api.Data.Entities.AdjustmentType", "AdjustmentType")
+                        .WithMany("PayrollAdjustments")
+                        .HasForeignKey("AdjustmentTypeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AdjustmentItem");
+
+                    b.Navigation("AdjustmentType");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollFeedback", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("PayrollFeedbacks")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.Payroll", "Payroll")
+                        .WithMany()
+                        .HasForeignKey("PayrollID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Payroll");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Report", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.Construction", "Construction")
@@ -7560,7 +8599,7 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("dotnet_api.Data.Entities.EmployeeRequest", "WorkShift")
+                    b.HasOne("dotnet_api.Data.Entities.WorkShift", "WorkShift")
                         .WithMany("ShiftAssignments")
                         .HasForeignKey("WorkShiftID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -7573,13 +8612,43 @@ namespace dotnet_api.Migrations
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ShiftDetail", b =>
                 {
-                    b.HasOne("dotnet_api.Data.Entities.EmployeeRequest", "WorkShift")
+                    b.HasOne("dotnet_api.Data.Entities.WorkShift", "WorkShift")
                         .WithMany("ShiftDetails")
                         .HasForeignKey("WorkShiftID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WorkShift");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("TimeSheets")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheetFeedback", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("TimeSheetFeedbacks")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.TimeSheet", "TimeSheet")
+                        .WithMany()
+                        .HasForeignKey("TimeSheetID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("TimeSheet");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkAttribute", b =>
@@ -7634,9 +8703,18 @@ namespace dotnet_api.Migrations
                     b.Navigation("WorkSubTypeVariant");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.AdjustmentType", b =>
+                {
+                    b.Navigation("AdjustmentItems");
+
+                    b.Navigation("PayrollAdjustments");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("ConstructionPlans");
+
+                    b.Navigation("Contracts");
 
                     b.Navigation("EmployeeRequests");
 
@@ -7646,9 +8724,19 @@ namespace dotnet_api.Migrations
 
                     b.Navigation("ImportOrders");
 
+                    b.Navigation("PayrollFeedbacks");
+
+                    b.Navigation("Payrolls");
+
                     b.Navigation("Reports");
 
                     b.Navigation("ShiftAssignments");
+
+                    b.Navigation("TimeSheetFeedbacks");
+
+                    b.Navigation("TimeSheets");
+
+                    b.Navigation("applicationUser_PayrollAdjustment");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Construction", b =>
@@ -7695,16 +8783,19 @@ namespace dotnet_api.Migrations
                     b.Navigation("Constructions");
                 });
 
-            modelBuilder.Entity("dotnet_api.Data.Entities.EmployeeRequest", b =>
+            modelBuilder.Entity("dotnet_api.Data.Entities.Contract", b =>
                 {
-                    b.Navigation("ShiftAssignments");
-
-                    b.Navigation("ShiftDetails");
+                    b.Navigation("ContractAllowances");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ExportOrder", b =>
                 {
                     b.Navigation("Material_ExportOrders");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.FamilyRelation", b =>
+                {
+                    b.Navigation("EmployeeFamilyRelations");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ImportOrder", b =>
@@ -7743,6 +8834,13 @@ namespace dotnet_api.Migrations
                     b.Navigation("EmployeeRequests");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollAdjustment", b =>
+                {
+                    b.Navigation("applicationUser");
+
+                    b.Navigation("applicationUser_PayrollAdjustment");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Report", b =>
                 {
                     b.Navigation("ReportAttachments");
@@ -7761,6 +8859,12 @@ namespace dotnet_api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.Navigation("Payroll")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.UnitofMeasurement", b =>
                 {
                     b.Navigation("ConstructionItems");
@@ -7773,6 +8877,15 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkAttribute", b =>
                 {
                     b.Navigation("WorkSubTypeVariant_WorkAttributes");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.WorkShift", b =>
+                {
+                    b.Navigation("EmployeeRequests");
+
+                    b.Navigation("ShiftAssignments");
+
+                    b.Navigation("ShiftDetails");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkSubType", b =>

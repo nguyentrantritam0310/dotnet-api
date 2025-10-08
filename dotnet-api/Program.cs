@@ -59,6 +59,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Register other services
+builder.Services.AddScoped<IContractService, ContractService>();
 ///////////////////////////
 builder.Services.AddScoped<IConstructionService, ConstructionService>();
 builder.Services.AddScoped<IConstructionItemService, ConstructionItemService>();
@@ -79,6 +80,16 @@ builder.Services.AddScoped<IUnitofMeasurementService, UnitofMeasurementService>(
 builder.Services.AddScoped<IWorkSubTypeVariantService, WorkSubTypeVariantService>();
 builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IAttendanceMachineService, AttendanceMachineService>();
+builder.Services.AddScoped<IEmployeeRequestService, EmployeeRequestService>();
+builder.Services.AddScoped<IPayrollAdjustmentService, PayrollAdjustmentService>();
+builder.Services.AddScoped<IAdjustmentTypeService, AdjustmentTypeService>();
+builder.Services.AddScoped<IAdjustmentItemService, AdjustmentItemService>();
+builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();
+builder.Services.AddScoped<IOvertimeTypeService, OvertimeTypeService>();
+builder.Services.AddScoped<IOvertimeFormService, OvertimeFormService>();
+builder.Services.AddScoped<IFamilyRelationService, FamilyRelationService>();
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 //builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 builder.Services.AddScoped<WeatherPredictionService>(); 
@@ -86,11 +97,11 @@ builder.Services.AddScoped<WeatherPredictionService>();
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
     
     options.User.RequireUniqueEmail = true;
     

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace dotnet_api.Data.Configurations
 {
-    public class WorkShiftConfiguration : IEntityTypeConfiguration<EmployeeRequest>
+    public class WorkShiftConfiguration : IEntityTypeConfiguration<WorkShift>
     {
-        public void Configure(EntityTypeBuilder<EmployeeRequest> builder)
+        public void Configure(EntityTypeBuilder<WorkShift> builder)
         {
             builder.ToTable("WorkShifts");
 

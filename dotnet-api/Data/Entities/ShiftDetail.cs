@@ -9,6 +9,6 @@
         public TimeSpan EndTime { get; set; }
         public TimeSpan BreakStart { get; set; }
         public TimeSpan BreakEnd { get; set; }
-        public EmployeeRequest WorkShift { get; set; }
+        public WorkShift WorkShift { get; set; }
     }
 }

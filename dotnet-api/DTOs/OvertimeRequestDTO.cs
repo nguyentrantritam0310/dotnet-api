@@ -1,0 +1,21 @@
+using System;
+
+namespace dotnet_api.DTOs
+{
+    public class OvertimeRequestDTO
+    {
+        public string VoucherCode { get; set; }
+        public string EmployeeID { get; set; }
+        public string UserName { get; set; }
+        public int OvertimeTypeID { get; set; }
+        public string OvertimeTypeName { get; set; }
+        public float Coefficient { get; set; }
+        public int OvertimeFormID { get; set; }
+        public string OvertimeFormName { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
+        public string Reason { get; set; }
+        public string ApproveStatus { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+}

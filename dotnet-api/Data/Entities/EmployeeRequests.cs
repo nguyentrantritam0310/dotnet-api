@@ -15,11 +15,13 @@ namespace dotnet_api.Data.Entities
         public int? OvertimeFormID { get; set; }
         public int? LeaveTypeID { get; set; }
         public string EmployeeID { get; set; }
+    public int? WorkShiftID { get; set; } // FK to WorkShift
         // Navigation properties
         public ApplicationUser Employee { get; set; }
         public OvertimeType OvertimeType { get; set; }
         public OvertimeForm OvertimeForm { get; set; }
         public LeaveType LeaveType { get; set; }
+    public WorkShift WorkShift { get; set; }
 
     }
 }

@@ -12,7 +12,8 @@ namespace dotnet_api.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-
+        public DbSet<AdjustmentItem> AdjustmentItems { get; set; }
+        public DbSet<AdjustmentType> AdjustmentTypes { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceMachine> AttendanceMachines { get; set; }
@@ -27,11 +28,15 @@ namespace dotnet_api.Data
         public DbSet<ExportOrder> ExportOrders { get; set; }
         public DbSet<ImportOrder> ImportOrders { get; set; }
         public DbSet<ImportOrderEmployee> ImportOrderEmployees { get; set; }
+        public DbSet<LeaveType> LeaveTypes { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<Material_ExportOrder> Material_ExportOrders { get; set; }
         public DbSet<MaterialNorm> MaterialNorms { get; set; }
         public DbSet<MaterialType> MaterialTypes { get; set; }
         public DbSet<MaterialPlan> MaterialPlans { get; set; }
+        public DbSet<OvertimeForm> OvertimeForms { get; set; }
+        public DbSet<OvertimeType> OvertimeTypes { get; set; }
+        public DbSet<PayrollAdjustment> PayrollAdjustments { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<ReportAttachment> ReportAttachments { get; set; }
         public DbSet<ReportStatusLog> ReportStatusLogs { get; set; }
@@ -40,11 +45,28 @@ namespace dotnet_api.Data
         public DbSet<ShiftDetail> ShiftDetails { get; set; }
         public DbSet<UnitofMeasurement> UnitofMeasuremens { get; set; }
         public DbSet<WorkAttribute> WorkAttributes { get; set; }
-        public DbSet<EmployeeRequest> WorkShifts { get; set; }
+        public DbSet<WorkShift> WorkShifts { get; set; }
         public DbSet<WorkSubType> WorkSubTypes { get; set; }
         public DbSet<WorkSubTypeVariant_WorkAttribute> WorkSubTypeVariant_WorkAttributes { get; set; }
         public DbSet<WorkSubTypeVariant> WorkSubTypeVariants { get; set; }
         public DbSet<WorkType> WorkTypes { get; set; }
+        public DbSet<Contract> Contracts { get; set; }
+        public DbSet<ContractType> ContractTypes { get; set; }
+        public DbSet<Allowance> Allowances { get; set; }
+        public DbSet<Contract_Allowance> Contract_Allowances { get; set; }
+    public DbSet<ContractForm> ContractForms { get; set; }
+    public DbSet<ApplicationUser_PayrollAdjustment> ApplicationUser_PayrollAdjustments { get; set; }
+        
+
+    // Family & Payroll
+    public DbSet<FamilyRelation> FamilyRelations { get; set; }
+    public DbSet<Employee_FamilyRelation> Employee_FamilyRelations { get; set; }
+    public DbSet<Payroll> Payrolls { get; set; }
+    public DbSet<PayrollFeedback> PayrollFeedbacks { get; set; }
+
+    // Timesheet
+    public DbSet<TimeSheet> TimeSheets { get; set; }
+    public DbSet<TimeSheetFeedback> TimeSheetFeedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -98,6 +120,10 @@ namespace dotnet_api.Data
             });
 
             // Apply configurations
+            modelBuilder.ApplyConfiguration(new AdjustmentTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AdjustmentItemConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUser_PayrollAdjustmentConfiguration());
+            modelBuilder.ApplyConfiguration(new PayrollAdjustmentConfiguration());
             modelBuilder.ApplyConfiguration(new AttendanceConfiguration());
             modelBuilder.ApplyConfiguration(new AttendanceMachineConfiguration());
             modelBuilder.ApplyConfiguration(new ConstructionConfiguration());
@@ -129,6 +155,21 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new WorkSubTypeVariant_WorkAttributeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkSubTypeVariantConfiguration());
             modelBuilder.ApplyConfiguration(new WorkTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ContractConfiguration());
+            modelBuilder.ApplyConfiguration(new ContractTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new AllowanceConfiguration());
+            modelBuilder.ApplyConfiguration(new Contract_AllowanceConfiguration());
+            modelBuilder.ApplyConfiguration(new ContractFormConfiguration());
+
+            // Family & Payroll configs
+            modelBuilder.ApplyConfiguration(new FamilyRelationConfiguration());
+            modelBuilder.ApplyConfiguration(new Employee_FamilyRelationConfiguration());
+            modelBuilder.ApplyConfiguration(new PayrollConfiguration());
+            modelBuilder.ApplyConfiguration(new PayrollFeedbackConfiguration());
+
+            // Timesheet configs
+            modelBuilder.ApplyConfiguration(new TimeSheetConfiguration());
+            modelBuilder.ApplyConfiguration(new TimeSheetFeedbackConfiguration());
 
             // Seed data
             modelBuilder.Seed();

@@ -5,7 +5,6 @@ namespace dotnet_api.DTOs
     public class EmployeeDTO
     {
         public string Id { get; set; }
-        public string EmployeeCode { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmployeeName { get; set; } // FirstName + LastName

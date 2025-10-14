@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using dotnet_api.Data.Enums;
 
 namespace dotnet_api.DTOs.POST
 {
@@ -12,14 +14,8 @@ namespace dotnet_api.DTOs.POST
         [Required(ErrorMessage = "Loại hợp đồng là bắt buộc")]
         public int ContractTypeID { get; set; }
 
-        [Required(ErrorMessage = "Hình thức hợp đồng là bắt buộc")]
-        public int ContractFormID { get; set; }
-
         [Required(ErrorMessage = "ID nhân viên là bắt buộc")]
         public string EmployeeID { get; set; }
-
-        [Required(ErrorMessage = "Trạng thái là bắt buộc")]
-        public string Status { get; set; }
 
         [Required(ErrorMessage = "Ngày bắt đầu là bắt buộc")]
         public DateTime StartDate { get; set; }
@@ -35,7 +31,10 @@ namespace dotnet_api.DTOs.POST
         [Range(0, double.MaxValue, ErrorMessage = "Lương bảo hiểm phải lớn hơn 0")]
         public decimal InsuranceSalary { get; set; }
 
-        public string ApproveStatus { get; set; } = "Chờ duyệt";
+        public int ApproveStatus { get; set; } = (int)ApproveStatusEnum.Created;
+        
+        [JsonIgnore]
+        public ApproveStatusEnum ApproveStatusEnum => (ApproveStatusEnum)ApproveStatus;
         public List<ContractAllowanceDTOPOST> Allowances { get; set; } = new List<ContractAllowanceDTOPOST>();
     }
 

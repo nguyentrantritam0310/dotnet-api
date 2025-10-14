@@ -1,6 +1,7 @@
 using AutoMapper;
 using dotnet_api.Data;
 using dotnet_api.Data.Entities;
+using dotnet_api.Data.Enums;
 using dotnet_api.DTOs;
 using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
@@ -25,7 +26,6 @@ namespace dotnet_api.Services
             var contracts = await _context.Contracts
                 .Include(c => c.Employee)
                 .Include(c => c.ContractType)
-                .Include(c => c.ContractFormEntity)
                 .Include(c => c.ContractAllowances)
                     .ThenInclude(ca => ca.Allowance)
                 .ToListAsync();
@@ -38,7 +38,6 @@ namespace dotnet_api.Services
             var contract = await _context.Contracts
                 .Include(c => c.Employee)
                 .Include(c => c.ContractType)
-                .Include(c => c.ContractFormEntity)
                 .Include(c => c.ContractAllowances)
                     .ThenInclude(ca => ca.Allowance)
                 .FirstOrDefaultAsync(c => c.ID == id);
@@ -48,70 +47,100 @@ namespace dotnet_api.Services
 
         public async Task<ContractDTO> CreateContractAsync(ContractDTOPOST contractDTO)
         {
-            // Check if employee exists
-            var employee = await _context.ApplicationUsers.FindAsync(contractDTO.EmployeeID);
-            if (employee == null)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                throw new Exception("Không tìm thấy nhân viên với ID đã cho");
-            }
-
-            // Check if contract type exists
-            var contractType = await _context.ContractTypes.FindAsync(contractDTO.ContractTypeID);
-            if (contractType == null)
-            {
-                throw new Exception("Không tìm thấy loại hợp đồng với ID đã cho");
-            }
-
-            // Check if contract form exists
-            var contractForm = await _context.ContractForms.FindAsync(contractDTO.ContractFormID);
-            if (contractForm == null)
-            {
-                throw new Exception("Không tìm thấy hình thức hợp đồng với ID đã cho");
-            }
-
-            // Check if contract number already exists
-            var existingContract = await _context.Contracts
-                .FirstOrDefaultAsync(c => c.ContractNumber == contractDTO.ContractNumber);
-            if (existingContract != null)
-            {
-                throw new Exception("Số hợp đồng đã tồn tại");
-            }
-
-            // Validate allowances
-            foreach (var allowance in contractDTO.Allowances)
-            {
-                var allowanceEntity = await _context.Allowances.FindAsync(allowance.AllowanceID);
-                if (allowanceEntity == null)
+                // Check if employee exists
+                var employee = await _context.ApplicationUsers.FindAsync(contractDTO.EmployeeID);
+                if (employee == null)
                 {
-                    throw new Exception($"Không tìm thấy phụ cấp với ID: {allowance.AllowanceID}");
+                    throw new Exception("Không tìm thấy nhân viên với ID đã cho");
                 }
-            }
 
-            // Create contract
-            var contract = _mapper.Map<Contract>(contractDTO);
-            _context.Contracts.Add(contract);
-            await _context.SaveChangesAsync();
-
-            // Add allowances
-            foreach (var allowanceDTO in contractDTO.Allowances)
-            {
-                var contractAllowance = new Contract_Allowance
+                // Check if contract type exists
+                var contractType = await _context.ContractTypes.FindAsync(contractDTO.ContractTypeID);
+                if (contractType == null)
                 {
-                    ContractID = contract.ID,
-                    AllowanceID = allowanceDTO.AllowanceID,
-                    Value = allowanceDTO.Value
+                    throw new Exception("Không tìm thấy loại hợp đồng với ID đã cho");
+                }
+
+                // Validate probation contract duration (should be 2 months max)
+                if (contractType.ContractTypeName.ToLower().Contains("thử việc"))
+                {
+                    var startDate = contractDTO.StartDate;
+                    var endDate = contractDTO.EndDate;
+                    var durationInMonths = ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month;
+                    
+                    if (durationInMonths > 2)
+                    {
+                        throw new Exception("Hợp đồng thử việc không được vượt quá 2 tháng");
+                    }
+                }
+
+                // Check if contract number already exists
+                var existingContract = await _context.Contracts
+                    .FirstOrDefaultAsync(c => c.ContractNumber == contractDTO.ContractNumber);
+                if (existingContract != null)
+                {
+                    throw new Exception("Số hợp đồng đã tồn tại");
+                }
+
+                // Validate allowances
+                foreach (var allowance in contractDTO.Allowances)
+                {
+                    var allowanceEntity = await _context.Allowances.FindAsync(allowance.AllowanceID);
+                    if (allowanceEntity == null)
+                    {
+                        throw new Exception($"Không tìm thấy phụ cấp với ID: {allowance.AllowanceID}");
+                    }
+                }
+
+                // Create contract manually to avoid AutoMapper tracking issues
+                var contract = new Contract
+                {
+                    ContractNumber = contractDTO.ContractNumber,
+                    ContractTypeID = contractDTO.ContractTypeID,
+                    EmployeeID = contractDTO.EmployeeID,
+                    StartDate = contractDTO.StartDate,
+                    EndDate = contractDTO.EndDate,
+                    ContractSalary = contractDTO.ContractSalary,
+                    InsuranceSalary = contractDTO.InsuranceSalary,
+                    ApproveStatus = contractDTO.ApproveStatusEnum
                 };
-                _context.Contract_Allowances.Add(contractAllowance);
+
+                _context.Contracts.Add(contract);
+                await _context.SaveChangesAsync();
+
+                // Add allowances
+                foreach (var allowanceDTO in contractDTO.Allowances)
+                {
+                    var contractAllowance = new Contract_Allowance
+                    {
+                        ContractID = contract.ID,
+                        AllowanceID = allowanceDTO.AllowanceID,
+                        Value = allowanceDTO.Value
+                    };
+                    _context.Contract_Allowances.Add(contractAllowance);
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return await GetContractByIdAsync(contract.ID);
             }
-
-            await _context.SaveChangesAsync();
-
-            return await GetContractByIdAsync(contract.ID);
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<ContractDTO> UpdateContractAsync(ContractDTOPUT contractDTO)
         {
-            var contract = await _context.Contracts
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var contract = await _context.Contracts
                 .Include(c => c.ContractAllowances)
                 .FirstOrDefaultAsync(c => c.ID == contractDTO.ID);
 
@@ -134,11 +163,17 @@ namespace dotnet_api.Services
                 throw new Exception("Không tìm thấy loại hợp đồng với ID đã cho");
             }
 
-            // Check if contract form exists
-            var contractForm = await _context.ContractForms.FindAsync(contractDTO.ContractFormID);
-            if (contractForm == null)
+            // Validate probation contract duration (should be 2 months max)
+            if (contractType.ContractTypeName.ToLower().Contains("thử việc"))
             {
-                throw new Exception("Không tìm thấy hình thức hợp đồng với ID đã cho");
+                var startDate = contractDTO.StartDate;
+                var endDate = contractDTO.EndDate;
+                var durationInMonths = ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month;
+                
+                if (durationInMonths > 2)
+                {
+                    throw new Exception("Hợp đồng thử việc không được vượt quá 2 tháng");
+                }
             }
 
             // Check if contract number already exists (excluding current contract)
@@ -162,17 +197,19 @@ namespace dotnet_api.Services
             // Update contract properties
             contract.ContractNumber = contractDTO.ContractNumber;
             contract.ContractTypeID = contractDTO.ContractTypeID;
-            contract.ContractFormID = contractDTO.ContractFormID;
             contract.EmployeeID = contractDTO.EmployeeID;
-            contract.Status = contractDTO.Status;
             contract.StartDate = contractDTO.StartDate;
             contract.EndDate = contractDTO.EndDate;
             contract.ContractSalary = contractDTO.ContractSalary;
             contract.InsuranceSalary = contractDTO.InsuranceSalary;
-            contract.ApproveStatus = contractDTO.ApproveStatus;
+            contract.ApproveStatus = contractDTO.ApproveStatusEnum;
 
             // Remove existing allowances
             _context.Contract_Allowances.RemoveRange(contract.ContractAllowances);
+            await _context.SaveChangesAsync();
+
+            // Clear change tracker to avoid conflicts
+            _context.ChangeTracker.Clear();
 
             // Add new allowances
             foreach (var allowanceDTO in contractDTO.Allowances)
@@ -186,9 +223,16 @@ namespace dotnet_api.Services
                 _context.Contract_Allowances.Add(contractAllowance);
             }
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-            return await GetContractByIdAsync(contract.ID);
+                return await GetContractByIdAsync(contract.ID);
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> DeleteContractAsync(int id)
@@ -219,16 +263,57 @@ namespace dotnet_api.Services
             return _mapper.Map<IEnumerable<ContractTypeDTO>>(contractTypes);
         }
 
-        public async Task<IEnumerable<ContractFormDTO>> GetContractFormsAsync()
-        {
-            var contractForms = await _context.ContractForms.ToListAsync();
-            return _mapper.Map<IEnumerable<ContractFormDTO>>(contractForms);
-        }
 
         public async Task<IEnumerable<AllowanceDTO>> GetAllowancesAsync()
         {
             var allowances = await _context.Allowances.ToListAsync();
             return _mapper.Map<IEnumerable<AllowanceDTO>>(allowances);
+        }
+
+        // Approve/Reject Contract methods
+        public async Task<ContractDTO> ApproveContractAsync(int contractId)
+        {
+            var contract = await _context.Contracts.FindAsync(contractId);
+            if (contract == null)
+            {
+                throw new Exception("Không tìm thấy hợp đồng với ID đã cho");
+            }
+
+            contract.ApproveStatus = ApproveStatusEnum.Approved;
+            _context.Contracts.Update(contract);
+            await _context.SaveChangesAsync();
+
+            return await GetContractByIdAsync(contractId);
+        }
+
+        public async Task<ContractDTO> RejectContractAsync(int contractId)
+        {
+            var contract = await _context.Contracts.FindAsync(contractId);
+            if (contract == null)
+            {
+                throw new Exception("Không tìm thấy hợp đồng với ID đã cho");
+            }
+
+            contract.ApproveStatus = ApproveStatusEnum.Rejected;
+            _context.Contracts.Update(contract);
+            await _context.SaveChangesAsync();
+
+            return await GetContractByIdAsync(contractId);
+        }
+
+        public async Task<ContractDTO> PendingContractAsync(int contractId)
+        {
+            var contract = await _context.Contracts.FindAsync(contractId);
+            if (contract == null)
+            {
+                throw new Exception("Không tìm thấy hợp đồng với ID đã cho");
+            }
+
+            contract.ApproveStatus = ApproveStatusEnum.Pending;
+            _context.Contracts.Update(contract);
+            await _context.SaveChangesAsync();
+
+            return await GetContractByIdAsync(contractId);
         }
     }
 }

@@ -5,6 +5,8 @@ using dotnet_api.DTOs;
 using dotnet_api.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using dotnet_api.Data;
 
 namespace dotnet_api.Controllers
 {
@@ -16,17 +18,23 @@ namespace dotnet_api.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtService _jwtService;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
+        private readonly ApplicationDbContext _context;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             JwtService jwtService,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _roleManager = roleManager;
+            _emailService = emailService;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -77,13 +85,17 @@ namespace dotnet_api.Controllers
                 user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
                 await _userManager.UpdateAsync(user);
 
+                // Kiểm tra nếu user cần đổi mật khẩu
+                bool isDefaultPassword = user.RequiresPasswordChange;
+
                 return Ok(new AuthResponseDTO
                 {
                     IsSuccess = true,
                     Message = "Đăng nhập thành công",
                     Token = token,
                     RefreshToken = refreshToken,
-                    Expiration = DateTime.Now.AddDays(1)
+                    Expiration = DateTime.Now.AddDays(1),
+                    RequiresPasswordChange = isDefaultPassword
                 });
             }
 
@@ -145,11 +157,15 @@ namespace dotnet_api.Controllers
             if (string.IsNullOrEmpty(email))
                 return Unauthorized(new { Message = "User not found" });
 
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _context.ApplicationUsers
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
+            
             if (user == null)
                 return Unauthorized(new { Message = "User not found" });
 
-            var roles = await _userManager.GetRolesAsync(user);
+            // Get role from custom Role table and map to English role names
+            var roleName = GetEnglishRoleName(user.Role?.RoleName);
             
             return Ok(new
             {
@@ -158,8 +174,46 @@ namespace dotnet_api.Controllers
                 firstName = user.FirstName,
                 lastName = user.LastName,
                 fullName = $"{user.FirstName} {user.LastName}",
-                role = roles.FirstOrDefault() // Lấy role đầu tiên của user
+                role = roleName
             });
+        }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized(new { Message = "User not found" });
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Unauthorized(new { Message = "User not found" });
+
+            // Kiểm tra mật khẩu hiện tại
+            var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!isCurrentPasswordValid)
+                return BadRequest(new { Message = "Mật khẩu hiện tại không đúng" });
+
+            // Đổi mật khẩu
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                // Clear the password change requirement flag
+                user.RequiresPasswordChange = false;
+                await _userManager.UpdateAsync(user);
+                
+                // Send password changed notification email
+                var fullName = $"{user.FirstName} {user.LastName}".Trim();
+                _ = Task.Run(async () => await _emailService.SendPasswordChangedNotificationAsync(user.Email, fullName));
+                
+                return Ok(new { Message = "Đổi mật khẩu thành công" });
+            }
+
+            return BadRequest(new { Message = "Đổi mật khẩu thất bại", Errors = result.Errors });
         }
 
         [HttpPost("assign-role")]
@@ -189,6 +243,21 @@ namespace dotnet_api.Controllers
             }
 
             return BadRequest(result.Errors);
+        }
+
+        // Helper method to map Vietnamese role names to English role names
+        private string GetEnglishRoleName(string vietnameseRoleName)
+        {
+            return vietnameseRoleName?.ToLower() switch
+            {
+                "nhân viên kỹ thuật" => "technician",
+                "chỉ huy công trình" => "manager", 
+                "giám đốc" => "director",
+                "nhân viên thợ" => "worker",
+                "trưởng phòng hành chính – nhân sự" => "hr_manager",
+                "nhân viên phòng hành chính - nhân sự" => "hr_employee",
+                _ => "user"
+            };
         }
     }
 } 

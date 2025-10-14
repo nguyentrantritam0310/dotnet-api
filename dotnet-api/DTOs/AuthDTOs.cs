@@ -12,7 +12,8 @@ namespace dotnet_api.DTOs
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        [MinLength(6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&)")]
         public string Password { get; set; }
         [Required]
         [Compare("Password")]
@@ -35,6 +36,7 @@ namespace dotnet_api.DTOs
         public string Token { get; set; }
         public string RefreshToken { get; set; }
         public DateTime Expiration { get; set; }
+        public bool RequiresPasswordChange { get; set; } = false;
     }
 
     public class RefreshTokenDTO
@@ -43,5 +45,18 @@ namespace dotnet_api.DTOs
         public string Token { get; set; }
         [Required]
         public string RefreshToken { get; set; }
+    }
+
+    public class ChangePasswordDTO
+    {
+        [Required]
+        public string CurrentPassword { get; set; }
+        [Required]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", 
+            ErrorMessage = "Mật khẩu mới phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&)")]
+        public string NewPassword { get; set; }
+        [Required]
+        [Compare("NewPassword")]
+        public string ConfirmPassword { get; set; }
     }
 } 

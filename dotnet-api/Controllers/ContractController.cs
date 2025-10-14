@@ -3,6 +3,7 @@ using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
 using dotnet_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace dotnet_api.Controllers
 {
@@ -38,8 +39,19 @@ namespace dotnet_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ContractDTOPOST contractDTO)
         {
+            // Debug logging
+            Console.WriteLine($"Received contractDTO: {contractDTO?.ContractNumber}");
+            Console.WriteLine($"ApproveStatus: {contractDTO?.ApproveStatus}");
+            
             if (!ModelState.IsValid)
+            {
+                Console.WriteLine("ModelState is invalid:");
+                foreach (var error in ModelState)
+                {
+                    Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
                 return BadRequest(ModelState);
+            }
 
             try
             {
@@ -48,6 +60,7 @@ namespace dotnet_api.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Exception in Create: {ex.Message}");
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -98,18 +111,54 @@ namespace dotnet_api.Controllers
             return Ok(contractTypes);
         }
 
-        [HttpGet("contract-forms")]
-        public async Task<IActionResult> GetContractForms()
-        {
-            var contractForms = await _contractService.GetContractFormsAsync();
-            return Ok(contractForms);
-        }
 
         [HttpGet("allowances")]
         public async Task<IActionResult> GetAllowances()
         {
             var allowances = await _contractService.GetAllowancesAsync();
             return Ok(allowances);
+        }
+
+        [HttpPut("{id}/approve")]
+        public async Task<IActionResult> ApproveContract(int id)
+        {
+            try
+            {
+                var result = await _contractService.ApproveContractAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}/reject")]
+        public async Task<IActionResult> RejectContract(int id)
+        {
+            try
+            {
+                var result = await _contractService.RejectContractAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}/pending")]
+        public async Task<IActionResult> PendingContract(int id)
+        {
+            try
+            {
+                var result = await _contractService.PendingContractAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

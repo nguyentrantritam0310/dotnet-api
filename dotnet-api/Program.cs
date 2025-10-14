@@ -24,7 +24,11 @@ var port = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Deve
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
 // Configure file upload
 builder.Services.Configure<IISServerOptions>(options =>
@@ -91,8 +95,12 @@ builder.Services.AddScoped<IFamilyRelationService, FamilyRelationService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 //builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<AttendanceDataService>();
 
 builder.Services.AddScoped<WeatherPredictionService>(); 
+
+// Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

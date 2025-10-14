@@ -7,7 +7,9 @@ namespace dotnet_api.Data.Enums
         [Display(Name = "Đang làm việc")]
         Active,
         [Display(Name = "Nghỉ việc")]
-        Inactive
+        Resigned,
+        [Display(Name = "Nghỉ thai sản")]
+        MaternityLeave
     }
 
 }

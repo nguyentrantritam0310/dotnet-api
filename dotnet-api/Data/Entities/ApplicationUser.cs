@@ -5,7 +5,6 @@ namespace dotnet_api.Data.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public string EmployeeCode { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string? RefreshToken { get; set; }
@@ -18,6 +17,9 @@ namespace dotnet_api.Data.Entities
         public int RoleID { get; set; }
         public string? Phone { get; set; }
         public EmployeeStatusEnum Status { get; set; }
+        
+        // Password management
+        public bool RequiresPasswordChange { get; set; } = false;
 
         // Navigation properties
         public Role Role { get; set; }

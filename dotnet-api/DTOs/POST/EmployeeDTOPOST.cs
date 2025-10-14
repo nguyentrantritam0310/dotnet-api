@@ -5,8 +5,8 @@ namespace dotnet_api.DTOs.POST
 {
     public class EmployeeDTOPOST
     {
-        [Required(ErrorMessage = "Mã nhân viên là bắt buộc")]
-        public string EmployeeCode { get; set; }
+        [Required(ErrorMessage = "ID nhân viên là bắt buộc")]
+        public string Id { get; set; }
 
         [Required(ErrorMessage = "Họ và tên đệm là bắt buộc")]
         public string FirstName { get; set; }
@@ -33,10 +33,6 @@ namespace dotnet_api.DTOs.POST
 
         [Required(ErrorMessage = "Chức danh là bắt buộc")]
         public int RoleID { get; set; }
-
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
-        [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự")]
-        public string Password { get; set; }
 
         public EmployeeStatusEnum Status { get; set; } = EmployeeStatusEnum.Active;
     }

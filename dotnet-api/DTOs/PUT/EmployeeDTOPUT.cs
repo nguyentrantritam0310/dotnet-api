@@ -8,9 +8,6 @@ namespace dotnet_api.DTOs.PUT
         [Required(ErrorMessage = "ID là bắt buộc")]
         public string Id { get; set; }
 
-        [Required(ErrorMessage = "Mã nhân viên là bắt buộc")]
-        public string EmployeeCode { get; set; }
-
         [Required(ErrorMessage = "Họ và tên đệm là bắt buộc")]
         public string FirstName { get; set; }
 

@@ -13,16 +13,15 @@ namespace dotnet_api.Mapping
         public MappingProfile()
         {
             CreateMap<Contract, ContractDTO>()
-                .ForMember(dest => dest.ContractFormName, opt => opt.MapFrom(src => src.ContractFormEntity.ContractFormName))
                 .ForMember(dest => dest.ContractTypeName, opt => opt.MapFrom(src => src.ContractType.ContractTypeName))
                 .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.ApproveStatus)))
                 .ForMember(dest => dest.Allowances, opt => opt.MapFrom(src => src.ContractAllowances));
 
-            // Contract type, form, allowance mappings
+            // Contract type, allowance mappings
             CreateMap<ContractType, ContractTypeDTO>();
-            CreateMap<ContractForm, ContractFormDTO>();
             CreateMap<Allowance, AllowanceDTO>();
             CreateMap<Contract_Allowance, ContractAllowanceDTO>()
                 .ForMember(dest => dest.ContractID, opt => opt.MapFrom(src => src.ContractID))
@@ -33,13 +32,12 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.ID, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore())
                 .ForMember(dest => dest.ContractType, opt => opt.Ignore())
-                .ForMember(dest => dest.ContractFormEntity, opt => opt.Ignore())
-                .ForMember(dest => dest.ContractAllowances, opt => opt.MapFrom(src => src.Allowances));
+                .ForMember(dest => dest.ContractAllowances, opt => opt.MapFrom(src => src.Allowances))
+                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => ApproveStatusEnum.Created));
 
             CreateMap<ContractDTOPUT, Contract>()
                 .ForMember(dest => dest.Employee, opt => opt.Ignore())
                 .ForMember(dest => dest.ContractType, opt => opt.Ignore())
-                .ForMember(dest => dest.ContractFormEntity, opt => opt.Ignore())
                 .ForMember(dest => dest.ContractAllowances, opt => opt.MapFrom(src => src.Allowances));
 
             CreateMap<ContractAllowanceDTOPOST, Contract_Allowance>()
@@ -359,7 +357,7 @@ namespace dotnet_api.Mapping
             CreateMap<LeaveRequestDTOPOST, EmployeeRequests>()
                 .ForMember(dest => dest.RequestType, opt => opt.MapFrom(src => "Nghỉ phép"))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => ApproveStatusEnum.Pending))
+                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => ApproveStatusEnum.Created))
                 .ForMember(dest => dest.OvertimeTypeID, opt => opt.Ignore())
                 .ForMember(dest => dest.OvertimeFormID, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore())
@@ -405,7 +403,7 @@ namespace dotnet_api.Mapping
             CreateMap<OvertimeRequestDTOPOST, EmployeeRequests>()
                 .ForMember(dest => dest.RequestType, opt => opt.MapFrom(src => "Tăng ca"))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => ApproveStatusEnum.Pending))
+                .ForMember(dest => dest.ApproveStatus, opt => opt.MapFrom(src => ApproveStatusEnum.Created))
                 .ForMember(dest => dest.LeaveTypeID, opt => opt.Ignore())
                 .ForMember(dest => dest.WorkShiftID, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore())

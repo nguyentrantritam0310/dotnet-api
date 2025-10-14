@@ -19,10 +19,6 @@ namespace dotnet_api.Data.Configurations
                 .WithMany()
                 .HasForeignKey(x => x.ContractTypeID)
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(x => x.ContractFormEntity)
-                .WithMany()
-                .HasForeignKey(x => x.ContractFormID)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

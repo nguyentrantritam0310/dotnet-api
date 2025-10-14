@@ -115,6 +115,33 @@ namespace dotnet_api.Controllers
             }
         }
 
+        [HttpPut("employee/{id}/status")]
+        public async Task<IActionResult> UpdateEmployeeStatus(string id, [FromBody] UpdateEmployeeStatusDTO statusDTO)
+        {
+            if (string.IsNullOrEmpty(id))
+                return BadRequest(new { message = "ID nhân viên không được để trống" });
+
+            if (statusDTO == null)
+                return BadRequest(new { message = "Dữ liệu trạng thái không được để trống" });
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var result = await _applicationUserService.UpdateEmployeeStatusAsync(id, statusDTO.Status);
+                if (result == null)
+                {
+                    return NotFound(new { message = "Không tìm thấy nhân viên với ID đã cho" });
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("roles")]
         public async Task<IActionResult> GetAllRoles()
         {

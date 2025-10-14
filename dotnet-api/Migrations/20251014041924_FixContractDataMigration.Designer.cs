@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_api.Data;
 
@@ -11,9 +12,11 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251014041924_FixContractDataMigration")]
+    partial class FixContractDataMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,18 +75,6 @@ namespace dotnet_api.Migrations
                             Id = "4",
                             Name = "employee",
                             NormalizedName = "EMPLOYEE"
-                        },
-                        new
-                        {
-                            Id = "5",
-                            Name = "hr_manager",
-                            NormalizedName = "HR_MANAGER"
-                        },
-                        new
-                        {
-                            Id = "6",
-                            Name = "hr_employee",
-                            NormalizedName = "HR_EMPLOYEE"
                         });
                 });
 
@@ -208,41 +199,6 @@ namespace dotnet_api.Migrations
                         {
                             UserId = "tech3-id",
                             RoleId = "1"
-                        },
-                        new
-                        {
-                            UserId = "hr-manager1-id",
-                            RoleId = "5"
-                        },
-                        new
-                        {
-                            UserId = "hr-manager2-id",
-                            RoleId = "5"
-                        },
-                        new
-                        {
-                            UserId = "hr-employee1-id",
-                            RoleId = "6"
-                        },
-                        new
-                        {
-                            UserId = "hr-employee2-id",
-                            RoleId = "6"
-                        },
-                        new
-                        {
-                            UserId = "hr-employee3-id",
-                            RoleId = "6"
-                        },
-                        new
-                        {
-                            UserId = "hr-employee4-id",
-                            RoleId = "6"
-                        },
-                        new
-                        {
-                            UserId = "hr-employee5-id",
-                            RoleId = "6"
                         },
                         new
                         {
@@ -459,6 +415,10 @@ namespace dotnet_api.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("EmployeeCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -549,16 +509,17 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b65f066f-4170-4caf-a4cb-92f3da30d11e",
+                            ConcurrencyStamp = "b6e07e62-9ee1-4892-a983-3dea6e44d36e",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "GD001",
                             FirstName = "Phạm",
                             Gender = "Nam",
                             LastName = "Văn Đốc",
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPix5c3XCwEhnz5sUkLy+O6pmXcK7aKk9auGPujAYFDhYrcS+2adkTVRQJvNP+cGXw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEXtx0h+U95q5tNGLM24jnikxkTKOHDq3n/fInzJHZWArMph5I4sBjLUHZaKV3V42Q==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -575,9 +536,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "26102491-980f-49dd-942f-e558d404357e",
+                            ConcurrencyStamp = "3ef13cd2-8d2e-41e2-a0c2-3eb6573613b0",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH001",
                             FirstName = "Nguyễn",
                             Gender = "Nam",
                             LastName = "Chỉ Huy",
@@ -601,9 +563,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5e114c72-292b-41e8-8c3e-59eccb139457",
+                            ConcurrencyStamp = "7887bb69-0a9c-4385-bb5d-afd777ff87b6",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH002",
                             FirstName = "Trần",
                             Gender = "Nam",
                             LastName = "Công Trình",
@@ -627,9 +590,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b8d49aec-342e-4573-a548-37603a2f4123",
+                            ConcurrencyStamp = "81f584b1-1446-428d-a56a-a00c5cc9caf2",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "CH003",
                             FirstName = "Lê",
                             Gender = "Nam",
                             LastName = "Xây Dựng",
@@ -653,9 +617,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "26b345ba-1ccc-4169-9d1a-bcf06fba9ca6",
+                            ConcurrencyStamp = "0027dcc6-4f7f-4a0e-9ed5-c845598fe4bd",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT001",
                             FirstName = "Hoàng",
                             Gender = "Nam",
                             LastName = "Kỹ Thuật",
@@ -679,9 +644,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0884cdb3-3b30-4d5d-9554-dea175361ecc",
+                            ConcurrencyStamp = "79f4bb67-962a-4712-85a4-6a33100a59ad",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT002",
                             FirstName = "Phan",
                             Gender = "Nữ",
                             LastName = "Thiết Kế",
@@ -705,9 +671,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2ce633d4-1811-4192-9040-3bde51e3cd7e",
+                            ConcurrencyStamp = "bb4dc7d4-a581-43c5-8e96-6977479f59f3",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "KT003",
                             FirstName = "Vũ",
                             Gender = "Nam",
                             LastName = "Vận Hành",
@@ -729,193 +696,12 @@ namespace dotnet_api.Migrations
                         },
                         new
                         {
-                            Id = "hr-manager1-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "d8eea111-9ab6-4ec5-aa62-324cc3fcfd67",
-                            Email = "truongphonghr1@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Nguyễn",
-                            Gender = "Nữ",
-                            LastName = "Thị Hoa",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "TRUONGPHONGHR1@COMPANY.COM",
-                            NormalizedUserName = "TRUONGPHONGHR1@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654321",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 5,
-                            SecurityStamp = "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4e",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "truongphonghr1@company.com",
-                            birthday = new DateTime(1985, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-manager2-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "7e760697-f72f-4686-9ff1-64abca678690",
-                            Email = "truongphonghr2@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Trần",
-                            Gender = "Nam",
-                            LastName = "Văn Minh",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "TRUONGPHONGHR2@COMPANY.COM",
-                            NormalizedUserName = "TRUONGPHONGHR2@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654322",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 5,
-                            SecurityStamp = "b2c3d4e5-f6a7-4b5c-8d7e-9f0a1b2c3d4f",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "truongphonghr2@company.com",
-                            birthday = new DateTime(1982, 7, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2019, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-employee1-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e35f11c-6bc2-4754-8383-8db1567f735c",
-                            Email = "nhanvienhr1@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Lê",
-                            Gender = "Nữ",
-                            LastName = "Thị Lan",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "NHANVIENHR1@COMPANY.COM",
-                            NormalizedUserName = "NHANVIENHR1@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654323",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 6,
-                            SecurityStamp = "c3d4e5f6-a7b8-4c5d-8e7f-9a0b1c2d3e4f",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "nhanvienhr1@company.com",
-                            birthday = new DateTime(1992, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2021, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-employee2-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "1f4135a1-23b7-4c89-ad04-603c00b086bc",
-                            Email = "nhanvienhr2@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Phạm",
-                            Gender = "Nam",
-                            LastName = "Văn Đức",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "NHANVIENHR2@COMPANY.COM",
-                            NormalizedUserName = "NHANVIENHR2@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654324",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 6,
-                            SecurityStamp = "d4e5f6a7-b8c9-4d5e-8f7a-9b0c1d2e3f4a",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "nhanvienhr2@company.com",
-                            birthday = new DateTime(1990, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2022, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-employee3-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "afd5fd64-7443-4c18-8e60-0ed518b6abc9",
-                            Email = "nhanvienhr3@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Hoàng",
-                            Gender = "Nữ",
-                            LastName = "Thị Mai",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "NHANVIENHR3@COMPANY.COM",
-                            NormalizedUserName = "NHANVIENHR3@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654325",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 6,
-                            SecurityStamp = "e5f6a7b8-c9d0-4e5f-8a7b-9c0d1e2f3a4b",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "nhanvienhr3@company.com",
-                            birthday = new DateTime(1993, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2022, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-employee4-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "6b93ba3f-bb21-44dc-b5c6-4562df148c72",
-                            Email = "nhanvienhr4@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Vũ",
-                            Gender = "Nam",
-                            LastName = "Văn Tài",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "NHANVIENHR4@COMPANY.COM",
-                            NormalizedUserName = "NHANVIENHR4@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654326",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 6,
-                            SecurityStamp = "f6a7b8c9-d0e1-4f5a-8b7c-9d0e1f2a3b4c",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "nhanvienhr4@company.com",
-                            birthday = new DateTime(1988, 12, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "hr-employee5-id",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "9ad1bfd5-db5f-4817-a164-41876eca7f28",
-                            Email = "nhanvienhr5@company.com",
-                            EmailConfirmed = true,
-                            FirstName = "Đặng",
-                            Gender = "Nữ",
-                            LastName = "Thị Hương",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "NHANVIENHR5@COMPANY.COM",
-                            NormalizedUserName = "NHANVIENHR5@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==",
-                            Phone = "0987654327",
-                            PhoneNumberConfirmed = false,
-                            RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            RequiresPasswordChange = false,
-                            RoleID = 6,
-                            SecurityStamp = "a7b8c9d0-e1f2-4a5b-8c7d-9e0f1a2b3c4d",
-                            Status = "Active",
-                            TwoFactorEnabled = false,
-                            UserName = "nhanvienhr5@company.com",
-                            birthday = new DateTime(1991, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            joinDate = new DateTime(2023, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9c458131-32bc-4fcb-ad89-4d64e74c4474",
+                            ConcurrencyStamp = "b8e9eb6f-8567-4025-b6f1-e9b50b7f920f",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T001",
                             FirstName = "Đinh",
                             Gender = "Nam",
                             LastName = "Văn Thợ",
@@ -938,9 +724,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "92515fd6-d143-4cde-af14-c286a9ed12d5",
+                            ConcurrencyStamp = "dd4359e8-becd-4451-90e1-5bb2c4c92da1",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T002",
                             FirstName = "Mai",
                             Gender = "Nữ",
                             LastName = "Thị Hàn",
@@ -963,9 +750,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3c3de628-ebd1-4ce0-a506-faf394b4327f",
+                            ConcurrencyStamp = "860ffc48-6fd0-4e76-8410-0311afce16a1",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T003",
                             FirstName = "Lý",
                             Gender = "Nam",
                             LastName = "Văn Xây",
@@ -988,9 +776,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "649e3495-cc18-4717-817d-42c0c43692eb",
+                            ConcurrencyStamp = "e6d241f2-5179-49be-a5be-0b82b0f80ea4",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T004",
                             FirstName = "Trịnh",
                             Gender = "Nam",
                             LastName = "Công Mộc",
@@ -1013,9 +802,10 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a41dc298-f341-41d3-9c09-dcb990e0033f",
+                            ConcurrencyStamp = "5cc46a71-9b64-4876-baf8-1dcaf87f979b",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
+                            EmployeeCode = "T005",
                             FirstName = "Võ",
                             Gender = "Nữ",
                             LastName = "Thị Sơn",
@@ -4728,7 +4518,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 14, 21, 54, 10, 409, DateTimeKind.Local).AddTicks(8463),
+                            CreatedAt = new DateTime(2025, 10, 14, 11, 19, 22, 997, DateTimeKind.Local).AddTicks(7345),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 21, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 1,
@@ -4741,7 +4531,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 14, 21, 54, 10, 411, DateTimeKind.Local).AddTicks(5637),
+                            CreatedAt = new DateTime(2025, 10, 14, 11, 19, 22, 998, DateTimeKind.Local).AddTicks(5305),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 22, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 2,
@@ -4754,7 +4544,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 14, 21, 54, 10, 411, DateTimeKind.Local).AddTicks(5660),
+                            CreatedAt = new DateTime(2025, 10, 14, 11, 19, 22, 998, DateTimeKind.Local).AddTicks(5320),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 27, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 1,
@@ -4767,7 +4557,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 14, 21, 54, 10, 411, DateTimeKind.Local).AddTicks(5822),
+                            CreatedAt = new DateTime(2025, 10, 14, 11, 19, 22, 998, DateTimeKind.Local).AddTicks(5435),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 30, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 2,
@@ -6716,16 +6506,6 @@ namespace dotnet_api.Migrations
                         {
                             ID = 4,
                             RoleName = "Thợ"
-                        },
-                        new
-                        {
-                            ID = 5,
-                            RoleName = "Trưởng phòng Hành chính – Nhân sự"
-                        },
-                        new
-                        {
-                            ID = 6,
-                            RoleName = "Nhân viên phòng Hành chính - Nhân sự"
                         });
                 });
 

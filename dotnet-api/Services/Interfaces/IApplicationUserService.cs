@@ -1,6 +1,7 @@
 ﻿using dotnet_api.DTOs;
 using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
+using dotnet_api.Data.Enums;
 
 namespace dotnet_api.Services.Interfaces
 {
@@ -16,5 +17,6 @@ namespace dotnet_api.Services.Interfaces
         Task<EmployeeDTO> UpdateEmployeeAsync(EmployeeDTOPUT employeeDTO);
         Task<bool> DeleteEmployeeAsync(string id);
         Task<IEnumerable<RoleDTO>> GetAllRolesAsync();
+        Task<EmployeeDTO> UpdateEmployeeStatusAsync(string employeeId, EmployeeStatusEnum status);
     }
 }

@@ -69,7 +69,7 @@ namespace dotnet_api.Services
                     Reason = PayrollAdjustmentDTO.Reason,
                     AdjustmentTypeID = PayrollAdjustmentDTO.AdjustmentTypeID,
                     AdjustmentItemID = PayrollAdjustmentDTO.AdjustmentItemID > 0 ? PayrollAdjustmentDTO.AdjustmentItemID : null,
-                    ApproveStatus = ApproveStatusEnum.Pending
+                    ApproveStatus = ApproveStatusEnum.Created
                 };
 
                 _context.PayrollAdjustments.Add(entity);

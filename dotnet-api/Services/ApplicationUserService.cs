@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using dotnet_api.Data;
 using dotnet_api.Data.Entities;
+using dotnet_api.Data.Enums;
 using dotnet_api.DTOs;
 using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
@@ -15,12 +16,14 @@ namespace dotnet_api.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
 
-        public ApplicationUserService(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public ApplicationUserService(ApplicationDbContext context, IMapper mapper, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<ConstructionItemDTO> GetConstructionItemByIdAsync(int id)
@@ -66,11 +69,11 @@ namespace dotnet_api.Services
                 throw new Exception("Email đã được sử dụng bởi tài khoản khác");
             }
 
-            // Check if employee code already exists
-            var existingEmployeeCode = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.EmployeeCode == employeeDTO.EmployeeCode);
-            if (existingEmployeeCode != null)
+            // Check if ID already exists
+            var existingId = await _userManager.FindByIdAsync(employeeDTO.Id);
+            if (existingId != null)
             {
-                throw new Exception("Mã nhân viên đã được sử dụng bởi tài khoản khác");
+                throw new Exception("ID nhân viên đã được sử dụng bởi tài khoản khác");
             }
 
             // Check if role exists
@@ -80,8 +83,12 @@ namespace dotnet_api.Services
                 throw new Exception("Chức danh không tồn tại");
             }
 
+            // Generate random secure password
+            var temporaryPassword = PasswordGeneratorService.GenerateSecurePassword(12);
+            
             var user = _mapper.Map<ApplicationUser>(employeeDTO);
-            var result = await _userManager.CreateAsync(user, employeeDTO.Password);
+            user.RequiresPasswordChange = true; // Set flag for new users
+            var result = await _userManager.CreateAsync(user, temporaryPassword);
             
             if (!result.Succeeded)
             {
@@ -89,9 +96,27 @@ namespace dotnet_api.Services
                 throw new Exception($"Không thể tạo tài khoản: {errors}");
             }
 
-            // Note: Role is already set via RoleID in the user entity
-            // No need to use UserManager.AddToRoleAsync since we're using custom Roles table
-            // The role is already assigned through user.RoleID
+            // Send login credentials via email
+            var fullName = $"{user.FirstName} {user.LastName}".Trim();
+            var emailSent = await _emailService.SendLoginCredentialsAsync(user.Email, fullName, temporaryPassword);
+            
+            if (!emailSent)
+            {
+                // Log warning but don't fail the creation
+                Console.WriteLine($"Warning: Could not send email to {user.Email}");
+            }
+
+            // Also add user to Identity role for authentication
+            var identityRoleName = GetIdentityRoleName(role.RoleName);
+            if (!string.IsNullOrEmpty(identityRoleName))
+            {
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, identityRoleName);
+                if (!addToRoleResult.Succeeded)
+                {
+                    var errors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
+                    Console.WriteLine($"Warning: Could not add user to Identity role {identityRoleName}: {errors}");
+                }
+            }
 
             return await GetEmployeeByIdAsync(user.Id);
         }
@@ -135,16 +160,6 @@ namespace dotnet_api.Services
                 }
             }
 
-            // Check if employee code is being changed and if new code already exists
-            if (user.EmployeeCode != employeeDTO.EmployeeCode)
-            {
-                var existingEmployeeCode = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.EmployeeCode == employeeDTO.EmployeeCode);
-                if (existingEmployeeCode != null && existingEmployeeCode.Id != user.Id)
-                {
-                    throw new Exception("Mã nhân viên đã được sử dụng bởi tài khoản khác");
-                }
-            }
-
             // Check if role exists
             var role = await _context.Roles.FindAsync(employeeDTO.RoleID);
             if (role == null)
@@ -153,7 +168,6 @@ namespace dotnet_api.Services
             }
 
             // Update properties
-            user.EmployeeCode = employeeDTO.EmployeeCode;
             user.FirstName = employeeDTO.FirstName;
             user.LastName = employeeDTO.LastName;
             user.birthday = employeeDTO.Birthday;
@@ -171,8 +185,25 @@ namespace dotnet_api.Services
 
             await _context.SaveChangesAsync();
 
-            // Note: Role is already updated via user.RoleID
-            // No need to use UserManager role management since we're using custom Roles table
+            // Also update Identity role for authentication
+            var identityRoleName = GetIdentityRoleName(role.RoleName);
+            if (!string.IsNullOrEmpty(identityRoleName))
+            {
+                // Remove user from all current roles
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Any())
+                {
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                }
+                
+                // Add user to new role
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, identityRoleName);
+                if (!addToRoleResult.Succeeded)
+                {
+                    var errors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
+                    Console.WriteLine($"Warning: Could not update user Identity role to {identityRoleName}: {errors}");
+                }
+            }
 
             return await GetEmployeeByIdAsync(user.Id);
         }
@@ -211,6 +242,35 @@ namespace dotnet_api.Services
         {
             var roles = await _context.Roles.ToListAsync();
             return _mapper.Map<IEnumerable<RoleDTO>>(roles);
+        }
+
+        public async Task<EmployeeDTO> UpdateEmployeeStatusAsync(string employeeId, EmployeeStatusEnum status)
+        {
+            var employee = await _context.ApplicationUsers.FindAsync(employeeId);
+            if (employee == null)
+            {
+                throw new Exception("Không tìm thấy nhân viên với ID đã cho");
+            }
+
+            employee.Status = status;
+            await _context.SaveChangesAsync();
+
+            return await GetEmployeeByIdAsync(employeeId);
+        }
+
+        // Helper method to map custom role names to Identity role names
+        private string GetIdentityRoleName(string customRoleName)
+        {
+            return customRoleName?.ToLower() switch
+            {
+                "nhân viên kỹ thuật" => "technician",
+                "chỉ huy công trình" => "manager", 
+                "giám đốc" => "director",
+                "nhân viên thợ" => "worker",
+                "trưởng phòng hành chính – nhân sự" => "hr_manager",
+                "nhân viên phòng hành chính - nhân sự" => "hr_employee",
+                _ => null
+            };
         }
     }
 }

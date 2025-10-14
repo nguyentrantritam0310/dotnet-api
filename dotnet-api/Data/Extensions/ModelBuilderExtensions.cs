@@ -12,12 +12,6 @@ namespace dotnet_api.Data.Extensions
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            // Seed data for ContractForm
-            modelBuilder.Entity<ContractForm>().HasData(
-                new ContractForm { ID = 1, ContractFormName = "Chính thức" },
-                new ContractForm { ID = 2, ContractFormName = "Thử việc" },
-                new ContractForm { ID = 3, ContractFormName = "Khoán việc" }
-            );
             // Seed data for Contract
             modelBuilder.Entity<Contract>().HasData(
                 new Contract
@@ -25,14 +19,12 @@ namespace dotnet_api.Data.Extensions
                     ID = 1,
                     ContractNumber = "HD001",
                     ContractTypeID = 1,
-                    ContractFormID = 1,
                     EmployeeID = "admin-id",
-                    Status = "Đã ký",
                     StartDate = new DateTime(2025, 1, 1),
                     EndDate = new DateTime(2025, 12, 31),
                     ContractSalary = 20000000,
                     InsuranceSalary = 18000000,
-                    ApproveStatus = "Đã duyệt"
+                    ApproveStatus = ApproveStatusEnum.Approved
                 }
             );
 
@@ -126,7 +118,9 @@ namespace dotnet_api.Data.Extensions
                     new Role { ID = 1, RoleName = "Nhân viên kỹ thuật" },
                     new Role { ID = 2, RoleName = "Chỉ huy công trình" },
                     new Role { ID = 3, RoleName = "Giám đốc" },
-                    new Role { ID = 4, RoleName = "Thợ" }
+                    new Role { ID = 4, RoleName = "Thợ" },
+                    new Role { ID = 5, RoleName = "Trưởng phòng Hành chính – Nhân sự" },
+                    new Role { ID = 6, RoleName = "Nhân viên phòng Hành chính - Nhân sự" }
                 );
 
                 // Seed Identity Roles
@@ -134,7 +128,9 @@ namespace dotnet_api.Data.Extensions
                     new IdentityRole { Id = "1", Name = "technician", NormalizedName = "TECHNICIAN" },
                     new IdentityRole { Id = "2", Name = "manager", NormalizedName = "MANAGER" },
                     new IdentityRole { Id = "3", Name = "director", NormalizedName = "DIRECTOR" },
-                    new IdentityRole { Id = "4", Name = "employee", NormalizedName = "EMPLOYEE" }
+                    new IdentityRole { Id = "4", Name = "employee", NormalizedName = "EMPLOYEE" },
+                    new IdentityRole { Id = "5", Name = "hr_manager", NormalizedName = "HR_MANAGER" },
+                    new IdentityRole { Id = "6", Name = "hr_employee", NormalizedName = "HR_EMPLOYEE" }
                 );
 
                 // Seed Application Users
@@ -144,7 +140,6 @@ namespace dotnet_api.Data.Extensions
                 var adminUser = new ApplicationUser
                 {
                     Id = "admin-id",
-                    EmployeeCode = "GD001",
                     UserName = "giamdoc@company.com",
                     NormalizedUserName = "GIAMDOC@COMPANY.COM",
                     Email = "giamdoc@company.com",
@@ -172,7 +167,6 @@ namespace dotnet_api.Data.Extensions
                 var manager1User = new ApplicationUser
                 {
                     Id = "manager1-id",
-                    EmployeeCode = "CH001",
                     UserName = "chihuy1@company.com",
                     NormalizedUserName = "CHIHUY1@COMPANY.COM",
                     Email = "chihuy1@company.com",
@@ -196,7 +190,6 @@ namespace dotnet_api.Data.Extensions
                 var manager2User = new ApplicationUser
                 {
                     Id = "manager2-id",
-                    EmployeeCode = "CH002",
                     UserName = "chihuy2@company.com",
                     NormalizedUserName = "CHIHUY2@COMPANY.COM",
                     Email = "chihuy2@company.com",
@@ -221,7 +214,6 @@ namespace dotnet_api.Data.Extensions
                 var manager3User = new ApplicationUser
                 {
                     Id = "manager3-id",
-                    EmployeeCode = "CH003",
                     UserName = "chihuy3@company.com",
                     NormalizedUserName = "CHIHUY3@COMPANY.COM",
                     Email = "chihuy3@company.com",
@@ -246,7 +238,6 @@ namespace dotnet_api.Data.Extensions
                 var tech1User = new ApplicationUser
                 {
                     Id = "tech1-id",
-                    EmployeeCode = "KT001",
                     UserName = "kythuat1@company.com",
                     NormalizedUserName = "KYTHUAT1@COMPANY.COM",
                     Email = "kythuat1@company.com",
@@ -270,7 +261,6 @@ namespace dotnet_api.Data.Extensions
                 var tech2User = new ApplicationUser
                 {
                     Id = "tech2-id",
-                    EmployeeCode = "KT002",
                     UserName = "kythuat2@company.com",
                     NormalizedUserName = "KYTHUAT2@COMPANY.COM",
                     Email = "kythuat2@company.com",
@@ -294,7 +284,6 @@ namespace dotnet_api.Data.Extensions
                 var tech3User = new ApplicationUser
                 {
                     Id = "tech3-id",
-                    EmployeeCode = "KT003",
                     UserName = "kythuat3@company.com",
                     NormalizedUserName = "KYTHUAT3@COMPANY.COM",
                     Email = "kythuat3@company.com",
@@ -315,13 +304,175 @@ namespace dotnet_api.Data.Extensions
                 // Add static DateTime values for RefreshTokenExpiryTime
                 tech3User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
 
+                // HR Manager users
+                var hrManager1User = new ApplicationUser
+                {
+                    Id = "hr-manager1-id",
+                    UserName = "truongphonghr1@company.com",
+                    NormalizedUserName = "TRUONGPHONGHR1@COMPANY.COM",
+                    Email = "truongphonghr1@company.com",
+                    NormalizedEmail = "TRUONGPHONGHR1@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Nguyễn",
+                    LastName = "Thị Hoa",
+                    birthday = new DateTime(1985, 3, 15),
+                    joinDate = new DateTime(2020, 6, 1),
+                    Gender = "Nữ",
+                    RoleID = 5,
+                    Phone = "0987654321",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4e").ToString()
+                };
+                hrManager1User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrManager1User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                var hrManager2User = new ApplicationUser
+                {
+                    Id = "hr-manager2-id",
+                    UserName = "truongphonghr2@company.com",
+                    NormalizedUserName = "TRUONGPHONGHR2@COMPANY.COM",
+                    Email = "truongphonghr2@company.com",
+                    NormalizedEmail = "TRUONGPHONGHR2@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Trần",
+                    LastName = "Văn Minh",
+                    birthday = new DateTime(1982, 7, 22),
+                    joinDate = new DateTime(2019, 3, 15),
+                    Gender = "Nam",
+                    RoleID = 5,
+                    Phone = "0987654322",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("b2c3d4e5-f6a7-4b5c-8d7e-9f0a1b2c3d4f").ToString()
+                };
+                hrManager2User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrManager2User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                // HR Employee users
+                var hrEmployee1User = new ApplicationUser
+                {
+                    Id = "hr-employee1-id",
+                    UserName = "nhanvienhr1@company.com",
+                    NormalizedUserName = "NHANVIENHR1@COMPANY.COM",
+                    Email = "nhanvienhr1@company.com",
+                    NormalizedEmail = "NHANVIENHR1@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Lê",
+                    LastName = "Thị Lan",
+                    birthday = new DateTime(1992, 5, 10),
+                    joinDate = new DateTime(2021, 8, 1),
+                    Gender = "Nữ",
+                    RoleID = 6,
+                    Phone = "0987654323",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("c3d4e5f6-a7b8-4c5d-8e7f-9a0b1c2d3e4f").ToString()
+                };
+                hrEmployee1User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrEmployee1User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                var hrEmployee2User = new ApplicationUser
+                {
+                    Id = "hr-employee2-id",
+                    UserName = "nhanvienhr2@company.com",
+                    NormalizedUserName = "NHANVIENHR2@COMPANY.COM",
+                    Email = "nhanvienhr2@company.com",
+                    NormalizedEmail = "NHANVIENHR2@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Phạm",
+                    LastName = "Văn Đức",
+                    birthday = new DateTime(1990, 11, 25),
+                    joinDate = new DateTime(2022, 2, 1),
+                    Gender = "Nam",
+                    RoleID = 6,
+                    Phone = "0987654324",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("d4e5f6a7-b8c9-4d5e-8f7a-9b0c1d2e3f4a").ToString()
+                };
+                hrEmployee2User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrEmployee2User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                var hrEmployee3User = new ApplicationUser
+                {
+                    Id = "hr-employee3-id",
+                    UserName = "nhanvienhr3@company.com",
+                    NormalizedUserName = "NHANVIENHR3@COMPANY.COM",
+                    Email = "nhanvienhr3@company.com",
+                    NormalizedEmail = "NHANVIENHR3@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Hoàng",
+                    LastName = "Thị Mai",
+                    birthday = new DateTime(1993, 8, 18),
+                    joinDate = new DateTime(2022, 9, 1),
+                    Gender = "Nữ",
+                    RoleID = 6,
+                    Phone = "0987654325",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("e5f6a7b8-c9d0-4e5f-8a7b-9c0d1e2f3a4b").ToString()
+                };
+                hrEmployee3User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrEmployee3User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                var hrEmployee4User = new ApplicationUser
+                {
+                    Id = "hr-employee4-id",
+                    UserName = "nhanvienhr4@company.com",
+                    NormalizedUserName = "NHANVIENHR4@COMPANY.COM",
+                    Email = "nhanvienhr4@company.com",
+                    NormalizedEmail = "NHANVIENHR4@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Vũ",
+                    LastName = "Văn Tài",
+                    birthday = new DateTime(1988, 12, 3),
+                    joinDate = new DateTime(2023, 1, 15),
+                    Gender = "Nam",
+                    RoleID = 6,
+                    Phone = "0987654326",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("f6a7b8c9-d0e1-4f5a-8b7c-9d0e1f2a3b4c").ToString()
+                };
+                hrEmployee4User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrEmployee4User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
+                var hrEmployee5User = new ApplicationUser
+                {
+                    Id = "hr-employee5-id",
+                    UserName = "nhanvienhr5@company.com",
+                    NormalizedUserName = "NHANVIENHR5@COMPANY.COM",
+                    Email = "nhanvienhr5@company.com",
+                    NormalizedEmail = "NHANVIENHR5@COMPANY.COM",
+                    EmailConfirmed = true,
+                    FirstName = "Đặng",
+                    LastName = "Thị Hương",
+                    birthday = new DateTime(1991, 4, 12),
+                    joinDate = new DateTime(2023, 6, 1),
+                    Gender = "Nữ",
+                    RoleID = 6,
+                    Phone = "0987654327",
+                    Status = EmployeeStatusEnum.Active,
+                    SecurityStamp = Guid.Parse("a7b8c9d0-e1f2-4a5b-8c7d-9e0f1a2b3c4d").ToString()
+                };
+                hrEmployee5User.PasswordHash = "AQAAAAIAAYagAAAAELgmRFJ1LcM0Ym3M8AmCA0oo9QcjPmFIU3ZlIgl+R6NZlSbp+BV9J7VO0l6isUvY1w==";
+
+                // Add static DateTime values for RefreshTokenExpiryTime
+                hrEmployee5User.RefreshTokenExpiryTime = new DateTime(2025, 1, 1);
+
                 // Worker users
                 var workers = new List<ApplicationUser>
             {
                 new ApplicationUser
                 {
                     Id = "worker1-id",
-                    EmployeeCode = "T001",
                     UserName = "tho1@company.com",
                     NormalizedUserName = "THO1@COMPANY.COM",
                     Email = "tho1@company.com",
@@ -340,7 +491,6 @@ namespace dotnet_api.Data.Extensions
                 new ApplicationUser
                 {
                     Id = "worker2-id",
-                    EmployeeCode = "T002",
                     UserName = "tho2@company.com",
                     NormalizedUserName = "THO2@COMPANY.COM",
                     Email = "tho2@company.com",
@@ -359,7 +509,6 @@ namespace dotnet_api.Data.Extensions
                 new ApplicationUser
                 {
                     Id = "worker3-id",
-                    EmployeeCode = "T003",
                     UserName = "tho3@company.com",
                     NormalizedUserName = "THO3@COMPANY.COM",
                     Email = "tho3@company.com",
@@ -378,7 +527,6 @@ namespace dotnet_api.Data.Extensions
                 new ApplicationUser
                 {
                     Id = "worker4-id",
-                    EmployeeCode = "T004",
                     UserName = "tho4@company.com",
                     NormalizedUserName = "THO4@COMPANY.COM",
                     Email = "tho4@company.com",
@@ -397,7 +545,6 @@ namespace dotnet_api.Data.Extensions
                 new ApplicationUser
                 {
                     Id = "worker5-id",
-                    EmployeeCode = "T005",
                     UserName = "tho5@company.com",
                     NormalizedUserName = "THO5@COMPANY.COM",
                     Email = "tho5@company.com",
@@ -429,7 +576,14 @@ namespace dotnet_api.Data.Extensions
                     manager3User,
                     tech1User,
                     tech2User,
-                    tech3User
+                    tech3User,
+                    hrManager1User,
+                    hrManager2User,
+                    hrEmployee1User,
+                    hrEmployee2User,
+                    hrEmployee3User,
+                    hrEmployee4User,
+                    hrEmployee5User
                 );
 
                 modelBuilder.Entity<ApplicationUser>().HasData(workers);
@@ -448,6 +602,17 @@ namespace dotnet_api.Data.Extensions
                     new IdentityUserRole<string> { UserId = "tech1-id", RoleId = "1" },
                     new IdentityUserRole<string> { UserId = "tech2-id", RoleId = "1" },
                     new IdentityUserRole<string> { UserId = "tech3-id", RoleId = "1" },
+
+                    // Trưởng phòng Hành chính – Nhân sự
+                    new IdentityUserRole<string> { UserId = "hr-manager1-id", RoleId = "5" },
+                    new IdentityUserRole<string> { UserId = "hr-manager2-id", RoleId = "5" },
+
+                    // Nhân viên phòng Hành chính - Nhân sự
+                    new IdentityUserRole<string> { UserId = "hr-employee1-id", RoleId = "6" },
+                    new IdentityUserRole<string> { UserId = "hr-employee2-id", RoleId = "6" },
+                    new IdentityUserRole<string> { UserId = "hr-employee3-id", RoleId = "6" },
+                    new IdentityUserRole<string> { UserId = "hr-employee4-id", RoleId = "6" },
+                    new IdentityUserRole<string> { UserId = "hr-employee5-id", RoleId = "6" },
 
                     // Thợ
                     new IdentityUserRole<string> { UserId = "worker1-id", RoleId = "4" },
@@ -3303,9 +3468,9 @@ namespace dotnet_api.Data.Extensions
 
                 // Seed data for ContractType
                 modelBuilder.Entity<ContractType>().HasData(
-                    new ContractType { ID = 1, ContractTypeName = "Hợp đồng lao động" },
-                    new ContractType { ID = 2, ContractTypeName = "Hợp đồng thử việc" },
-                    new ContractType { ID = 3, ContractTypeName = "Hợp đồng khoán việc" }
+                    new ContractType { ID = 1, ContractTypeName = "Hợp đồng thử việc" },
+                    new ContractType { ID = 2, ContractTypeName = "Hợp đồng xác định thời hạn" },
+                    new ContractType { ID = 3, ContractTypeName = "Hợp đồng không xác định thời hạn" }
                 );
 
                 // Seed data for Allowance

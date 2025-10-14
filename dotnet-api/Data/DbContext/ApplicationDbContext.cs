@@ -54,7 +54,6 @@ namespace dotnet_api.Data
         public DbSet<ContractType> ContractTypes { get; set; }
         public DbSet<Allowance> Allowances { get; set; }
         public DbSet<Contract_Allowance> Contract_Allowances { get; set; }
-    public DbSet<ContractForm> ContractForms { get; set; }
     public DbSet<ApplicationUser_PayrollAdjustment> ApplicationUser_PayrollAdjustments { get; set; }
         
 
@@ -159,7 +158,6 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ContractTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AllowanceConfiguration());
             modelBuilder.ApplyConfiguration(new Contract_AllowanceConfiguration());
-            modelBuilder.ApplyConfiguration(new ContractFormConfiguration());
 
             // Family & Payroll configs
             modelBuilder.ApplyConfiguration(new FamilyRelationConfiguration());

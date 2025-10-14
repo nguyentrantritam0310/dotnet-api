@@ -113,7 +113,6 @@ namespace dotnet_api.Services
                 {
                     EmployeeID = employee.Id,
                     EmployeeName = employee.FirstName + " " + employee.LastName,
-                    EmployeeCode = employee.EmployeeCode,
                     RoleName = employee.Role?.RoleName ?? "",
                     WeekShifts = new List<DayShiftDTO>()
                 };

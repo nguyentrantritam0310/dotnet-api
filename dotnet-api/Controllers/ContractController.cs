@@ -68,8 +68,23 @@ namespace dotnet_api.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ContractDTOPUT contractDTO)
         {
+            // Debug logging
+            Console.WriteLine($"=== UPDATE CONTRACT DEBUG ===");
+            Console.WriteLine($"Received contractDTO: {contractDTO?.ContractNumber}");
+            Console.WriteLine($"Contract ID: {contractDTO?.ID}");
+            Console.WriteLine($"ApproveStatus: {contractDTO?.ApproveStatus}");
+            //Console.WriteLine($"ValidityPeriod: {contractDTO?.ValidityPeriod}");
+            Console.WriteLine($"Allowances count: {contractDTO?.Allowances?.Count ?? 0}");
+            
             if (!ModelState.IsValid)
+            {
+                Console.WriteLine("ModelState is invalid:");
+                foreach (var error in ModelState)
+                {
+                    Console.WriteLine($"Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
                 return BadRequest(ModelState);
+            }
 
             try
             {
@@ -82,6 +97,8 @@ namespace dotnet_api.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Exception in Update: {ex.Message}");
+                Console.WriteLine($"Exception stack trace: {ex.StackTrace}");
                 return BadRequest(new { message = ex.Message });
             }
         }

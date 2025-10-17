@@ -17,5 +17,7 @@ namespace dotnet_api.DTOs
         public string? MachineName { get; set; }
         public string? Location { get; set; }
         public AttendanceStatusEnum? Status { get; set; }
+        public string? RefCode { get; set; }
+        public int? WorkShiftID { get; set; }
     }
 }

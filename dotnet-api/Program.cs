@@ -97,7 +97,10 @@ builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 //builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<AttendanceDataService>();
 
-builder.Services.AddScoped<WeatherPredictionService>(); 
+builder.Services.AddScoped<WeatherPredictionService>();
+
+// Face Recognition Service
+builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>(); 
 
 // Email Service
 builder.Services.AddScoped<IEmailService, EmailService>();

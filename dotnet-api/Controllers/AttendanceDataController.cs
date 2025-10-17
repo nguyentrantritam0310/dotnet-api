@@ -108,5 +108,86 @@ namespace dotnet_api.Controllers
                 return StatusCode(500, new { message = "Lỗi khi lấy dữ liệu chấm công theo tháng", error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Lấy dữ liệu chấm công theo nhân viên và ngày cụ thể
+        /// </summary>
+        /// <param name="employeeCode">Mã nhân viên</param>
+        /// <param name="date">Ngày (yyyy-MM-dd)</param>
+        /// <returns>Danh sách dữ liệu chấm công của nhân viên trong ngày</returns>
+        [HttpGet("employee/date")]
+        public async Task<ActionResult<List<AttendanceDataDto>>> GetAttendanceDataByEmployeeAndDate(
+            [FromQuery] string employeeCode, 
+            [FromQuery] string date)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(employeeCode))
+                {
+                    return BadRequest(new { message = "Mã nhân viên không được để trống" });
+                }
+
+                if (!DateTime.TryParse(date, out DateTime targetDate))
+                {
+                    return BadRequest(new { message = "Định dạng ngày không hợp lệ. Sử dụng định dạng yyyy-MM-dd" });
+                }
+
+                var attendanceData = await _attendanceDataService.GetAttendanceDataByEmployeeAndDateAsync(employeeCode, targetDate);
+                return Ok(attendanceData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lấy dữ liệu chấm công của nhân viên theo ngày", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Lấy dữ liệu chấm công theo tuần
+        /// </summary>
+        /// <param name="week">Chuỗi tuần (ví dụ: "2024-W42")</param>
+        /// <returns>Danh sách dữ liệu chấm công trong tuần</returns>
+        [HttpGet("week")]
+        public async Task<ActionResult<List<AttendanceDataDto>>> GetAttendanceDataByWeek([FromQuery] string week)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(week))
+                {
+                    return BadRequest(new { message = "Chuỗi tuần không được để trống" });
+                }
+
+                // Parse week string (format: YYYY-WWW)
+                var parts = week.Split('-');
+                if (parts.Length != 2 || !int.TryParse(parts[0], out int year) || !parts[1].StartsWith("W") || !int.TryParse(parts[1].Substring(1), out int weekNumber))
+                {
+                    return BadRequest(new { message = "Định dạng tuần không hợp lệ. Sử dụng định dạng YYYY-WWW" });
+                }
+
+                var attendanceData = await _attendanceDataService.GetAttendanceDataByWeekAsync(year, weekNumber);
+                return Ok(attendanceData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lấy dữ liệu chấm công theo tuần", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Debug endpoint để kiểm tra dữ liệu có sẵn
+        /// </summary>
+        /// <returns>Thông tin debug về dữ liệu</returns>
+        [HttpGet("debug")]
+        public async Task<ActionResult<object>> GetDebugInfo()
+        {
+            try
+            {
+                var debugInfo = await _attendanceDataService.GetDebugInfoAsync();
+                return Ok(debugInfo);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lấy thông tin debug", error = ex.Message });
+            }
+        }
     }
 }

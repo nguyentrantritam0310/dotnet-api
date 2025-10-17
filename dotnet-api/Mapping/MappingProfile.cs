@@ -130,6 +130,7 @@ namespace dotnet_api.Mapping
                     opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
                 .ForMember(dest => dest.RoleName,
                     opt => opt.MapFrom(src => src.Role.RoleName))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.StatusName,
                     opt => opt.MapFrom(src => EnumHelper.GetDisplayName(src.Status)))
                 .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.birthday))

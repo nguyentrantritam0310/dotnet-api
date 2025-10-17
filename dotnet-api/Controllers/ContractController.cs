@@ -73,8 +73,18 @@ namespace dotnet_api.Controllers
             Console.WriteLine($"Received contractDTO: {contractDTO?.ContractNumber}");
             Console.WriteLine($"Contract ID: {contractDTO?.ID}");
             Console.WriteLine($"ApproveStatus: {contractDTO?.ApproveStatus}");
-            //Console.WriteLine($"ValidityPeriod: {contractDTO?.ValidityPeriod}");
+            Console.WriteLine($"StartDate: {contractDTO?.StartDate}");
+            Console.WriteLine($"EndDate: {contractDTO?.EndDate}");
+            Console.WriteLine($"ContractSalary: {contractDTO?.ContractSalary}");
+            Console.WriteLine($"InsuranceSalary: {contractDTO?.InsuranceSalary}");
             Console.WriteLine($"Allowances count: {contractDTO?.Allowances?.Count ?? 0}");
+            if (contractDTO?.Allowances != null && contractDTO.Allowances.Count > 0)
+            {
+                foreach (var allowance in contractDTO.Allowances)
+                {
+                    Console.WriteLine($"Allowance: ContractID={allowance.ContractID}, AllowanceID={allowance.AllowanceID}, Value={allowance.Value}");
+                }
+            }
             
             if (!ModelState.IsValid)
             {

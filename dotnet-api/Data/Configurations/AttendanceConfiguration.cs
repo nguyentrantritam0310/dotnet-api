@@ -19,6 +19,11 @@ namespace dotnet_api.Data.Configurations
             builder.HasOne(x => x.ShiftAssignment)
                 .WithOne(t => t.Attendance)
                      .HasForeignKey<Attendance>(x => x.ShiftAssignmentID);
+
+            builder.HasOne(x => x.AttendanceMachine)
+                .WithMany()
+                .HasForeignKey(x => x.AttendanceMachineId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

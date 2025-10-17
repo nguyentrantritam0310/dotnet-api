@@ -399,6 +399,59 @@ class FaceRecognitionSystem:
                 "message": f"Lỗi: {str(e)}"
             }
 
+    def detect_face(self, image_path: str) -> Dict:
+        """
+        Chỉ phát hiện khuôn mặt (không nhận dạng)
+        
+        Args:
+            image_path: Đường dẫn ảnh
+            
+        Returns:
+            Kết quả phát hiện
+        """
+        try:
+            logger.info("Bắt đầu phát hiện khuôn mặt")
+            
+            # Load image
+            image = cv2.imread(image_path)
+            if image is None:
+                return {
+                    "success": False,
+                    "message": "Không thể đọc ảnh"
+                }
+            
+            # Detect faces using MTCNN (nhanh hơn YOLO cho detection đơn giản)
+            aligned_faces = self.detect_and_align_faces_mtcnn(image)
+            
+            if not aligned_faces:
+                return {
+                    "success": False,
+                    "message": "Không phát hiện được khuôn mặt trong ảnh"
+                }
+            
+            # Lấy khuôn mặt có confidence cao nhất
+            best_face, best_confidence = max(aligned_faces, key=lambda x: x[1])
+            
+            if best_confidence < self.face_detection_confidence:
+                return {
+                    "success": False,
+                    "message": f"Độ tin cậy phát hiện khuôn mặt quá thấp: {best_confidence:.2f}"
+                }
+            
+            logger.info(f"Phát hiện khuôn mặt thành công (confidence: {best_confidence:.3f})")
+            return {
+                "success": True,
+                "message": "Phát hiện khuôn mặt thành công",
+                "confidence": best_confidence
+            }
+                
+        except Exception as e:
+            logger.error(f"Lỗi khi phát hiện khuôn mặt: {e}")
+            return {
+                "success": False,
+                "message": f"Lỗi: {str(e)}"
+            }
+
 def main():
     """Main function để xử lý command line arguments"""
     if len(sys.argv) < 3:
@@ -406,6 +459,7 @@ def main():
         print("Commands:")
         print("  register <image_path> <employee_id> - Đăng ký khuôn mặt")
         print("  recognize <image_path> - Nhận dạng khuôn mặt")
+        print("  detect <image_path> - Phát hiện khuôn mặt")
         sys.exit(1)
     
     command = sys.argv[1]
@@ -424,6 +478,9 @@ def main():
         
     elif command == "recognize":
         result = face_system.recognize_face(image_path)
+        
+    elif command == "detect":
+        result = face_system.detect_face(image_path)
         
     else:
         result = {

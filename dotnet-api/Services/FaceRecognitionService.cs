@@ -1,8 +1,11 @@
 using dotnet_api.DTOs;
 using dotnet_api.Services.Interfaces;
+using dotnet_api.Data;
+using dotnet_api.Data.Entities;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Services
 {
@@ -10,19 +13,23 @@ namespace dotnet_api.Services
     {
         private readonly ILogger<FaceRecognitionService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly ConcurrentDictionary<string, FaceEmbedding> _faceEmbeddings;
+        private readonly ApplicationDbContext _context;
+        private readonly IFaceRegistrationService _faceRegistrationService;
         private readonly string _pythonScriptPath;
         private readonly string _faceDatabasePath;
 
-        public FaceRecognitionService(ILogger<FaceRecognitionService> logger, IConfiguration configuration)
+        public FaceRecognitionService(
+            ILogger<FaceRecognitionService> logger, 
+            IConfiguration configuration,
+            ApplicationDbContext context,
+            IFaceRegistrationService faceRegistrationService)
         {
             _logger = logger;
             _configuration = configuration;
-            _faceEmbeddings = new ConcurrentDictionary<string, FaceEmbedding>();
+            _context = context;
+            _faceRegistrationService = faceRegistrationService;
             _pythonScriptPath = Path.Combine(Directory.GetCurrentDirectory(), "MachineLearning", "face_recognition.py");
             _faceDatabasePath = Path.Combine(Directory.GetCurrentDirectory(), "MachineLearning", "face_database.json");
-            
-            LoadFaceDatabase();
         }
 
         public async Task<FaceRegistrationResult> RegisterFaceAsync(string employeeId, byte[] imageBytes)
@@ -51,16 +58,24 @@ namespace dotnet_api.Services
                 if (result.Success)
                 {
                     var faceId = Guid.NewGuid().ToString();
-                    var embedding = new FaceEmbedding
+                    var embeddingJson = JsonSerializer.Serialize(result.Embedding);
+                    
+                    // Lưu ảnh
+                    var imagePath = await SaveFaceImageAsync(imageBytes, employeeId);
+                    
+                    // Lưu vào database
+                    var faceRegistrationDto = new FaceRegistrationDTO
                     {
                         EmployeeId = employeeId,
                         FaceId = faceId,
-                        Embedding = result.Embedding,
-                        CreatedDate = DateTime.Now
+                        ImagePath = imagePath,
+                        EmbeddingData = embeddingJson,
+                        Confidence = result.Confidence,
+                        RegisteredBy = "System",
+                        Notes = "Auto-registered via face recognition"
                     };
 
-                    _faceEmbeddings.AddOrUpdate(employeeId, embedding, (key, oldValue) => embedding);
-                    await SaveFaceDatabaseAsync();
+                    var savedRegistration = await _faceRegistrationService.CreateFaceRegistrationAsync(faceRegistrationDto);
 
                     _logger.LogInformation($"Đăng ký khuôn mặt thành công cho nhân viên: {employeeId}");
                     return new FaceRegistrationResult
@@ -68,7 +83,8 @@ namespace dotnet_api.Services
                         Success = true,
                         Message = "Đăng ký khuôn mặt thành công",
                         FaceId = faceId,
-                        Confidence = result.Confidence
+                        Confidence = result.Confidence,
+                        FaceRegistrationId = 1 // Will be updated when we get the actual ID
                     };
                 }
                 else
@@ -157,9 +173,13 @@ namespace dotnet_api.Services
             {
                 _logger.LogInformation($"Xóa khuôn mặt cho nhân viên: {employeeId}");
 
-                if (_faceEmbeddings.TryRemove(employeeId, out _))
+                // Get the actual entity to get the ID
+                var registrationEntity = await _context.FaceRegistrations
+                    .FirstOrDefaultAsync(fr => fr.EmployeeId == employeeId && fr.IsActive);
+                
+                if (registrationEntity != null)
                 {
-                    await SaveFaceDatabaseAsync();
+                    await _faceRegistrationService.DeleteFaceRegistrationAsync(registrationEntity.ID);
                     _logger.LogInformation($"Xóa khuôn mặt thành công cho nhân viên: {employeeId}");
                     return true;
                 }
@@ -178,21 +198,7 @@ namespace dotnet_api.Services
         {
             try
             {
-                var employees = new List<RegisteredEmployee>();
-                
-                foreach (var embedding in _faceEmbeddings.Values)
-                {
-                    var employeeName = await GetEmployeeNameAsync(embedding.EmployeeId);
-                    employees.Add(new RegisteredEmployee
-                    {
-                        EmployeeId = embedding.EmployeeId,
-                        EmployeeName = employeeName,
-                        RegisteredDate = embedding.CreatedDate,
-                        FaceId = embedding.FaceId
-                    });
-                }
-
-                return employees.OrderBy(e => e.EmployeeName).ToList();
+                return await _faceRegistrationService.GetAllRegisteredEmployeesAsync();
             }
             catch (Exception ex)
             {
@@ -203,7 +209,47 @@ namespace dotnet_api.Services
 
         public async Task<bool> IsEmployeeRegisteredAsync(string employeeId)
         {
-            return await Task.FromResult(_faceEmbeddings.ContainsKey(employeeId));
+            try
+            {
+                return await _faceRegistrationService.IsEmployeeRegisteredAsync(employeeId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error checking if employee {employeeId} is registered");
+                return false;
+            }
+        }
+
+        public async Task<bool> DetectFaceAsync(byte[] imageBytes)
+        {
+            try
+            {
+                _logger.LogInformation("Bắt đầu phát hiện khuôn mặt");
+
+                // Tạo thư mục tạm để lưu ảnh
+                var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
+                Directory.CreateDirectory(tempDir);
+                
+                var tempImagePath = Path.Combine(tempDir, $"detect_{DateTime.Now:yyyyMMddHHmmss}.jpg");
+                
+                // Lưu ảnh tạm
+                await File.WriteAllBytesAsync(tempImagePath, imageBytes);
+
+                // Gọi Python script để phát hiện khuôn mặt
+                var pythonArgs = $"detect {tempImagePath}";
+                var result = await RunPythonScriptAsync(pythonArgs);
+
+                // Xóa file tạm
+                if (File.Exists(tempImagePath))
+                    File.Delete(tempImagePath);
+
+                return result.Success;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi phát hiện khuôn mặt");
+                return false;
+            }
         }
 
         private async Task<PythonResult> RunPythonScriptAsync(string arguments)
@@ -248,48 +294,38 @@ namespace dotnet_api.Services
 
         private async Task<string> GetEmployeeNameAsync(string employeeId)
         {
-            // TODO: Implement database lookup for employee name
-            // For now, return a placeholder
-            return await Task.FromResult($"Nhân viên {employeeId}");
-        }
-
-        private void LoadFaceDatabase()
-        {
             try
             {
-                if (File.Exists(_faceDatabasePath))
-                {
-                    var json = File.ReadAllText(_faceDatabasePath);
-                    var embeddings = JsonSerializer.Deserialize<Dictionary<string, FaceEmbedding>>(json);
-                    
-                    if (embeddings != null)
-                    {
-                        foreach (var embedding in embeddings)
-                        {
-                            _faceEmbeddings.TryAdd(embedding.Key, embedding.Value);
-                        }
-                    }
-                }
+                var employee = await _context.Users.FindAsync(employeeId);
+                return employee?.UserName ?? $"Nhân viên {employeeId}";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi load face database");
+                _logger.LogError(ex, $"Error getting employee name for {employeeId}");
+                return $"Nhân viên {employeeId}";
             }
         }
 
-        private async Task SaveFaceDatabaseAsync()
+        private async Task<string> SaveFaceImageAsync(byte[] imageBytes, string employeeId)
         {
             try
             {
-                var embeddings = _faceEmbeddings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                var json = JsonSerializer.Serialize(embeddings, new JsonSerializerOptions { WriteIndented = true });
-                await File.WriteAllTextAsync(_faceDatabasePath, json);
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "faces");
+                Directory.CreateDirectory(uploadsDir);
+
+                var fileName = $"{employeeId}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                var filePath = Path.Combine(uploadsDir, fileName);
+
+                await File.WriteAllBytesAsync(filePath, imageBytes);
+                return $"/uploads/faces/{fileName}";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi save face database");
+                _logger.LogError(ex, $"Error saving face image for employee: {employeeId}");
+                return string.Empty;
             }
         }
+
 
         private class PythonResult
         {

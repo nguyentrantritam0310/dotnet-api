@@ -38,5 +38,12 @@ namespace dotnet_api.Services.Interfaces
         /// <param name="employeeId">ID nhân viên</param>
         /// <returns>True nếu đã đăng ký</returns>
         Task<bool> IsEmployeeRegisteredAsync(string employeeId);
+
+        /// <summary>
+        /// Phát hiện khuôn mặt trong ảnh (chỉ kiểm tra có khuôn mặt hay không)
+        /// </summary>
+        /// <param name="imageBytes">Dữ liệu ảnh dưới dạng byte array</param>
+        /// <returns>True nếu phát hiện khuôn mặt</returns>
+        Task<bool> DetectFaceAsync(byte[] imageBytes);
     }
 }

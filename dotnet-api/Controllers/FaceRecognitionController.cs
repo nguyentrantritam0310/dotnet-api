@@ -13,10 +13,14 @@ namespace dotnet_api.Controllers
     public class FaceRecognitionController : ControllerBase
     {
         private readonly IFaceRecognitionService _faceRecognitionService;
+        private readonly IAttendanceService _attendanceService;
 
-        public FaceRecognitionController(IFaceRecognitionService faceRecognitionService)
+        public FaceRecognitionController(
+            IFaceRecognitionService faceRecognitionService,
+            IAttendanceService attendanceService)
         {
             _faceRecognitionService = faceRecognitionService;
+            _attendanceService = attendanceService;
         }
 
         /// <summary>
@@ -196,6 +200,137 @@ namespace dotnet_api.Controllers
             }
         }
 
+        /// <summary>
+        /// Chấm công vào (check-in) với nhận dạng khuôn mặt
+        /// </summary>
+        /// <param name="request">Thông tin chấm công</param>
+        /// <returns></returns>
+        [HttpPost("checkin")]
+        public async Task<IActionResult> CheckIn([FromBody] AttendanceCheckInRequest request)
+        {
+            if (string.IsNullOrEmpty(request.EmployeeId) || string.IsNullOrEmpty(request.ImageBase64))
+                return BadRequest(new { message = "EmployeeId và ImageBase64 là bắt buộc" });
+
+            try
+            {
+                var result = await _attendanceService.CheckInAsync(request);
+                
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Chấm công ra (check-out)
+        /// </summary>
+        /// <param name="employeeId">ID nhân viên</param>
+        /// <param name="request">Thông tin check-out</param>
+        /// <returns></returns>
+        [HttpPost("checkout/{employeeId}")]
+        public async Task<IActionResult> CheckOut(string employeeId, [FromBody] CheckOutRequest request)
+        {
+            try
+            {
+                var success = await _attendanceService.CheckOutAsync(
+                    employeeId, 
+                    request.CheckOutDateTime, 
+                    request.ImageBase64);
+
+                if (success)
+                {
+                    return Ok(new { message = "Check-out thành công" });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Check-out thất bại" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Lấy lịch sử chấm công của nhân viên
+        /// </summary>
+        /// <param name="employeeId">ID nhân viên</param>
+        /// <param name="startDate">Ngày bắt đầu (optional)</param>
+        /// <param name="endDate">Ngày kết thúc (optional)</param>
+        /// <returns></returns>
+        [HttpGet("attendance/{employeeId}")]
+        public async Task<IActionResult> GetEmployeeAttendance(string employeeId, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            try
+            {
+                var attendance = await _attendanceService.GetEmployeeAttendanceAsync(employeeId, startDate, endDate);
+                return Ok(attendance);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Lấy thông tin chấm công hôm nay của nhân viên
+        /// </summary>
+        /// <param name="employeeId">ID nhân viên</param>
+        /// <returns></returns>
+        [HttpGet("attendance/today/{employeeId}")]
+        public async Task<IActionResult> GetTodayAttendance(string employeeId)
+        {
+            try
+            {
+                var attendance = await _attendanceService.GetTodayAttendanceAsync(employeeId);
+                return Ok(attendance);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
+        /// Phát hiện khuôn mặt trong ảnh (chỉ kiểm tra có khuôn mặt hay không)
+        /// </summary>
+        /// <param name="request">Request chứa base64 image</param>
+        /// <returns></returns>
+        [HttpPost("detect-face")]
+        public async Task<IActionResult> DetectFace([FromBody] FaceDetectionRequest request)
+        {
+            if (string.IsNullOrEmpty(request.ImageBase64))
+                return BadRequest(new { message = "Không có ảnh base64" });
+
+            try
+            {
+                // Decode base64 to bytes
+                var imageBytes = Convert.FromBase64String(request.ImageBase64);
+                
+                // Gọi Python script để phát hiện khuôn mặt
+                var result = await _faceRecognitionService.DetectFaceAsync(imageBytes);
+                
+                return Ok(new { 
+                    hasFace = result,
+                    message = result ? "Phát hiện khuôn mặt" : "Không phát hiện khuôn mặt"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
         private bool IsValidImageFile(IFormFile file)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
@@ -208,5 +343,16 @@ namespace dotnet_api.Controllers
     {
         public string ImageBase64 { get; set; }
         public string UserId { get; set; }
+    }
+
+    public class CheckOutRequest
+    {
+        public DateTime CheckOutDateTime { get; set; }
+        public string? ImageBase64 { get; set; }
+    }
+
+    public class FaceDetectionRequest
+    {
+        public string ImageBase64 { get; set; }
     }
 }

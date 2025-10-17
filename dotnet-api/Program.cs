@@ -30,7 +30,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
-// Configure file upload
+// Configure file upload and request size limits
 builder.Services.Configure<IISServerOptions>(options =>
 {
     options.MaxRequestBodySize = int.MaxValue;
@@ -39,6 +39,14 @@ builder.Services.Configure<IISServerOptions>(options =>
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = int.MaxValue;
+    options.ValueLengthLimit = int.MaxValue;
+    options.ValueCountLimit = int.MaxValue;
+    options.KeyLengthLimit = int.MaxValue;
+});
+
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = int.MaxValue;
 });
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -99,8 +107,10 @@ builder.Services.AddScoped<AttendanceDataService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 
-// Face Recognition Service
-builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>(); 
+// Face Recognition Services
+builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>();
+builder.Services.AddScoped<IFaceRegistrationService, FaceRegistrationService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>(); 
 
 // Email Service
 builder.Services.AddScoped<IEmailService, EmailService>();

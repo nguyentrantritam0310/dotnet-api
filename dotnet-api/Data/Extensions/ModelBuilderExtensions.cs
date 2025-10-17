@@ -3235,11 +3235,21 @@ namespace dotnet_api.Data.Extensions
         {
             ID = 1,
             ShiftAssignmentID = 1,
+            EmployeeId = "worker1-id",
+            CheckInDateTime = DateTime.Now.AddDays(-1).Date.AddHours(8),
+            CheckOutDateTime = DateTime.Now.AddDays(-1).Date.AddHours(17),
             CheckIn = new TimeSpan(8, 0, 0),
             CheckOut = new TimeSpan(17, 0, 0),
-            ImageCheckIn = "/uploads/attendace/worker1-20240912-checkin.jpg",
-            ImageCheckOut = "/uploads/attendace/worker1-20240912-checkin.jpg",
-            Status = AttendanceStatusEnum.Present
+            ImageCheckIn = "/uploads/attendance/worker1-20240912-checkin.jpg",
+            ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
+            CheckInLocation = "Construction Site A",
+            CheckOutLocation = "Construction Site A",
+            FaceRecognitionConfidence = 0.95f,
+            AttendanceMachineId = 2,
+            Status = AttendanceStatusEnum.Present,
+            CreatedDate = DateTime.Now.AddDays(-1),
+            LastUpdated = DateTime.Now.AddDays(-1),
+            Notes = "Full day attendance with face recognition"
         }
      );
                 modelBuilder.Entity<AttendanceMachine>().HasData(
@@ -3548,6 +3558,81 @@ namespace dotnet_api.Data.Extensions
                     }
                 );
             }
+
+            // Seed FaceRegistration data - Using actual employee IDs from existing data
+            modelBuilder.Entity<FaceRegistration>().HasData(
+                new FaceRegistration
+                {
+                    ID = 1,
+                    EmployeeId = "worker1-id",
+                    FaceId = "face-worker1-001",
+                    ImagePath = "/uploads/faces/worker1-20241217080000.jpg",
+                    EmbeddingData = "[0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234, 0.5678, -0.9012, 0.3456, -0.7890]",
+                    Confidence = 0.95f,
+                    RegisteredDate = DateTime.Now.AddDays(-30),
+                    LastUpdated = DateTime.Now.AddDays(-30),
+                    IsActive = true,
+                    RegisteredBy = "admin",
+                    Notes = "Face registration for Đinh Văn Thợ (worker1)"
+                },
+                new FaceRegistration
+                {
+                    ID = 2,
+                    EmployeeId = "worker2-id",
+                    FaceId = "face-worker2-002",
+                    ImagePath = "/uploads/faces/worker2-20241217080100.jpg",
+                    EmbeddingData = "[0.2345, -0.6789, 0.0123, -0.4567, 0.8901, -0.2345, 0.6789, -0.0123, 0.4567, -0.8901]",
+                    Confidence = 0.92f,
+                    RegisteredDate = DateTime.Now.AddDays(-25),
+                    LastUpdated = DateTime.Now.AddDays(-25),
+                    IsActive = true,
+                    RegisteredBy = "admin",
+                    Notes = "Face registration for Mai Thị Hàn (worker2)"
+                },
+                new FaceRegistration
+                {
+                    ID = 3,
+                    EmployeeId = "tech1-id",
+                    FaceId = "face-tech1-003",
+                    ImagePath = "/uploads/faces/tech1-20241217080200.jpg",
+                    EmbeddingData = "[0.3456, -0.7890, 0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234, 0.5678, -0.9012]",
+                    Confidence = 0.88f,
+                    RegisteredDate = DateTime.Now.AddDays(-20),
+                    LastUpdated = DateTime.Now.AddDays(-20),
+                    IsActive = true,
+                    RegisteredBy = "hr-manager1-id",
+                    Notes = "Face registration for Hoàng Kỹ Thuật (tech1)"
+                },
+                new FaceRegistration
+                {
+                    ID = 4,
+                    EmployeeId = "manager1-id",
+                    FaceId = "face-manager1-004",
+                    ImagePath = "/uploads/faces/manager1-20241217080300.jpg",
+                    EmbeddingData = "[0.4567, -0.8901, 0.2345, -0.6789, 0.0123, -0.4567, 0.8901, -0.2345, 0.6789, -0.0123]",
+                    Confidence = 0.94f,
+                    RegisteredDate = DateTime.Now.AddDays(-15),
+                    LastUpdated = DateTime.Now.AddDays(-15),
+                    IsActive = true,
+                    RegisteredBy = "admin",
+                    Notes = "Face registration for Nguyễn Quản Lý (manager1)"
+                },
+                new FaceRegistration
+                {
+                    ID = 5,
+                    EmployeeId = "hr-employee1-id",
+                    FaceId = "face-hr1-005",
+                    ImagePath = "/uploads/faces/hr1-20241217080400.jpg",
+                    EmbeddingData = "[0.5678, -0.9012, 0.3456, -0.7890, 0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234]",
+                    Confidence = 0.91f,
+                    RegisteredDate = DateTime.Now.AddDays(-10),
+                    LastUpdated = DateTime.Now.AddDays(-10),
+                    IsActive = true,
+                    RegisteredBy = "hr-manager1-id",
+                    Notes = "Face registration for Lê Thị Lan (hr-employee1)"
+                }
+            );
+
         }
     }
 }

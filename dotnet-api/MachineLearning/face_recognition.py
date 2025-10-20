@@ -415,15 +415,25 @@ class FaceRecognitionSystem:
             # Load image
             image = cv2.imread(image_path)
             if image is None:
+                logger.error(f"Không thể đọc ảnh từ: {image_path}")
                 return {
                     "success": False,
                     "message": "Không thể đọc ảnh"
+                }
+            
+            # Kiểm tra MTCNN đã được khởi tạo chưa
+            if self.mtcnn is None:
+                logger.error("MTCNN chưa được khởi tạo")
+                return {
+                    "success": False,
+                    "message": "MTCNN chưa được khởi tạo"
                 }
             
             # Detect faces using MTCNN (nhanh hơn YOLO cho detection đơn giản)
             aligned_faces = self.detect_and_align_faces_mtcnn(image)
             
             if not aligned_faces:
+                logger.info("Không phát hiện được khuôn mặt trong ảnh")
                 return {
                     "success": False,
                     "message": "Không phát hiện được khuôn mặt trong ảnh"
@@ -433,6 +443,7 @@ class FaceRecognitionSystem:
             best_face, best_confidence = max(aligned_faces, key=lambda x: x[1])
             
             if best_confidence < self.face_detection_confidence:
+                logger.info(f"Độ tin cậy phát hiện khuôn mặt quá thấp: {best_confidence:.2f}")
                 return {
                     "success": False,
                     "message": f"Độ tin cậy phát hiện khuôn mặt quá thấp: {best_confidence:.2f}"
@@ -447,6 +458,8 @@ class FaceRecognitionSystem:
                 
         except Exception as e:
             logger.error(f"Lỗi khi phát hiện khuôn mặt: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return {
                 "success": False,
                 "message": f"Lỗi: {str(e)}"

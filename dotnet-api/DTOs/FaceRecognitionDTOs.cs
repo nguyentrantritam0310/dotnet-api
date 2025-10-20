@@ -40,6 +40,12 @@ namespace dotnet_api.DTOs
         public DateTime CreatedDate { get; set; }
     }
 
+    public class FaceRegistrationRequest
+    {
+        public string EmployeeId { get; set; }
+        public string ImageBase64 { get; set; }
+    }
+
     // DTOs for Attendance
     public class AttendanceCheckInRequest
     {

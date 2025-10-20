@@ -156,6 +156,50 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
+        /// Đăng ký khuôn mặt từ base64 string (cho mobile app)
+        /// </summary>
+        /// <param name="request">Request chứa base64 image và employeeId</param>
+        /// <returns></returns>
+        [HttpPost("register-face")]
+        public async Task<IActionResult> RegisterFaceBase64([FromBody] FaceRegistrationRequest request)
+        {
+            if (string.IsNullOrEmpty(request.ImageBase64))
+                return BadRequest(new { message = "Không có ảnh base64" });
+
+            if (string.IsNullOrEmpty(request.EmployeeId))
+                return BadRequest(new { message = "Không có ID nhân viên" });
+
+            try
+            {
+                // Decode base64 to bytes
+                var imageBytes = Convert.FromBase64String(request.ImageBase64);
+                
+                var result = await _faceRecognitionService.RegisterFaceAsync(request.EmployeeId, imageBytes);
+                
+                if (result.Success)
+                {
+                    return Ok(new { 
+                        success = true,
+                        message = "Đăng ký khuôn mặt thành công",
+                        faceId = result.FaceId,
+                        confidence = result.Confidence
+                    });
+                }
+                else
+                {
+                    return BadRequest(new { 
+                        success = false,
+                        message = result.Message
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        /// <summary>
         /// Xóa khuôn mặt đã đăng ký
         /// </summary>
         /// <param name="employeeId">ID nhân viên</param>

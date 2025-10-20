@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_api.Data;
 
@@ -11,9 +12,11 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251018120105_permissionrole")]
+    partial class permissionrole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -549,7 +552,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6c484c03-2994-4a92-bf63-a61ac80e4564",
+                            ConcurrencyStamp = "46a1e734-9787-4d47-abd0-77dbc67acd67",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -558,7 +561,7 @@ namespace dotnet_api.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGNdxYsOBH5fozlffrVUQnrdQL2G9TAx5wKRPiKHUg+yBHztJhWC8g0koLYsaJKfSA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDc4I3Xf4xgCiFCNQ5i7BOEv7wP7cYSw4/EYoyjfc7r/lY6dmEP97PCW5OadiChckg==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -575,7 +578,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "03ee3a65-9d62-4181-944a-99eb9aa217d6",
+                            ConcurrencyStamp = "94ec5021-87c2-4d68-be8d-d62dab7dd3ff",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -601,7 +604,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "35e5a5de-c852-4384-90d2-9fe2c0cd494b",
+                            ConcurrencyStamp = "aad7a87d-369a-4227-b5cc-534149237bce",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -627,7 +630,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "22488519-ea2a-46cb-a93a-eae788a3394c",
+                            ConcurrencyStamp = "99839d03-3767-4f62-b5c9-bbb63a2b3ad3",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -653,7 +656,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ffc81f35-9ede-4ec6-99a4-5d7c496ca884",
+                            ConcurrencyStamp = "112fd5b1-bbd8-4a0d-b14f-4ea03ca0c790",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -679,7 +682,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4298c76e-48b1-40d0-88c8-a51c9525c7c3",
+                            ConcurrencyStamp = "7ddc3ecb-068a-469c-80ef-75e3ee13d6db",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -705,7 +708,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "78d05726-1c81-41ae-a852-04da8420954b",
+                            ConcurrencyStamp = "c1971292-1c80-43fb-8096-1af9ce87bb6d",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -731,7 +734,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "89bd2939-5eb8-407d-8e7f-9e935994771f",
+                            ConcurrencyStamp = "9effdb71-394b-4722-bc9b-825715161c98",
                             Email = "truongphonghr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -757,7 +760,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "64eb8c76-8126-4bc1-94d9-c13989e48be6",
+                            ConcurrencyStamp = "9a0d502f-c436-40a6-80ea-28cedcf22b33",
                             Email = "truongphonghr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -783,7 +786,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dc723dcf-6eb0-43ee-a42a-f1293772fcff",
+                            ConcurrencyStamp = "96e4d716-2e30-40e5-a708-56c94a4c5031",
                             Email = "nhanvienhr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -809,7 +812,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "958b1484-fb11-4d68-b072-cd1a36c8d142",
+                            ConcurrencyStamp = "d020ce1f-cc86-4d5f-bace-a2cdf6fc0f99",
                             Email = "nhanvienhr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -835,7 +838,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6f93c179-92d6-4230-ba42-7c3597260b63",
+                            ConcurrencyStamp = "ed382fca-2b0a-4dcb-adfd-3f4a4902eb78",
                             Email = "nhanvienhr3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -861,7 +864,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ba9bd07d-467b-4b3c-98f4-72de4ceae356",
+                            ConcurrencyStamp = "6f75c3b3-ff24-4569-9864-2929d2c3ba82",
                             Email = "nhanvienhr4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -887,7 +890,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c9d600f6-cf6e-4e73-9c7a-28c7f4eb73c1",
+                            ConcurrencyStamp = "6d0cc5aa-5c6d-4077-bde9-08f3017e557c",
                             Email = "nhanvienhr5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đặng",
@@ -913,7 +916,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "31eb8b34-4871-46cf-97db-172956ebc69e",
+                            ConcurrencyStamp = "eade7bc0-5265-40a4-abd8-1b03f32fc005",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -938,7 +941,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "09a14310-a855-42dc-8b30-8baf9c1120d1",
+                            ConcurrencyStamp = "8eb99309-117b-4cdb-9734-6f31977eed3c",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -963,7 +966,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4551481a-911b-400e-9e3e-3ee92035420a",
+                            ConcurrencyStamp = "03e9146a-b34d-4e15-b82f-87fe75d24e61",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -988,7 +991,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "66d5b1f9-3c7a-46dc-926b-39379190fc00",
+                            ConcurrencyStamp = "ef496408-6722-4370-8158-95bc1d66fe68",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -1013,7 +1016,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8666632a-549c-4217-8e1b-96a74f1ad920",
+                            ConcurrencyStamp = "4b14f733-be97-4de4-b6b8-c7b1b305b7bb",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -1158,12 +1161,12 @@ namespace dotnet_api.Migrations
                             CheckOut = new TimeSpan(0, 17, 0, 0, 0),
                             CheckOutDateTime = new DateTime(2025, 10, 17, 17, 0, 0, 0, DateTimeKind.Local),
                             CheckOutLocation = "Construction Site A",
-                            CreatedDate = new DateTime(2025, 10, 17, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(1679),
+                            CreatedDate = new DateTime(2025, 10, 17, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(3033),
                             EmployeeId = "worker1-id",
                             FaceRecognitionConfidence = 0.95f,
                             ImageCheckIn = "/uploads/attendance/worker1-20240912-checkin.jpg",
                             ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
-                            LastUpdated = new DateTime(2025, 10, 17, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(1813),
+                            LastUpdated = new DateTime(2025, 10, 17, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(3138),
                             Notes = "Full day attendance with face recognition",
                             ShiftAssignmentID = 1,
                             Status = 0
@@ -4772,7 +4775,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 18, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(5423),
+                            CreatedAt = new DateTime(2025, 10, 18, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(6866),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 21, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 1,
@@ -4785,7 +4788,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 18, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(6005),
+                            CreatedAt = new DateTime(2025, 10, 18, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(7387),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 22, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 2,
@@ -4798,7 +4801,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 18, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(6009),
+                            CreatedAt = new DateTime(2025, 10, 18, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(7404),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 27, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 1,
@@ -4811,7 +4814,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 18, 19, 16, 55, 558, DateTimeKind.Local).AddTicks(6126),
+                            CreatedAt = new DateTime(2025, 10, 18, 19, 1, 3, 399, DateTimeKind.Local).AddTicks(7503),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 30, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 2,
@@ -4959,10 +4962,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker1-001",
                             ImagePath = "/uploads/faces/worker1-20241217080000.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 18, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6549),
+                            LastUpdated = new DateTime(2025, 9, 18, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(7729),
                             Notes = "Face registration for Đinh Văn Thợ (worker1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 18, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6361)
+                            RegisteredDate = new DateTime(2025, 9, 18, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(7621)
                         },
                         new
                         {
@@ -4973,10 +4976,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker2-002",
                             ImagePath = "/uploads/faces/worker2-20241217080100.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 23, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6991),
+                            LastUpdated = new DateTime(2025, 9, 23, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8140),
                             Notes = "Face registration for Mai Thị Hàn (worker2)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 23, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6989)
+                            RegisteredDate = new DateTime(2025, 9, 23, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8139)
                         },
                         new
                         {
@@ -4987,10 +4990,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-tech1-003",
                             ImagePath = "/uploads/faces/tech1-20241217080200.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 28, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6994),
+                            LastUpdated = new DateTime(2025, 9, 28, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8143),
                             Notes = "Face registration for Hoàng Kỹ Thuật (tech1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 9, 28, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6994)
+                            RegisteredDate = new DateTime(2025, 9, 28, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8142)
                         },
                         new
                         {
@@ -5001,10 +5004,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-manager1-004",
                             ImagePath = "/uploads/faces/manager1-20241217080300.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 3, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6997),
+                            LastUpdated = new DateTime(2025, 10, 3, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8146),
                             Notes = "Face registration for Nguyễn Quản Lý (manager1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 10, 3, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6996)
+                            RegisteredDate = new DateTime(2025, 10, 3, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8145)
                         },
                         new
                         {
@@ -5015,10 +5018,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-hr1-005",
                             ImagePath = "/uploads/faces/hr1-20241217080400.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 8, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(7000),
+                            LastUpdated = new DateTime(2025, 10, 8, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8149),
                             Notes = "Face registration for Lê Thị Lan (hr-employee1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 10, 8, 19, 16, 55, 559, DateTimeKind.Local).AddTicks(6999)
+                            RegisteredDate = new DateTime(2025, 10, 8, 19, 1, 3, 400, DateTimeKind.Local).AddTicks(8148)
                         });
                 });
 
@@ -6491,6 +6494,623 @@ namespace dotnet_api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Page")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PermissionType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Permissions_IsActive");
+
+                    b.HasIndex("PermissionType")
+                        .HasDatabaseName("IX_Permissions_PermissionType");
+
+                    b.HasIndex("Page", "Action")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Permissions_Page_Action");
+
+                    b.ToTable("Permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3226),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3535),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3550),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3562),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3574),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3589),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3642),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3654),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3666),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3679),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3689),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3700),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3710),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3721),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3731),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3741),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3751),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3763),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3773),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3784),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3794),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3805),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3814),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3824),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3834),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3844),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3854),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3863),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Action = "view",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3900),
+                            Description = "Có thể truy cập trang/chức năng",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Action = "create",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3912),
+                            Description = "Có thể tạo mới dữ liệu",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Action = "edit",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3922),
+                            Description = "Có thể chỉnh sửa dữ liệu",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Action = "delete",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3933),
+                            Description = "Có thể xóa dữ liệu",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "functional"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3947),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3958),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3969),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "leave",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3979),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(3991),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4001),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "attendance",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4011),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4022),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4032),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "payroll",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4043),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4053),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4142),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "employee",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4175),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4186),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4197),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "construction",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4209),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4220),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4230),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "material",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4276),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4314),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4326),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "report",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Action = "view_all",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4337),
+                            Description = "Có thể xem dữ liệu của tất cả người dùng",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Action = "view_own",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4348),
+                            Description = "Chỉ xem được dữ liệu của chính mình",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "data_access"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Action = "view_by_role",
+                            CreatedAt = new DateTime(2025, 10, 18, 12, 1, 3, 401, DateTimeKind.Utc).AddTicks(4359),
+                            Description = "Có thể chọn role cụ thể để xem dữ liệu",
+                            IsActive = true,
+                            Page = "system",
+                            PermissionType = "data_access"
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.Report", b =>
                 {
                     b.Property<int>("ID")
@@ -6854,6 +7474,10 @@ namespace dotnet_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -6894,6 +7518,51 @@ namespace dotnet_api.Migrations
                             ID = 6,
                             RoleName = "Nhân viên phòng Hành chính - Nhân sự"
                         });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.RolePermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<bool>("IsGranted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsGranted")
+                        .HasDatabaseName("IX_RolePermissions_IsGranted");
+
+                    b.HasIndex("PermissionId")
+                        .HasDatabaseName("IX_RolePermissions_PermissionId");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("IX_RolePermissions_RoleId");
+
+                    b.HasIndex("RoleId", "PermissionId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_RolePermissions_RoleId_PermissionId");
+
+                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
@@ -8962,6 +9631,25 @@ namespace dotnet_api.Migrations
                     b.Navigation("Report");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.RolePermission", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.ConstructionTask", null)
@@ -9214,6 +9902,11 @@ namespace dotnet_api.Migrations
                     b.Navigation("applicationUser");
 
                     b.Navigation("applicationUser_PayrollAdjustment");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Report", b =>

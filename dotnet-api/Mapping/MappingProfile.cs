@@ -573,6 +573,38 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.FamilyRelation, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
 
+            // TimeSheetFeedback mappings
+            CreateMap<TimeSheetFeedback, TimeSheetFeedbackDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName));
+
+            CreateMap<CreateTimeSheetFeedbackDto, TimeSheetFeedback>()
+                .ForMember(dest => dest.TimeSheetFeedbackDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.Employee, opt => opt.Ignore())
+                .ForMember(dest => dest.TimeSheet, opt => opt.Ignore());
+
+            CreateMap<UpdateTimeSheetFeedbackDto, TimeSheetFeedback>()
+                .ForMember(dest => dest.TimeSheetID, opt => opt.Ignore())
+                .ForMember(dest => dest.EmployeeID, opt => opt.Ignore())
+                .ForMember(dest => dest.TimeSheetFeedbackDate, opt => opt.Ignore())
+                .ForMember(dest => dest.Employee, opt => opt.Ignore())
+                .ForMember(dest => dest.TimeSheet, opt => opt.Ignore());
+
+            // PayrollFeedback mappings
+            CreateMap<PayrollFeedback, PayrollFeedbackDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName));
+
+            CreateMap<CreatePayrollFeedbackDto, PayrollFeedback>()
+                .ForMember(dest => dest.PayrollFeedbackDate, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.Employee, opt => opt.Ignore())
+                .ForMember(dest => dest.Payroll, opt => opt.Ignore());
+
+            CreateMap<UpdatePayrollFeedbackDto, PayrollFeedback>()
+                .ForMember(dest => dest.PayrollID, opt => opt.Ignore())
+                .ForMember(dest => dest.EmployeeID, opt => opt.Ignore())
+                .ForMember(dest => dest.PayrollFeedbackDate, opt => opt.Ignore())
+                .ForMember(dest => dest.Employee, opt => opt.Ignore())
+                .ForMember(dest => dest.Payroll, opt => opt.Ignore());
+
         }
     }
 }

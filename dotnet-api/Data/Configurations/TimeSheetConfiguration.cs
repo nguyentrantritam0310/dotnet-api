@@ -13,10 +13,6 @@ namespace dotnet_api.Data.Configurations
                 .WithMany(u => u.TimeSheets)
                 .HasForeignKey(x => x.EmployeeID)
                 .OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(x => x.Payroll)
-                .WithOne()
-                .HasForeignKey<Payroll>(p => p.ID)
-                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

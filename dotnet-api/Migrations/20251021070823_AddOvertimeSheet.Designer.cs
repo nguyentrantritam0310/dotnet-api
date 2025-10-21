@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_api.Data;
 
@@ -11,9 +12,11 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021070823_AddOvertimeSheet")]
+    partial class AddOvertimeSheet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -549,7 +552,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "31207bfb-e702-4820-b7b0-7ca238eb991c",
+                            ConcurrencyStamp = "c5b61890-a0ea-4dd9-8929-2a75d8311ffc",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -558,7 +561,7 @@ namespace dotnet_api.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOO2i5Te3GWEc8fL4dlZQYugszAl6MXiMHGPq6t2l/bq8Rwkd6BdTX0PH7TVhSdiHw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJ2+7Gv/+h1NdkX9Y/1Cbyhvzv+7F3A0lYiRdggNcAWuLzYSXYK+J8BPTgGnsEcniA==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -575,7 +578,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dd439793-5b63-4062-8b84-01a83854821b",
+                            ConcurrencyStamp = "963b0012-5298-4a18-ae34-386627a805e1",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -601,7 +604,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e6bb822a-8d81-47dc-be37-1230bc6d881b",
+                            ConcurrencyStamp = "d5376451-9537-4d9e-a5e4-72731aa15ed2",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -627,7 +630,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9580771e-7edb-4d94-8f95-59bd509afca8",
+                            ConcurrencyStamp = "fc62652f-ecc3-4f4f-b233-6f9ee8c98a6b",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -653,7 +656,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "340b27dc-b636-4519-9e27-73406fcc6acc",
+                            ConcurrencyStamp = "f5a151bf-5bbe-4121-8c02-16c79be46761",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -679,7 +682,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dc41d7c2-ce98-4093-ac87-ba340f0fce8d",
+                            ConcurrencyStamp = "6369decb-9a8f-4654-b51d-3e02a174b6d8",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -705,7 +708,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5429aed5-02da-46cc-b407-cbb12ed9046c",
+                            ConcurrencyStamp = "64065020-04ab-412c-a9e7-7faf82b38cfa",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -731,7 +734,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c7aea5e1-b3d9-4c71-8d81-36622ae4944d",
+                            ConcurrencyStamp = "b2298465-8cda-4e58-8ab6-2d80826091c8",
                             Email = "truongphonghr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -757,7 +760,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dac0682f-36ff-4f91-b0d2-e28e9cf4f9e0",
+                            ConcurrencyStamp = "41616f14-b1c7-4c21-b388-c401058e16c4",
                             Email = "truongphonghr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -783,7 +786,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "241f955b-e84b-40ca-8976-decd5c36fcf0",
+                            ConcurrencyStamp = "39876796-4c84-45cf-a5f8-7acb8915ad67",
                             Email = "nhanvienhr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -809,7 +812,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "76e842ec-a41b-417d-8299-ace45900d12f",
+                            ConcurrencyStamp = "47b80ad8-2697-4e3f-9cc6-292876609713",
                             Email = "nhanvienhr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -835,7 +838,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "78149344-dabb-4d15-a2e0-65a10e8389cc",
+                            ConcurrencyStamp = "a9244846-6393-41c6-bc96-85e83b8f48eb",
                             Email = "nhanvienhr3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -861,7 +864,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f850a219-7694-4bc6-b46a-e90f32176c4f",
+                            ConcurrencyStamp = "3a8eff8f-bf03-4152-a299-dc5bf9dc3474",
                             Email = "nhanvienhr4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -887,7 +890,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fc07660b-69f1-45ec-948f-3583616286ae",
+                            ConcurrencyStamp = "b865145f-91fe-46dd-b164-2d11f9d8f2a6",
                             Email = "nhanvienhr5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đặng",
@@ -913,7 +916,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6f88fcd3-97e4-466d-b11c-48cd65eab663",
+                            ConcurrencyStamp = "9efc55cc-d783-48cf-9dff-7cd61c9defe4",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -938,7 +941,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cf46e736-f8b5-4293-b2a2-7b4a6ec9bc39",
+                            ConcurrencyStamp = "35f68799-5a74-4d9d-816a-a3de9814da37",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -963,7 +966,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9f279da9-bd1c-4d30-92cc-32714c1068af",
+                            ConcurrencyStamp = "d0a4068c-2f0c-418d-bdf8-69a30fd19d42",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -988,7 +991,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fefda413-77df-47a8-895b-82a0b888b74f",
+                            ConcurrencyStamp = "47f032e1-6d0e-495a-a042-8ee99635310e",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -1013,7 +1016,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "28d0777b-a6c5-44ba-a8b5-856b9dc7b43d",
+                            ConcurrencyStamp = "904eb49b-dc39-4d22-91e2-0153a5dfeed0",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -1158,12 +1161,12 @@ namespace dotnet_api.Migrations
                             CheckOut = new TimeSpan(0, 17, 0, 0, 0),
                             CheckOutDateTime = new DateTime(2025, 10, 20, 17, 0, 0, 0, DateTimeKind.Local),
                             CheckOutLocation = "Construction Site A",
-                            CreatedDate = new DateTime(2025, 10, 20, 15, 25, 19, 350, DateTimeKind.Local).AddTicks(3664),
+                            CreatedDate = new DateTime(2025, 10, 20, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(872),
                             EmployeeId = "worker1-id",
                             FaceRecognitionConfidence = 0.95f,
                             ImageCheckIn = "/uploads/attendance/worker1-20240912-checkin.jpg",
                             ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
-                            LastUpdated = new DateTime(2025, 10, 20, 15, 25, 19, 350, DateTimeKind.Local).AddTicks(3801),
+                            LastUpdated = new DateTime(2025, 10, 20, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(976),
                             Notes = "Full day attendance with face recognition",
                             ShiftAssignmentID = 1,
                             Status = 0
@@ -4772,7 +4775,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 21, 15, 25, 19, 351, DateTimeKind.Local).AddTicks(75),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(5513),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 21, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 1,
@@ -4785,7 +4788,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 21, 15, 25, 19, 351, DateTimeKind.Local).AddTicks(607),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6042),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 22, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 2,
@@ -4798,7 +4801,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 21, 15, 25, 19, 351, DateTimeKind.Local).AddTicks(610),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6047),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 27, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 1,
@@ -4811,7 +4814,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 21, 15, 25, 19, 351, DateTimeKind.Local).AddTicks(715),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6159),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 30, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 2,
@@ -4959,10 +4962,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker1-001",
                             ImagePath = "/uploads/faces/worker1-20241217080000.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 21, 15, 25, 19, 352, DateTimeKind.Local).AddTicks(6756),
+                            LastUpdated = new DateTime(2025, 9, 21, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(5450),
                             Notes = "Face registration for Đinh Văn Thợ (worker1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 21, 15, 25, 19, 352, DateTimeKind.Local).AddTicks(6552)
+                            RegisteredDate = new DateTime(2025, 9, 21, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(5308)
                         },
                         new
                         {
@@ -4973,10 +4976,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker2-002",
                             ImagePath = "/uploads/faces/worker2-20241217080100.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 26, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8170),
+                            LastUpdated = new DateTime(2025, 9, 26, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7124),
                             Notes = "Face registration for Mai Thị Hàn (worker2)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 26, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8150)
+                            RegisteredDate = new DateTime(2025, 9, 26, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7107)
                         },
                         new
                         {
@@ -4987,10 +4990,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-tech1-003",
                             ImagePath = "/uploads/faces/tech1-20241217080200.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 1, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8185),
+                            LastUpdated = new DateTime(2025, 10, 1, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7128),
                             Notes = "Face registration for Hoàng Kỹ Thuật (tech1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 10, 1, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8184)
+                            RegisteredDate = new DateTime(2025, 10, 1, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7127)
                         },
                         new
                         {
@@ -5001,10 +5004,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-manager1-004",
                             ImagePath = "/uploads/faces/manager1-20241217080300.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 6, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8189),
+                            LastUpdated = new DateTime(2025, 10, 6, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7134),
                             Notes = "Face registration for Nguyễn Quản Lý (manager1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 10, 6, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8189)
+                            RegisteredDate = new DateTime(2025, 10, 6, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7133)
                         },
                         new
                         {
@@ -5015,10 +5018,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-hr1-005",
                             ImagePath = "/uploads/faces/hr1-20241217080400.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 11, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8192),
+                            LastUpdated = new DateTime(2025, 10, 11, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7137),
                             Notes = "Face registration for Lê Thị Lan (hr-employee1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 10, 11, 15, 25, 19, 353, DateTimeKind.Local).AddTicks(8192)
+                            RegisteredDate = new DateTime(2025, 10, 11, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7136)
                         });
                 });
 
@@ -6308,10 +6311,7 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.Payroll", b =>
                 {
                     b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<decimal>("ActualSalary")
                         .HasColumnType("decimal(18,2)");
@@ -8989,6 +8989,12 @@ namespace dotnet_api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("dotnet_api.Data.Entities.TimeSheet", null)
+                        .WithOne("Payroll")
+                        .HasForeignKey("dotnet_api.Data.Entities.Payroll", "ID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Employee");
                 });
 
@@ -9339,6 +9345,12 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
                 {
                     b.Navigation("Attendance")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.Navigation("Payroll")
                         .IsRequired();
                 });
 

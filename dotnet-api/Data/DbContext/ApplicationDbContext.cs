@@ -36,6 +36,7 @@ namespace dotnet_api.Data
         public DbSet<MaterialType> MaterialTypes { get; set; }
         public DbSet<MaterialPlan> MaterialPlans { get; set; }
         public DbSet<OvertimeForm> OvertimeForms { get; set; }
+        public DbSet<OvertimeSheet> OvertimeSheets { get; set; }
         public DbSet<OvertimeType> OvertimeTypes { get; set; }
         public DbSet<PayrollAdjustment> PayrollAdjustments { get; set; }
         public DbSet<Report> Reports { get; set; }

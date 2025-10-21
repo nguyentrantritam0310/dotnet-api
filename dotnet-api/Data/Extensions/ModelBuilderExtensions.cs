@@ -3532,7 +3532,10 @@ namespace dotnet_api.Data.Extensions
                         TotalDeduction = 3200000,
                         NetPay = 18800000,
                         PayrollClosingDate = new DateTime(2025, 9, 30),
-                        PayrollNotes = "Lương tháng 9/2025"
+                        PayrollNotes = "Lương tháng 9/2025",
+                        IsClosed = false,
+                        ClosedAt = null,
+                        ClosedBy = null
                     }
                 );
 
@@ -3554,7 +3557,30 @@ namespace dotnet_api.Data.Extensions
                         EarlyLeaveCount = 0,
                         UnexcusedAbsenceCount = 0,
                         TimeSheetClosingDate = new DateTime(2025, 9, 30),
-                        TimeSheetNotes = "Bảng công tháng 9/2025"
+                        TimeSheetNotes = "Bảng công tháng 9/2025",
+                        IsClosed = false,
+                        ClosedAt = null,
+                        ClosedBy = null
+                    }
+                );
+
+                // Seed data for OvertimeSheet
+                modelBuilder.Entity<OvertimeSheet>().HasData(
+                    new OvertimeSheet
+                    {
+                        ID = 1,
+                        EmployeeID = "admin-id",
+                        EmployeeName = "Phạm Văn Đốc",
+                        TotalOvertimeDays = 3,
+                        TotalOvertimeHours = 24,
+                        OvertimeSalary = 1000000,
+                        OvertimeCoefficient = 1.5m,
+                        OvertimeClosingDate = new DateTime(2025, 9, 30),
+                        OvertimeNotes = "Bảng công tăng ca tháng 9/2025",
+                        IsClosed = false,
+                        ClosedAt = null,
+                        ClosedBy = null,
+                        PayrollID = 1
                     }
                 );
             }

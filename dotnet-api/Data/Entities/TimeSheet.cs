@@ -19,9 +19,11 @@ namespace dotnet_api.Data.Entities
         public int UnexcusedAbsenceCount { get; set; }
         public DateTime TimeSheetClosingDate { get; set; }
         public string TimeSheetNotes { get; set; }
-
-        // 1-1 với Payroll
-        public Payroll Payroll { get; set; }
+        
+        // Status để đánh dấu đã chốt hay chưa
+        public bool IsClosed { get; set; } = false;
+        public DateTime? ClosedAt { get; set; }
+        public string? ClosedBy { get; set; }
         public ApplicationUser Employee { get; set; }
     }
 }

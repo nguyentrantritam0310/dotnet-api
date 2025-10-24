@@ -61,12 +61,7 @@ namespace dotnet_api.Data
     // Family & Payroll
     public DbSet<FamilyRelation> FamilyRelations { get; set; }
     public DbSet<Employee_FamilyRelation> Employee_FamilyRelations { get; set; }
-    public DbSet<Payroll> Payrolls { get; set; }
-    public DbSet<PayrollFeedback> PayrollFeedbacks { get; set; }
 
-    // Timesheet
-    public DbSet<TimeSheet> TimeSheets { get; set; }
-    public DbSet<TimeSheetFeedback> TimeSheetFeedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -163,12 +158,7 @@ namespace dotnet_api.Data
             // Family & Payroll configs
             modelBuilder.ApplyConfiguration(new FamilyRelationConfiguration());
             modelBuilder.ApplyConfiguration(new Employee_FamilyRelationConfiguration());
-            modelBuilder.ApplyConfiguration(new PayrollConfiguration());
-            modelBuilder.ApplyConfiguration(new PayrollFeedbackConfiguration());
 
-            // Timesheet configs
-            modelBuilder.ApplyConfiguration(new TimeSheetConfiguration());
-            modelBuilder.ApplyConfiguration(new TimeSheetFeedbackConfiguration());
 
             // Seed data
             modelBuilder.Seed();

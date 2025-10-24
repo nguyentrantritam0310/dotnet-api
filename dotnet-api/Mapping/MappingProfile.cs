@@ -447,10 +447,7 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.EmployeeRequests, opt => opt.Ignore())
                 .ForMember(dest => dest.applicationUser_PayrollAdjustment, opt => opt.Ignore())
                 .ForMember(dest => dest.Contracts, opt => opt.Ignore())
-                .ForMember(dest => dest.Payrolls, opt => opt.Ignore())
-                .ForMember(dest => dest.PayrollFeedbacks, opt => opt.Ignore())
-                .ForMember(dest => dest.TimeSheets, opt => opt.Ignore())
-                .ForMember(dest => dest.TimeSheetFeedbacks, opt => opt.Ignore())
+               
                 .ForMember(dest => dest.RefreshToken, opt => opt.Ignore())
                 .ForMember(dest => dest.RefreshTokenExpiryTime, opt => opt.Ignore());
 
@@ -470,10 +467,7 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.EmployeeRequests, opt => opt.Ignore())
                 .ForMember(dest => dest.applicationUser_PayrollAdjustment, opt => opt.Ignore())
                 .ForMember(dest => dest.Contracts, opt => opt.Ignore())
-                .ForMember(dest => dest.Payrolls, opt => opt.Ignore())
-                .ForMember(dest => dest.PayrollFeedbacks, opt => opt.Ignore())
-                .ForMember(dest => dest.TimeSheets, opt => opt.Ignore())
-                .ForMember(dest => dest.TimeSheetFeedbacks, opt => opt.Ignore())
+               
                 .ForMember(dest => dest.RefreshToken, opt => opt.Ignore())
                 .ForMember(dest => dest.RefreshTokenExpiryTime, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
@@ -572,6 +566,8 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.FamilyRelationID, opt => opt.MapFrom(src => src.ID))
                 .ForMember(dest => dest.FamilyRelation, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
+
+           
 
         }
     }

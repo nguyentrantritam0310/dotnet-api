@@ -15,7 +15,6 @@ namespace dotnet_api.Data.Entities
         public string? ImageCheckOut { get; set; } // Path to check-out image
         public string? CheckInLocation { get; set; } // GPS coordinates or location name
         public string? CheckOutLocation { get; set; } // GPS coordinates or location name
-        public float? FaceRecognitionConfidence { get; set; } // Face recognition confidence score
         public int? AttendanceMachineId { get; set; } // Which machine was used
         public AttendanceStatusEnum? Status { get; set; } 
         public DateTime CreatedDate { get; set; }

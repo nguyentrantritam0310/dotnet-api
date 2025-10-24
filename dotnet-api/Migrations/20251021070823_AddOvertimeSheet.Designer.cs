@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_api.Data;
 
@@ -11,9 +12,11 @@ using dotnet_api.Data;
 namespace dotnet_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021070823_AddOvertimeSheet")]
+    partial class AddOvertimeSheet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -549,7 +552,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "admin-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d4d7531e-6d00-46e3-a564-709d72c9286a",
+                            ConcurrencyStamp = "c5b61890-a0ea-4dd9-8929-2a75d8311ffc",
                             Email = "giamdoc@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -558,7 +561,7 @@ namespace dotnet_api.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "GIAMDOC@COMPANY.COM",
                             NormalizedUserName = "GIAMDOC@COMPANY.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE8Rq8KvI1xVECqbCouo5iQ8lFAEDpSTW3Ww/lTp5q4iKDOmeWnzPN2FXsioeAPeRw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJ2+7Gv/+h1NdkX9Y/1Cbyhvzv+7F3A0lYiRdggNcAWuLzYSXYK+J8BPTgGnsEcniA==",
                             Phone = "0901234567",
                             PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -575,7 +578,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0b403690-a4fb-4ebb-8e1d-ed9326d7e18f",
+                            ConcurrencyStamp = "963b0012-5298-4a18-ae34-386627a805e1",
                             Email = "chihuy1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -601,7 +604,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "69c3ad0a-35ca-494b-b58f-d5c18450b26d",
+                            ConcurrencyStamp = "d5376451-9537-4d9e-a5e4-72731aa15ed2",
                             Email = "chihuy2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -627,7 +630,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "manager3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3459a873-5ddf-418f-847d-b5b218911c97",
+                            ConcurrencyStamp = "fc62652f-ecc3-4f4f-b233-6f9ee8c98a6b",
                             Email = "chihuy3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -653,7 +656,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9da9309b-9c3b-45e0-82ae-8a4450eea9bb",
+                            ConcurrencyStamp = "f5a151bf-5bbe-4121-8c02-16c79be46761",
                             Email = "kythuat1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -679,7 +682,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4bd83e71-b7cc-47e7-931d-90a8c1c792f2",
+                            ConcurrencyStamp = "6369decb-9a8f-4654-b51d-3e02a174b6d8",
                             Email = "kythuat2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phan",
@@ -705,7 +708,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "tech3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "308d7141-8261-4625-a73b-3635af179e1c",
+                            ConcurrencyStamp = "64065020-04ab-412c-a9e7-7faf82b38cfa",
                             Email = "kythuat3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -731,7 +734,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2045b93b-b828-456c-b232-ac2ae3fec5bf",
+                            ConcurrencyStamp = "b2298465-8cda-4e58-8ab6-2d80826091c8",
                             Email = "truongphonghr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Nguyễn",
@@ -757,7 +760,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-manager2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e934fee9-4366-4515-8d29-32adc67b93c8",
+                            ConcurrencyStamp = "41616f14-b1c7-4c21-b388-c401058e16c4",
                             Email = "truongphonghr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trần",
@@ -783,7 +786,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0c3d21b9-0ba0-49c8-ac0d-df364b091880",
+                            ConcurrencyStamp = "39876796-4c84-45cf-a5f8-7acb8915ad67",
                             Email = "nhanvienhr1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lê",
@@ -809,7 +812,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6b9a5a6d-cb4a-463a-8966-21380ecccc7f",
+                            ConcurrencyStamp = "47b80ad8-2697-4e3f-9cc6-292876609713",
                             Email = "nhanvienhr2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Phạm",
@@ -835,7 +838,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6d3505d3-aeb2-4e3e-b14d-2afdd35ec8d1",
+                            ConcurrencyStamp = "a9244846-6393-41c6-bc96-85e83b8f48eb",
                             Email = "nhanvienhr3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Hoàng",
@@ -861,7 +864,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "33f28ae8-c072-484e-825f-d9321a2cb397",
+                            ConcurrencyStamp = "3a8eff8f-bf03-4152-a299-dc5bf9dc3474",
                             Email = "nhanvienhr4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Vũ",
@@ -887,7 +890,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "hr-employee5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "710dcf30-cdc5-4bbd-b9cb-e2976d015bd2",
+                            ConcurrencyStamp = "b865145f-91fe-46dd-b164-2d11f9d8f2a6",
                             Email = "nhanvienhr5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đặng",
@@ -913,7 +916,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker1-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f3faa677-8504-44dc-b521-9813e371eeeb",
+                            ConcurrencyStamp = "9efc55cc-d783-48cf-9dff-7cd61c9defe4",
                             Email = "tho1@company.com",
                             EmailConfirmed = true,
                             FirstName = "Đinh",
@@ -938,7 +941,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker2-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e695d12c-09e6-48cb-972b-69ee7565f8c9",
+                            ConcurrencyStamp = "35f68799-5a74-4d9d-816a-a3de9814da37",
                             Email = "tho2@company.com",
                             EmailConfirmed = true,
                             FirstName = "Mai",
@@ -963,7 +966,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker3-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4a3a445f-045a-41d9-b1fb-baa14072ae09",
+                            ConcurrencyStamp = "d0a4068c-2f0c-418d-bdf8-69a30fd19d42",
                             Email = "tho3@company.com",
                             EmailConfirmed = true,
                             FirstName = "Lý",
@@ -988,7 +991,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker4-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "795d893e-b72f-468b-8ac4-6bd2b4ec8ad4",
+                            ConcurrencyStamp = "47f032e1-6d0e-495a-a042-8ee99635310e",
                             Email = "tho4@company.com",
                             EmailConfirmed = true,
                             FirstName = "Trịnh",
@@ -1013,7 +1016,7 @@ namespace dotnet_api.Migrations
                         {
                             Id = "worker5-id",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "40e063c6-3319-4e32-8139-be7c6998b837",
+                            ConcurrencyStamp = "904eb49b-dc39-4d22-91e2-0153a5dfeed0",
                             Email = "tho5@company.com",
                             EmailConfirmed = true,
                             FirstName = "Võ",
@@ -1114,6 +1117,9 @@ namespace dotnet_api.Migrations
                     b.Property<string>("EmployeeId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<float?>("FaceRecognitionConfidence")
+                        .HasColumnType("real");
+
                     b.Property<string>("ImageCheckIn")
                         .HasColumnType("nvarchar(max)");
 
@@ -1150,17 +1156,18 @@ namespace dotnet_api.Migrations
                             ID = 1,
                             AttendanceMachineId = 2,
                             CheckIn = new TimeSpan(0, 8, 0, 0, 0),
-                            CheckInDateTime = new DateTime(2025, 10, 23, 8, 0, 0, 0, DateTimeKind.Local),
+                            CheckInDateTime = new DateTime(2025, 10, 20, 8, 0, 0, 0, DateTimeKind.Local),
                             CheckInLocation = "Construction Site A",
                             CheckOut = new TimeSpan(0, 17, 0, 0, 0),
-                            CheckOutDateTime = new DateTime(2025, 10, 23, 17, 0, 0, 0, DateTimeKind.Local),
+                            CheckOutDateTime = new DateTime(2025, 10, 20, 17, 0, 0, 0, DateTimeKind.Local),
                             CheckOutLocation = "Construction Site A",
-                            CreatedDate = new DateTime(2025, 10, 23, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(1494),
+                            CreatedDate = new DateTime(2025, 10, 20, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(872),
                             EmployeeId = "worker1-id",
+                            FaceRecognitionConfidence = 0.95f,
                             ImageCheckIn = "/uploads/attendance/worker1-20240912-checkin.jpg",
                             ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
-                            LastUpdated = new DateTime(2025, 10, 23, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(1603),
-                            Notes = "Full day attendance",
+                            LastUpdated = new DateTime(2025, 10, 20, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(976),
+                            Notes = "Full day attendance with face recognition",
                             ShiftAssignmentID = 1,
                             Status = 0
                         });
@@ -4768,7 +4775,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 24, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(5670),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(5513),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 21, 22, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 1,
@@ -4781,7 +4788,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "OT002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 24, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(6199),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6042),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 22, 23, 0, 0, 0, DateTimeKind.Unspecified),
                             OvertimeFormID = 2,
@@ -4794,7 +4801,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV001",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 24, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(6203),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6047),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 27, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 1,
@@ -4807,7 +4814,7 @@ namespace dotnet_api.Migrations
                         {
                             VoucherCode = "LV002",
                             ApproveStatus = 0,
-                            CreatedAt = new DateTime(2025, 10, 24, 18, 58, 21, 921, DateTimeKind.Local).AddTicks(6308),
+                            CreatedAt = new DateTime(2025, 10, 21, 14, 8, 20, 645, DateTimeKind.Local).AddTicks(6159),
                             EmployeeID = "tech1-id",
                             EndDateTime = new DateTime(2025, 9, 30, 17, 0, 0, 0, DateTimeKind.Unspecified),
                             LeaveTypeID = 2,
@@ -4955,10 +4962,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker1-001",
                             ImagePath = "/uploads/faces/worker1-20241217080000.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 24, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1375),
+                            LastUpdated = new DateTime(2025, 9, 21, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(5450),
                             Notes = "Face registration for Đinh Văn Thợ (worker1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 24, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1262)
+                            RegisteredDate = new DateTime(2025, 9, 21, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(5308)
                         },
                         new
                         {
@@ -4969,10 +4976,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-worker2-002",
                             ImagePath = "/uploads/faces/worker2-20241217080100.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 9, 29, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1799),
+                            LastUpdated = new DateTime(2025, 9, 26, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7124),
                             Notes = "Face registration for Mai Thị Hàn (worker2)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 9, 29, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1798)
+                            RegisteredDate = new DateTime(2025, 9, 26, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7107)
                         },
                         new
                         {
@@ -4983,10 +4990,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-tech1-003",
                             ImagePath = "/uploads/faces/tech1-20241217080200.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 4, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1803),
+                            LastUpdated = new DateTime(2025, 10, 1, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7128),
                             Notes = "Face registration for Hoàng Kỹ Thuật (tech1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 10, 4, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1802)
+                            RegisteredDate = new DateTime(2025, 10, 1, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7127)
                         },
                         new
                         {
@@ -4997,10 +5004,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-manager1-004",
                             ImagePath = "/uploads/faces/manager1-20241217080300.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 9, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1806),
+                            LastUpdated = new DateTime(2025, 10, 6, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7134),
                             Notes = "Face registration for Nguyễn Quản Lý (manager1)",
                             RegisteredBy = "admin",
-                            RegisteredDate = new DateTime(2025, 10, 9, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1805)
+                            RegisteredDate = new DateTime(2025, 10, 6, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7133)
                         },
                         new
                         {
@@ -5011,10 +5018,10 @@ namespace dotnet_api.Migrations
                             FaceId = "face-hr1-005",
                             ImagePath = "/uploads/faces/hr1-20241217080400.jpg",
                             IsActive = true,
-                            LastUpdated = new DateTime(2025, 10, 14, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1808),
+                            LastUpdated = new DateTime(2025, 10, 11, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7137),
                             Notes = "Face registration for Lê Thị Lan (hr-employee1)",
                             RegisteredBy = "hr-manager1-id",
-                            RegisteredDate = new DateTime(2025, 10, 14, 18, 58, 21, 922, DateTimeKind.Local).AddTicks(1808)
+                            RegisteredDate = new DateTime(2025, 10, 11, 14, 8, 20, 647, DateTimeKind.Local).AddTicks(7136)
                         });
                 });
 
@@ -6189,6 +6196,78 @@ namespace dotnet_api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.OvertimeSheet", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClosedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("OvertimeClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("OvertimeCoefficient")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("OvertimeNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("OvertimeSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PayrollID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalOvertimeDays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalOvertimeHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("PayrollID");
+
+                    b.ToTable("OvertimeSheets");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            EmployeeID = "admin-id",
+                            EmployeeName = "Phạm Văn Đốc",
+                            IsClosed = false,
+                            OvertimeClosingDate = new DateTime(2025, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OvertimeCoefficient = 1.5m,
+                            OvertimeNotes = "Bảng công tăng ca tháng 9/2025",
+                            OvertimeSalary = 1000000m,
+                            PayrollID = 1,
+                            TotalOvertimeDays = 3m,
+                            TotalOvertimeHours = 24m
+                        });
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.OvertimeType", b =>
                 {
                     b.Property<int>("ID")
@@ -6226,6 +6305,165 @@ namespace dotnet_api.Migrations
                             ID = 3,
                             OvertimeTypeName = "Tăng ca ngày lễ",
                             coefficient = 3f
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Payroll", b =>
+                {
+                    b.Property<int>("ID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ActualSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Bonus")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClosedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ContractSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ContractType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("DailySalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("DependentDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("EatAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("GrossIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HealthInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("HealthInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("InsuranceSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("LeaveSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MealAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NetPay")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OtherIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("OvertimeSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("PayrollClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PayrollNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PersonalDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PersonalIncomeTax")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PetrolAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SocialInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SocialInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TaxableIncome")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAllowance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalContractSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalDeduction")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnemploymentInsuranceEmployee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnemploymentInsuranceEmployer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnionFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("Payrolls");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            ActualSalary = 20000000m,
+                            Bonus = 2000000m,
+                            ContractSalary = 20000000m,
+                            ContractType = "Hợp đồng lao động",
+                            DailySalary = 800000m,
+                            DependentDeduction = 4400000m,
+                            EatAllowance = 500000m,
+                            EmployeeID = "admin-id",
+                            GrossIncome = 22000000m,
+                            HealthInsuranceEmployee = 360000m,
+                            HealthInsuranceEmployer = 720000m,
+                            InsuranceSalary = 18000000m,
+                            IsClosed = false,
+                            LeaveSalary = 0m,
+                            MealAllowance = 200000m,
+                            NetIncome = 18800000m,
+                            NetPay = 18800000m,
+                            OtherIncome = 500000m,
+                            OvertimeSalary = 1000000m,
+                            PayrollClosingDate = new DateTime(2025, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PayrollNotes = "Lương tháng 9/2025",
+                            PersonalDeduction = 11000000m,
+                            PersonalIncomeTax = 1200000m,
+                            PetrolAllowance = 300000m,
+                            SocialInsuranceEmployee = 1800000m,
+                            SocialInsuranceEmployer = 3600000m,
+                            TaxableIncome = 20000000m,
+                            TotalAllowance = 1000000m,
+                            TotalContractSalary = 20000000m,
+                            TotalDeduction = 3200000m,
+                            UnemploymentInsuranceEmployee = 180000m,
+                            UnemploymentInsuranceEmployer = 360000m,
+                            UnionFee = 100000m
                         });
                 });
 
@@ -6299,6 +6537,42 @@ namespace dotnet_api.Migrations
                             Reason = "Kỷ luật đi trễ nhiều lần",
                             Year = 2025,
                             decisionDate = new DateTime(2025, 9, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollFeedback", b =>
+                {
+                    b.Property<int>("PayrollID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PayrollFeedbackDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PayrollID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("PayrollFeedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            PayrollID = 1,
+                            EmployeeID = "manager1-id",
+                            Content = "Lương chưa tính đủ phụ cấp xăng xe.",
+                            PayrollFeedbackDate = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Phản ánh lương tháng 9"
                         });
                 });
 
@@ -6855,6 +7129,132 @@ namespace dotnet_api.Migrations
                             EndTime = new TimeSpan(0, 12, 0, 0, 0),
                             StartTime = new TimeSpan(0, 8, 0, 0, 0),
                             WorkShiftID = 1
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClosedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("CompensatedOvertime")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("EarlyLeaveCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmployeeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LateArrivalCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PayableOvertime")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("TimeSheetClosingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TimeSheetNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalActualWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalPaidLeave")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalStandardWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalUnpaidLeave")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalWorkdays")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UnexcusedAbsenceCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("TimeSheets");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            CompensatedOvertime = 2m,
+                            EarlyLeaveCount = 0,
+                            EmployeeID = "admin-id",
+                            EmployeeName = "Phạm Văn Đốc",
+                            IsClosed = false,
+                            LateArrivalCount = 0,
+                            PayableOvertime = 2m,
+                            TimeSheetClosingDate = new DateTime(2025, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TimeSheetNotes = "Bảng công tháng 9/2025",
+                            TotalActualWorkdays = 24m,
+                            TotalPaidLeave = 2m,
+                            TotalStandardWorkdays = 22m,
+                            TotalUnpaidLeave = 0m,
+                            TotalWorkdays = 24m,
+                            UnexcusedAbsenceCount = 0
+                        });
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheetFeedback", b =>
+                {
+                    b.Property<int>("TimeSheetID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeSheetFeedbackDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TimeSheetID", "EmployeeID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("TimeSheetFeedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            TimeSheetID = 1,
+                            EmployeeID = "manager1-id",
+                            Content = "Thiếu ngày công do lỗi chấm công.",
+                            TimeSheetFeedbackDate = new DateTime(2025, 10, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Phản ánh bảng công tháng 9"
                         });
                 });
 
@@ -8562,6 +8962,42 @@ namespace dotnet_api.Migrations
                     b.Navigation("Material");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.OvertimeSheet", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.Payroll", "Payroll")
+                        .WithMany()
+                        .HasForeignKey("PayrollID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Payroll");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.Payroll", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("Payrolls")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.TimeSheet", null)
+                        .WithOne("Payroll")
+                        .HasForeignKey("dotnet_api.Data.Entities.Payroll", "ID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.PayrollAdjustment", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.AdjustmentItem", "AdjustmentItem")
@@ -8578,6 +9014,25 @@ namespace dotnet_api.Migrations
                     b.Navigation("AdjustmentItem");
 
                     b.Navigation("AdjustmentType");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.PayrollFeedback", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("PayrollFeedbacks")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.Payroll", "Payroll")
+                        .WithMany()
+                        .HasForeignKey("PayrollID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Payroll");
                 });
 
             modelBuilder.Entity("dotnet_api.Data.Entities.Report", b =>
@@ -8655,6 +9110,36 @@ namespace dotnet_api.Migrations
                     b.Navigation("WorkShift");
                 });
 
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("TimeSheets")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheetFeedback", b =>
+                {
+                    b.HasOne("dotnet_api.Data.Entities.ApplicationUser", "Employee")
+                        .WithMany("TimeSheetFeedbacks")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("dotnet_api.Data.Entities.TimeSheet", "TimeSheet")
+                        .WithMany()
+                        .HasForeignKey("TimeSheetID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("TimeSheet");
+                });
+
             modelBuilder.Entity("dotnet_api.Data.Entities.WorkAttribute", b =>
                 {
                     b.HasOne("dotnet_api.Data.Entities.UnitofMeasurement", "UnitOfMeasurement")
@@ -8728,9 +9213,17 @@ namespace dotnet_api.Migrations
 
                     b.Navigation("ImportOrders");
 
+                    b.Navigation("PayrollFeedbacks");
+
+                    b.Navigation("Payrolls");
+
                     b.Navigation("Reports");
 
                     b.Navigation("ShiftAssignments");
+
+                    b.Navigation("TimeSheetFeedbacks");
+
+                    b.Navigation("TimeSheets");
 
                     b.Navigation("applicationUser_PayrollAdjustment");
                 });
@@ -8852,6 +9345,12 @@ namespace dotnet_api.Migrations
             modelBuilder.Entity("dotnet_api.Data.Entities.ShiftAssignment", b =>
                 {
                     b.Navigation("Attendance")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("dotnet_api.Data.Entities.TimeSheet", b =>
+                {
+                    b.Navigation("Payroll")
                         .IsRequired();
                 });
 

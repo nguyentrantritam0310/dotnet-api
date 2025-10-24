@@ -104,6 +104,7 @@ builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 //builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<AttendanceDataService>();
+builder.Services.AddScoped<SimpleAttendanceService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 

@@ -32,10 +32,6 @@ namespace dotnet_api.Data.Entities
         public ICollection<EmployeeRequests> EmployeeRequests { get; set; }
         public ICollection<ApplicationUser_PayrollAdjustment> applicationUser_PayrollAdjustment { get; set; }
         public ICollection<Contract> Contracts { get; set; }
-        public ICollection<Payroll> Payrolls { get; set; }
-        public ICollection<PayrollFeedback> PayrollFeedbacks { get; set; }
-        public ICollection<TimeSheet> TimeSheets { get; set; }
-        public ICollection<TimeSheetFeedback> TimeSheetFeedbacks { get; set; }
         
     }
 } 

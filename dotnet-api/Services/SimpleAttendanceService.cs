@@ -1,26 +1,20 @@
-﻿using dotnet_api.Data;
+using dotnet_api.Data;
 using dotnet_api.Data.Entities;
 using dotnet_api.Data.Enums;
 using dotnet_api.DTOs;
-using dotnet_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Services
 {
-    public class AttendanceService : IAttendanceService
+    public class SimpleAttendanceService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<AttendanceService> _logger;
-        private readonly IFaceRecognitionService _faceRecognitionService;
+        private readonly ILogger<SimpleAttendanceService> _logger;
 
-        public AttendanceService(
-            ApplicationDbContext context, 
-            ILogger<AttendanceService> logger,
-            IFaceRecognitionService faceRecognitionService)
+        public SimpleAttendanceService(ApplicationDbContext context, ILogger<SimpleAttendanceService> logger)
         {
             _context = context;
             _logger = logger;
-            _faceRecognitionService = faceRecognitionService;
         }
 
         public async Task<AttendanceCheckInResult> CheckInAsync(AttendanceCheckInRequest request)
@@ -43,20 +37,6 @@ namespace dotnet_api.Services
                     };
                 }
 
-                // Nhận dạng khuôn mặt
-                var faceResult = await _faceRecognitionService.RecognizeFaceAsync(
-                    Convert.FromBase64String(request.ImageBase64));
-
-                if (!faceResult.Success || faceResult.EmployeeId != request.EmployeeId)
-                {
-                    return new AttendanceCheckInResult
-                    {
-                        Success = false,
-                        Message = "Không thể xác thực khuôn mặt hoặc không khớp với nhân viên",
-                        EmployeeId = request.EmployeeId
-                    };
-                }
-
                 // Lấy thông tin nhân viên
                 var employee = await _context.Users.FindAsync(request.EmployeeId);
                 if (employee == null)
@@ -69,30 +49,22 @@ namespace dotnet_api.Services
                     };
                 }
 
-                // Tạo hoặc cập nhật attendance record
-                var attendance = existingAttendance ?? new Attendance
+                // Tạo attendance record mới
+                var attendance = new Attendance
                 {
                     EmployeeId = request.EmployeeId,
-                    CreatedDate = DateTime.Now
+                    CheckInDateTime = request.CheckInDateTime,
+                    CheckIn = request.CheckInDateTime.TimeOfDay,
+                    ImageCheckIn = await SaveAttendanceImageAsync(request.ImageBase64, "checkin", request.EmployeeId),
+                    CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}",
+                    AttendanceMachineId = request.AttendanceMachineId,
+                    Status = AttendanceStatusEnum.Present,
+                    Notes = request.Notes,
+                    CreatedDate = DateTime.Now,
+                    LastUpdated = DateTime.Now
                 };
 
-                attendance.CheckInDateTime = request.CheckInDateTime;
-                attendance.CheckIn = request.CheckInDateTime.TimeOfDay;
-                attendance.ImageCheckIn = await SaveAttendanceImageAsync(request.ImageBase64, "checkin", request.EmployeeId);
-                attendance.CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
-                attendance.AttendanceMachineId = request.AttendanceMachineId;
-                attendance.Status = AttendanceStatusEnum.Present;
-                attendance.LastUpdated = DateTime.Now;
-
-                if (existingAttendance == null)
-                {
-                    _context.Attendances.Add(attendance);
-                }
-                else
-                {
-                    _context.Attendances.Update(attendance);
-                }
-
+                _context.Attendances.Add(attendance);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation($"Check-in successful for employee: {request.EmployeeId}, Attendance ID: {attendance.ID}");
@@ -103,7 +75,7 @@ namespace dotnet_api.Services
                     Message = "Chấm công thành công",
                     AttendanceId = attendance.ID ?? 0,
                     EmployeeId = request.EmployeeId,
-                    EmployeeName = employee.UserName,
+                    EmployeeName = employee.UserName ?? employee.Email ?? "Unknown",
                     CheckInDateTime = attendance.CheckInDateTime.Value,
                     Status = attendance.Status.Value,
                     ImagePath = attendance.ImageCheckIn,
@@ -122,36 +94,97 @@ namespace dotnet_api.Services
             }
         }
 
-        public async Task<bool> CheckOutAsync(string employeeId, DateTime checkOutDateTime, string? imageBase64 = null)
+        public async Task<AttendanceCheckInResult> CheckOutAsync(AttendanceCheckOutRequest request)
         {
             try
             {
-                var attendance = await GetTodayAttendanceAsync(employeeId);
+                _logger.LogInformation($"Processing check-out for employee: {request.EmployeeId}");
+
+                var attendance = await GetTodayAttendanceAsync(request.EmployeeId);
                 if (attendance == null || !attendance.CheckInDateTime.HasValue)
                 {
-                    _logger.LogWarning($"No check-in record found for employee: {employeeId}");
-                    return false;
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy bản ghi chấm công vào hôm nay",
+                        EmployeeId = request.EmployeeId
+                    };
                 }
 
-                attendance.CheckOutDateTime = checkOutDateTime;
-                attendance.CheckOut = checkOutDateTime.TimeOfDay;
+                if (attendance.CheckOutDateTime.HasValue)
+                {
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Bạn đã chấm công ra hôm nay",
+                        EmployeeId = request.EmployeeId,
+                        CheckInDateTime = attendance.CheckInDateTime.Value
+                    };
+                }
+
+                // Cập nhật thông tin check-out
+                attendance.CheckOutDateTime = request.CheckOutDateTime;
+                attendance.CheckOut = request.CheckOutDateTime.TimeOfDay;
+                attendance.CheckOutLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
                 attendance.LastUpdated = DateTime.Now;
 
-                if (!string.IsNullOrEmpty(imageBase64))
+                if (!string.IsNullOrEmpty(request.ImageBase64))
                 {
-                    attendance.ImageCheckOut = await SaveAttendanceImageAsync(imageBase64, "checkout", employeeId);
+                    attendance.ImageCheckOut = await SaveAttendanceImageAsync(request.ImageBase64, "checkout", request.EmployeeId);
+                }
+
+                if (!string.IsNullOrEmpty(request.Notes))
+                {
+                    attendance.Notes = string.IsNullOrEmpty(attendance.Notes) 
+                        ? request.Notes 
+                        : $"{attendance.Notes}\n{request.Notes}";
                 }
 
                 _context.Attendances.Update(attendance);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"Check-out successful for employee: {employeeId}");
-                return true;
+                _logger.LogInformation($"Check-out successful for employee: {request.EmployeeId}");
+
+                return new AttendanceCheckInResult
+                {
+                    Success = true,
+                    Message = "Chấm công ra thành công",
+                    AttendanceId = attendance.ID ?? 0,
+                    EmployeeId = request.EmployeeId,
+                    EmployeeName = attendance.Employee?.UserName ?? attendance.Employee?.Email ?? "Unknown",
+                    CheckInDateTime = attendance.CheckInDateTime.Value,
+                    Status = attendance.Status ?? AttendanceStatusEnum.Present
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error processing check-out for employee: {employeeId}");
-                return false;
+                _logger.LogError(ex, $"Error processing check-out for employee: {request.EmployeeId}");
+                return new AttendanceCheckInResult
+                {
+                    Success = false,
+                    Message = $"Lỗi hệ thống: {ex.Message}",
+                    EmployeeId = request.EmployeeId
+                };
+            }
+        }
+
+        public async Task<Attendance?> GetTodayAttendanceAsync(string employeeId)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                return await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Include(a => a.AttendanceMachine)
+                    .FirstOrDefaultAsync(a => 
+                        a.EmployeeId == employeeId && 
+                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.Value.Date == today);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting today's attendance for employee: {employeeId}");
+                throw;
             }
         }
 
@@ -177,62 +210,6 @@ namespace dotnet_api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error getting attendance for employee: {employeeId}");
-                throw;
-            }
-        }
-
-        public async Task<Attendance?> GetTodayAttendanceAsync(string employeeId)
-        {
-            try
-            {
-                var today = DateTime.Today;
-                return await _context.Attendances
-                    .Include(a => a.Employee)
-                    .Include(a => a.AttendanceMachine)
-                    .FirstOrDefaultAsync(a => 
-                        a.EmployeeId == employeeId && 
-                        a.CheckInDateTime.HasValue && 
-                        a.CheckInDateTime.Value.Date == today);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error getting today's attendance for employee: {employeeId}");
-                throw;
-            }
-        }
-
-        public async Task<bool> HasCheckedInTodayAsync(string employeeId)
-        {
-            try
-            {
-                var today = DateTime.Today;
-                return await _context.Attendances
-                    .AnyAsync(a => 
-                        a.EmployeeId == employeeId && 
-                        a.CheckInDateTime.HasValue && 
-                        a.CheckInDateTime.Value.Date == today);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error checking if employee {employeeId} has checked in today");
-                throw;
-            }
-        }
-
-        public async Task<List<Attendance>> GetAttendanceByDateAsync(DateTime date)
-        {
-            try
-            {
-                return await _context.Attendances
-                    .Include(a => a.Employee)
-                    .Include(a => a.AttendanceMachine)
-                    .Where(a => a.CheckInDateTime.HasValue && a.CheckInDateTime.Value.Date == date.Date)
-                    .OrderBy(a => a.CheckInDateTime)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error getting attendance for date: {date:yyyy-MM-dd}");
                 throw;
             }
         }

@@ -104,6 +104,7 @@ builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IShiftAssignmentService, ShiftAssignmentService>();
 //builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<AttendanceDataService>();
+builder.Services.AddScoped<SimpleAttendanceService>();
 
 builder.Services.AddScoped<WeatherPredictionService>();
 
@@ -114,16 +115,6 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 // Email Service
 builder.Services.AddScoped<IEmailService, EmailService>();
-
-// Feedback Services
-builder.Services.AddScoped<ITimeSheetFeedbackService, TimeSheetFeedbackService>();
-builder.Services.AddScoped<IPayrollFeedbackService, PayrollFeedbackService>();
-
-// Closing Services
-builder.Services.AddScoped<IClosingService, ClosingService>();
-builder.Services.AddScoped<ITimeSheetService, TimeSheetService>();
-builder.Services.AddScoped<IPayrollService, PayrollService>();
-builder.Services.AddScoped<IOvertimeService, OvertimeService>();
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

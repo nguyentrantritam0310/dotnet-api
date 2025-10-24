@@ -44,29 +44,6 @@ namespace dotnet_api.Data.Extensions
                 }
             );
 
-            // Seed data for PayrollFeedback
-            modelBuilder.Entity<PayrollFeedback>().HasData(
-                new PayrollFeedback
-                {
-                    PayrollID = 1,
-                    EmployeeID = "manager1-id",
-                    Title = "Phản ánh lương tháng 9",
-                    PayrollFeedbackDate = new DateTime(2025, 10, 1),
-                    Content = "Lương chưa tính đủ phụ cấp xăng xe."
-                }
-            );
-
-            // Seed data for TimeSheetFeedback
-            modelBuilder.Entity<TimeSheetFeedback>().HasData(
-                new TimeSheetFeedback
-                {
-                    TimeSheetID = 1,
-                    EmployeeID = "manager1-id",
-                    Title = "Phản ánh bảng công tháng 9",
-                    TimeSheetFeedbackDate = new DateTime(2025, 10, 2),
-                    Content = "Thiếu ngày công do lỗi chấm công."
-                }
-            );
 
             // Seed data for Employee_FamilyRelation
             modelBuilder.Entity<Employee_FamilyRelation>().HasData(
@@ -3244,12 +3221,11 @@ namespace dotnet_api.Data.Extensions
             ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
             CheckInLocation = "Construction Site A",
             CheckOutLocation = "Construction Site A",
-            FaceRecognitionConfidence = 0.95f,
             AttendanceMachineId = 2,
             Status = AttendanceStatusEnum.Present,
             CreatedDate = DateTime.Now.AddDays(-1),
             LastUpdated = DateTime.Now.AddDays(-1),
-            Notes = "Full day attendance with face recognition"
+            Notes = "Full day attendance"
         }
      );
                 modelBuilder.Entity<AttendanceMachine>().HasData(
@@ -3496,93 +3472,6 @@ namespace dotnet_api.Data.Extensions
                     new FamilyRelation { ID = 2, RelativeName = "Trần Thị B", StartDate = new DateTime(2005, 5, 10), EndDate = new DateTime(2025, 1, 1) }
                 );
 
-                // Seed data for Payroll
-                modelBuilder.Entity<Payroll>().HasData(
-                    new Payroll
-                    {
-                        ID = 1,
-                        EmployeeID = "admin-id",
-                        ContractType = "Hợp đồng lao động",
-                        ContractSalary = 20000000,
-                        InsuranceSalary = 18000000,
-                        TotalContractSalary = 20000000,
-                        DailySalary = 800000,
-                        LeaveSalary = 0,
-                        ActualSalary = 20000000,
-                        OvertimeSalary = 1000000,
-                        EatAllowance = 500000,
-                        PetrolAllowance = 300000,
-                        MealAllowance = 200000,
-                        TotalAllowance = 1000000,
-                        SocialInsuranceEmployee = 1800000,
-                        HealthInsuranceEmployee = 360000,
-                        UnemploymentInsuranceEmployee = 180000,
-                        SocialInsuranceEmployer = 3600000,
-                        HealthInsuranceEmployer = 720000,
-                        UnemploymentInsuranceEmployer = 360000,
-                        UnionFee = 100000,
-                        GrossIncome = 22000000,
-                        TaxableIncome = 20000000,
-                        PersonalDeduction = 11000000,
-                        DependentDeduction = 4400000,
-                        Bonus = 2000000,
-                        OtherIncome = 500000,
-                        PersonalIncomeTax = 1200000,
-                        NetIncome = 18800000,
-                        TotalDeduction = 3200000,
-                        NetPay = 18800000,
-                        PayrollClosingDate = new DateTime(2025, 9, 30),
-                        PayrollNotes = "Lương tháng 9/2025",
-                        IsClosed = false,
-                        ClosedAt = null,
-                        ClosedBy = null
-                    }
-                );
-
-                // Seed data for TimeSheet
-                modelBuilder.Entity<TimeSheet>().HasData(
-                    new TimeSheet
-                    {
-                        ID = 1,
-                        EmployeeID = "admin-id",
-                        EmployeeName = "Phạm Văn Đốc",
-                        TotalStandardWorkdays = 22,
-                        TotalUnpaidLeave = 0,
-                        TotalPaidLeave = 2,
-                        TotalWorkdays = 24,
-                        CompensatedOvertime = 2,
-                        PayableOvertime = 2,
-                        TotalActualWorkdays = 24,
-                        LateArrivalCount = 0,
-                        EarlyLeaveCount = 0,
-                        UnexcusedAbsenceCount = 0,
-                        TimeSheetClosingDate = new DateTime(2025, 9, 30),
-                        TimeSheetNotes = "Bảng công tháng 9/2025",
-                        IsClosed = false,
-                        ClosedAt = null,
-                        ClosedBy = null
-                    }
-                );
-
-                // Seed data for OvertimeSheet
-                modelBuilder.Entity<OvertimeSheet>().HasData(
-                    new OvertimeSheet
-                    {
-                        ID = 1,
-                        EmployeeID = "admin-id",
-                        EmployeeName = "Phạm Văn Đốc",
-                        TotalOvertimeDays = 3,
-                        TotalOvertimeHours = 24,
-                        OvertimeSalary = 1000000,
-                        OvertimeCoefficient = 1.5m,
-                        OvertimeClosingDate = new DateTime(2025, 9, 30),
-                        OvertimeNotes = "Bảng công tăng ca tháng 9/2025",
-                        IsClosed = false,
-                        ClosedAt = null,
-                        ClosedBy = null,
-                        PayrollID = 1
-                    }
-                );
             }
 
             // Seed FaceRegistration data - Using actual employee IDs from existing data

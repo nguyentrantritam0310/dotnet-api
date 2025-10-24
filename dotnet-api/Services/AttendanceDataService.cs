@@ -16,118 +16,145 @@ namespace dotnet_api.Services
 
         public async Task<List<AttendanceDataDto>> GetAllAttendanceDataAsync()
         {
-            var attendanceData = await _context.Attendances
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.Employee)
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.WorkShift)
-                .OrderBy(a => a.ShiftAssignment.WorkDate)
-                .Select(a => new AttendanceDataDto
+            try
+            {
+                var attendanceData = await _context.Attendances
+                    .Include(a => a.Employee) // Lấy trực tiếp từ Employee
+                    .Where(a => a.Employee != null) // Chỉ lấy records có Employee
+                    .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
+                    .Select(a => new AttendanceDataDto
+                    {
+                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
+                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
+                        EmployeeCode = a.Employee.Id,
+                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
+                        CheckInTime = a.CheckIn,
+                        CheckOutTime = a.CheckOut,
+                        Status = a.Status,
+                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                    })
+                    .ToListAsync();
+
+                // Process data after query
+                foreach (var item in attendanceData)
                 {
-                    ImageCheckIn = a.ImageCheckIn,
-                    ImageCheckOut = a.ImageCheckOut,
-                    EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
-                    ShiftName = a.ShiftAssignment.WorkShift.ShiftName,
-                    WorkDate = a.ShiftAssignment.WorkDate,
-                    CheckInTime = a.CheckIn,
-                    CheckOutTime = a.CheckOut,
-                    Status = a.Status
-                })
-                .ToListAsync();
+                    item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
+                    item.MachineName = GetMachineNameFromAttendance(item);
+                    item.Location = GetLocationFromAttendance(item);
+                }
 
-            // Process data after query
-            foreach (var item in attendanceData)
-            {
-                item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                item.MachineName = GetMachineName(item.ImageCheckIn, item.ImageCheckOut);
-                item.Location = GetLocation(item.ImageCheckIn, item.ImageCheckOut);
+                // Add STT
+                for (int i = 0; i < attendanceData.Count; i++)
+                {
+                    attendanceData[i].STT = i + 1;
+                }
+
+                return attendanceData;
             }
-
-            // Add STT
-            for (int i = 0; i < attendanceData.Count; i++)
+            catch (Exception ex)
             {
-                attendanceData[i].STT = i + 1;
+                Console.WriteLine($"Error in GetAllAttendanceDataAsync: {ex.Message}");
+                return new List<AttendanceDataDto>();
             }
-
-            return attendanceData;
         }
 
         public async Task<List<AttendanceDataDto>> GetAttendanceDataByEmployeeAsync(string employeeCode)
         {
-            var attendanceData = await _context.Attendances
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.Employee)
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.WorkShift)
-                .Where(a => a.ShiftAssignment.Employee.Id == employeeCode)
-                .OrderBy(a => a.ShiftAssignment.WorkDate)
-                .Select(a => new AttendanceDataDto
+            try
+            {
+                var attendanceData = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Where(a => a.Employee != null && a.Employee.Id == employeeCode)
+                    .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
+                    .Select(a => new AttendanceDataDto
+                    {
+                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
+                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
+                        EmployeeCode = a.Employee.Id,
+                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
+                        CheckInTime = a.CheckIn,
+                        CheckOutTime = a.CheckOut,
+                        Status = a.Status,
+                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                    })
+                    .ToListAsync();
+
+                // Process data after query
+                foreach (var item in attendanceData)
                 {
-                    ImageCheckIn = a.ImageCheckIn,
-                    ImageCheckOut = a.ImageCheckOut,
-                    EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
-                    ShiftName = a.ShiftAssignment.WorkShift.ShiftName,
-                    WorkDate = a.ShiftAssignment.WorkDate,
-                    CheckInTime = a.CheckIn,
-                    CheckOutTime = a.CheckOut,
-                    Status = a.Status
-                })
-                .ToListAsync();
+                    item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
+                    item.MachineName = GetMachineNameFromAttendance(item);
+                    item.Location = GetLocationFromAttendance(item);
+                }
 
-            // Process data after query
-            foreach (var item in attendanceData)
-            {
-                item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                item.MachineName = GetMachineName(item.ImageCheckIn, item.ImageCheckOut);
-                item.Location = GetLocation(item.ImageCheckIn, item.ImageCheckOut);
+                // Add STT
+                for (int i = 0; i < attendanceData.Count; i++)
+                {
+                    attendanceData[i].STT = i + 1;
+                }
+
+                return attendanceData;
             }
-
-            // Add STT
-            for (int i = 0; i < attendanceData.Count; i++)
+            catch (Exception ex)
             {
-                attendanceData[i].STT = i + 1;
+                Console.WriteLine($"Error in GetAttendanceDataByEmployeeAsync: {ex.Message}");
+                return new List<AttendanceDataDto>();
             }
-
-            return attendanceData;
         }
 
         public async Task<List<AttendanceDataDto>> GetAttendanceDataByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            var attendanceData = await _context.Attendances
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.Employee)
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.WorkShift)
-                .Where(a => a.ShiftAssignment.WorkDate >= startDate && a.ShiftAssignment.WorkDate <= endDate)
-                .OrderBy(a => a.ShiftAssignment.WorkDate)
-                .Select(a => new AttendanceDataDto
+            try
+            {
+                var attendanceData = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Where(a => a.Employee != null && 
+                               (a.CheckInDateTime != null ? a.CheckInDateTime.Value.Date >= startDate.Date && a.CheckInDateTime.Value.Date <= endDate.Date :
+                                a.CreatedDate.Date >= startDate.Date && a.CreatedDate.Date <= endDate.Date))
+                    .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
+                    .Select(a => new AttendanceDataDto
+                    {
+                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
+                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
+                        EmployeeCode = a.Employee.Id,
+                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
+                        CheckInTime = a.CheckIn,
+                        CheckOutTime = a.CheckOut,
+                        Status = a.Status,
+                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                    })
+                    .ToListAsync();
+
+                // Process data after query
+                foreach (var item in attendanceData)
                 {
-                    ImageCheckIn = a.ImageCheckIn,
-                    ImageCheckOut = a.ImageCheckOut,
-                    EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
-                    ShiftName = a.ShiftAssignment.WorkShift.ShiftName,
-                    WorkDate = a.ShiftAssignment.WorkDate,
-                    CheckInTime = a.CheckIn,
-                    CheckOutTime = a.CheckOut,
-                    Status = a.Status
-                })
-                .ToListAsync();
+                    item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
+                    item.MachineName = GetMachineNameFromAttendance(item);
+                    item.Location = GetLocationFromAttendance(item);
+                }
 
-            // Process data after query
-            foreach (var item in attendanceData)
-            {
-                item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                item.MachineName = GetMachineName(item.ImageCheckIn, item.ImageCheckOut);
-                item.Location = GetLocation(item.ImageCheckIn, item.ImageCheckOut);
+                // Add STT
+                for (int i = 0; i < attendanceData.Count; i++)
+                {
+                    attendanceData[i].STT = i + 1;
+                }
+
+                return attendanceData;
             }
-
-            // Add STT
-            for (int i = 0; i < attendanceData.Count; i++)
+            catch (Exception ex)
             {
-                attendanceData[i].STT = i + 1;
+                Console.WriteLine($"Error in GetAttendanceDataByDateRangeAsync: {ex.Message}");
+                return new List<AttendanceDataDto>();
             }
-
-            return attendanceData;
         }
 
         private string GetCheckInOutType(TimeSpan? checkIn, TimeSpan? checkOut)
@@ -142,36 +169,49 @@ namespace dotnet_api.Services
                 return "Chưa quét";
         }
 
-        private string GetMachineName(string? imageCheckIn, string? imageCheckOut)
+        private string GetMachineNameFromAttendance(AttendanceDataDto item)
         {
-            // Logic to extract machine name from image path or use default
-            if (!string.IsNullOrEmpty(imageCheckIn) || !string.IsNullOrEmpty(imageCheckOut))
+            // Lấy từ AttendanceMachineId nếu có
+            if (item.WorkShiftID.HasValue)
             {
-                return "Máy quét 01"; // Default machine name
+                return $"Máy chấm công {item.WorkShiftID.Value}";
             }
+            
+            // Fallback dựa trên image path
+            if (!string.IsNullOrEmpty(item.ImageCheckIn) || !string.IsNullOrEmpty(item.ImageCheckOut))
+            {
+                return "Máy chấm công di động";
+            }
+            
             return "Chưa xác định";
         }
 
-        private string GetLocation(string? imageCheckIn, string? imageCheckOut)
+        private string GetLocationFromAttendance(AttendanceDataDto item)
         {
-            // Logic to determine location based on image or other criteria
-            if (!string.IsNullOrEmpty(imageCheckIn) || !string.IsNullOrEmpty(imageCheckOut))
+            // Có thể lấy từ CheckInLocation/CheckOutLocation trong tương lai
+            // Hiện tại dựa trên WorkShiftID
+            if (item.WorkShiftID.HasValue)
             {
-                return "Văn phòng Hà Nội"; // Default location
+                return $"Công trường {item.WorkShiftID.Value}";
             }
+            
+            // Fallback dựa trên image path
+            if (!string.IsNullOrEmpty(item.ImageCheckIn) || !string.IsNullOrEmpty(item.ImageCheckOut))
+            {
+                return "Vị trí di động";
+            }
+            
             return "Chưa xác định";
         }
 
         public async Task<List<AttendanceDataDto>> GetAttendanceDataByEmployeeAndDateAsync(string employeeCode, DateTime date)
         {
             var attendanceData = await _context.Attendances
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.Employee)
-                .Include(a => a.ShiftAssignment)
-                .ThenInclude(sa => sa.WorkShift)
-                .Where(a => a.ShiftAssignment.Employee.Id == employeeCode && 
-                           a.ShiftAssignment.WorkDate.Date == date.Date)
-                .OrderBy(a => a.ShiftAssignment.WorkDate)
+                .Include(a => a.Employee)
+                .Where(a => a.Employee != null && a.Employee.Id == employeeCode && 
+                           (a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date == date.Date :
+                            a.CreatedDate.Date == date.Date))
+                .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                 .Select(a => new AttendanceDataDto
                 {
                     ImageCheckIn = a.ImageCheckIn,
@@ -192,8 +232,8 @@ namespace dotnet_api.Services
             foreach (var item in attendanceData)
             {
                 item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                item.MachineName = GetMachineName(item.ImageCheckIn, item.ImageCheckOut);
-                item.Location = GetLocation(item.ImageCheckIn, item.ImageCheckOut);
+                    item.MachineName = GetMachineNameFromAttendance(item);
+                    item.Location = GetLocationFromAttendance(item);
             }
 
             // Add STT
@@ -241,8 +281,8 @@ namespace dotnet_api.Services
             foreach (var item in attendanceData)
             {
                 item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                item.MachineName = GetMachineName(item.ImageCheckIn, item.ImageCheckOut);
-                item.Location = GetLocation(item.ImageCheckIn, item.ImageCheckOut);
+                    item.MachineName = GetMachineNameFromAttendance(item);
+                    item.Location = GetLocationFromAttendance(item);
             }
 
             // Add STT
@@ -254,72 +294,30 @@ namespace dotnet_api.Services
             return attendanceData;
         }
 
+        public async Task<List<AttendanceDataDto>> GetAttendanceDataByMonthAsync(int year, int month)
+        {
+            try
+            {
+                var startDate = new DateTime(year, month, 1);
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+                
+                return await GetAttendanceDataByDateRangeAsync(startDate, endDate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetAttendanceDataByMonthAsync: {ex.Message}");
+                return new List<AttendanceDataDto>();
+            }
+        }
+
         public async Task<object> GetDebugInfoAsync()
         {
             try
             {
-                // Count total records in each table
-                var totalAttendances = await _context.Attendances.CountAsync();
-                var totalShiftAssignments = await _context.ShiftAssignments.CountAsync();
-                var totalEmployees = await _context.ApplicationUsers.CountAsync();
-                var totalWorkShifts = await _context.WorkShifts.CountAsync();
-
-                // Sample data
-                var sampleAttendances = await _context.Attendances
-                    .Include(a => a.ShiftAssignment)
-                    .ThenInclude(sa => sa.Employee)
-                    .Include(a => a.ShiftAssignment)
-                    .ThenInclude(sa => sa.WorkShift)
-                    .Take(5)
-                    .Select(a => new
-                    {
-                        AttendanceId = a.ID,
-                        EmployeeId = a.ShiftAssignment.Employee.Id,
-                        EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
-                        WorkDate = a.ShiftAssignment.WorkDate,
-                        CheckIn = a.CheckIn,
-                        CheckOut = a.CheckOut,
-                        ShiftName = a.ShiftAssignment.WorkShift.ShiftName
-                    })
-                    .ToListAsync();
-
-                var sampleEmployees = await _context.ApplicationUsers
-                    .Take(5)
-                    .Select(e => new
-                    {
-                        Id = e.Id,
-                        FirstName = e.FirstName,
-                        LastName = e.LastName,
-                        EmployeeName = $"{e.FirstName} {e.LastName}"
-                    })
-                    .ToListAsync();
-
-                var sampleShiftAssignments = await _context.ShiftAssignments
-                    .Include(sa => sa.Employee)
-                    .Include(sa => sa.WorkShift)
-                    .Take(5)
-                    .Select(sa => new
-                    {
-                        Id = sa.ID,
-                        EmployeeId = sa.Employee.Id,
-                        EmployeeName = $"{sa.Employee.FirstName} {sa.Employee.LastName}",
-                        WorkDate = sa.WorkDate,
-                        ShiftName = sa.WorkShift.ShiftName
-                    })
-                    .ToListAsync();
-
                 return new
                 {
-                    TotalRecords = new
-                    {
-                        Attendances = totalAttendances,
-                        ShiftAssignments = totalShiftAssignments,
-                        Employees = totalEmployees,
-                        WorkShifts = totalWorkShifts
-                    },
-                    SampleAttendances = sampleAttendances,
-                    SampleEmployees = sampleEmployees,
-                    SampleShiftAssignments = sampleShiftAssignments
+                    Message = "Debug endpoint working",
+                    Timestamp = DateTime.Now
                 };
             }
             catch (Exception ex)

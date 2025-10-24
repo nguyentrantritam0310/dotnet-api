@@ -157,27 +157,64 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
-        /// Test endpoint để kiểm tra kết nối API
+        /// Serve attendance images
         /// </summary>
-        /// <returns>Thông tin server và thời gian hiện tại</returns>
-        [HttpGet("today/test")]
-        public ActionResult TestConnection()
+        /// <param name="filename">Image filename</param>
+        /// <returns>Image file</returns>
+        [HttpGet("image/{filename}")]
+        public IActionResult GetAttendanceImage(string filename)
         {
             try
             {
-                return Ok(new
+                var uploadsPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" 
+                    ? "/var/www/backend/uploads" 
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "uploads");
+                
+                var imagePath = Path.Combine(uploadsPath, "attendance", filename);
+                
+                // Debug logging
+                Console.WriteLine($"Looking for image: {imagePath}");
+                Console.WriteLine($"File exists: {System.IO.File.Exists(imagePath)}");
+                Console.WriteLine($"Directory exists: {Directory.Exists(Path.GetDirectoryName(imagePath))}");
+                
+                if (Directory.Exists(Path.GetDirectoryName(imagePath)))
                 {
-                    message = "API Server is running",
-                    timestamp = DateTime.Now,
-                    server = "Attendance API",
-                    version = "1.0.0",
-                    status = "healthy"
-                });
+                    var files = Directory.GetFiles(Path.GetDirectoryName(imagePath));
+                    Console.WriteLine($"Files in directory: {string.Join(", ", files)}");
+                }
+                
+                if (!System.IO.File.Exists(imagePath))
+                {
+                    return NotFound(new { 
+                        message = "Image not found", 
+                        searchedPath = imagePath,
+                        uploadsPath = uploadsPath,
+                        filename = filename
+                    });
+                }
+                
+                var imageBytes = System.IO.File.ReadAllBytes(imagePath);
+                var contentType = GetContentType(filename);
+                
+                return File(imageBytes, contentType);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Server error", error = ex.Message });
+                return StatusCode(500, new { message = "Error serving image", error = ex.Message });
             }
+        }
+        
+        private string GetContentType(string filename)
+        {
+            var extension = Path.GetExtension(filename).ToLowerInvariant();
+            return extension switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
         }
     }
 }

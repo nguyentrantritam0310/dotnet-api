@@ -222,7 +222,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Cấu hình để phục vụ file tĩnh từ thư mục uploads
-var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+var uploadsPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" 
+    ? "/var/www/backend/uploads"  // Production path
+    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "uploads"); // Development path
+
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);

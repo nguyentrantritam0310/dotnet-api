@@ -49,16 +49,4 @@ namespace dotnet_api.DTOs
     // DTOs for Attendance - DEPRECATED, use new AttendanceCheckInRequest.cs instead
     // public class AttendanceCheckInRequest - MOVED TO AttendanceCheckInRequest.cs
     // public class AttendanceCheckInResult - MOVED TO AttendanceCheckInResult.cs
-
-    // DTO for Face Registration POST
-    public class FaceRegistrationDTO
-    {
-        public string EmployeeId { get; set; }
-        public string FaceId { get; set; }
-        public string ImagePath { get; set; }
-        public string EmbeddingData { get; set; }
-        public float Confidence { get; set; }
-        public string RegisteredBy { get; set; }
-        public string Notes { get; set; }
-    }
 }

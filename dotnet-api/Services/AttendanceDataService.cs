@@ -24,8 +24,8 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
-                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        ImageCheckIn = a.ImageCheckIn,
+                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -44,6 +44,18 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
+                    
+                    // Convert image paths to API URLs
+                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
+                    {
+                        var filename = item.ImageCheckIn.Split('/').Last();
+                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
+                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
+                    {
+                        var filename = item.ImageCheckOut.Split('/').Last();
+                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
                 }
 
                 // Add STT
@@ -71,8 +83,8 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
-                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        ImageCheckIn = a.ImageCheckIn,
+                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -91,6 +103,18 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
+                    
+                    // Convert image paths to API URLs
+                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
+                    {
+                        var filename = item.ImageCheckIn.Split('/').Last();
+                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
+                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
+                    {
+                        var filename = item.ImageCheckOut.Split('/').Last();
+                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
                 }
 
                 // Add STT
@@ -120,8 +144,8 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = !string.IsNullOrEmpty(a.ImageCheckIn) ? $"https://xaydungvipro.id.vn{a.ImageCheckIn}" : null,
-                        ImageCheckOut = !string.IsNullOrEmpty(a.ImageCheckOut) ? $"https://xaydungvipro.id.vn{a.ImageCheckOut}" : null,
+                        ImageCheckIn = a.ImageCheckIn,
+                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -140,6 +164,18 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
+                    
+                    // Convert image paths to API URLs
+                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
+                    {
+                        var filename = item.ImageCheckIn.Split('/').Last();
+                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
+                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
+                    {
+                        var filename = item.ImageCheckOut.Split('/').Last();
+                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
+                    }
                 }
 
                 // Add STT

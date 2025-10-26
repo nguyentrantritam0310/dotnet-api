@@ -75,7 +75,13 @@ namespace dotnet_api.Services
                         Notes = "Auto-registered via face recognition"
                     };
 
-                    var savedRegistration = await _faceRegistrationService.CreateFaceRegistrationAsync(faceRegistrationDto);
+                    var createRequest = new CreateFaceRegistrationDTO
+                    {
+                        EmployeeId = employeeId,
+                        ImageBase64 = Convert.ToBase64String(imageBytes),
+                        Notes = "Auto-registered via face recognition"
+                    };
+                    var savedRegistration = await _faceRegistrationService.RegisterFaceAsync(createRequest);
 
                     _logger.LogInformation($"Đăng ký khuôn mặt thành công cho nhân viên: {employeeId}");
                     return new FaceRegistrationResult
@@ -179,7 +185,7 @@ namespace dotnet_api.Services
                 
                 if (registrationEntity != null)
                 {
-                    await _faceRegistrationService.DeleteFaceRegistrationAsync(registrationEntity.ID);
+                    await _faceRegistrationService.DeleteFaceRegistrationAsync(registrationEntity.ID, employeeId);
                     _logger.LogInformation($"Xóa khuôn mặt thành công cho nhân viên: {employeeId}");
                     return true;
                 }
@@ -198,7 +204,22 @@ namespace dotnet_api.Services
         {
             try
             {
-                return await _faceRegistrationService.GetAllRegisteredEmployeesAsync();
+                // Get all face registrations from database directly
+                var registrations = await _context.FaceRegistrations
+                    .Where(fr => fr.IsActive)
+                    .Include(fr => fr.Employee)
+                    .ToListAsync();
+
+                return registrations.Select(fr => new RegisteredEmployee
+                {
+                    Id = fr.ID,
+                    EmployeeId = fr.EmployeeId,
+                    EmployeeName = $"{fr.Employee.FirstName} {fr.Employee.LastName}",
+                    RegisteredDate = fr.RegisteredDate,
+                    FaceId = fr.FaceId,
+                    Confidence = fr.Confidence,
+                    IsActive = fr.IsActive
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -211,7 +232,10 @@ namespace dotnet_api.Services
         {
             try
             {
-                return await _faceRegistrationService.IsEmployeeRegisteredAsync(employeeId);
+                // Check if employee has any active face registrations
+                var hasRegistration = await _context.FaceRegistrations
+                    .AnyAsync(fr => fr.EmployeeId == employeeId && fr.IsActive);
+                return hasRegistration;
             }
             catch (Exception ex)
             {

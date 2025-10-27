@@ -567,7 +567,12 @@ namespace dotnet_api.Mapping
                 .ForMember(dest => dest.FamilyRelation, opt => opt.Ignore())
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
 
-           
+            CreateMap<FaceRegistration, FaceRegistrationDTO>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName))
+                .ForMember(dest => dest.EmployeeEmail, opt => opt.MapFrom(src => src.Employee.Email));
+
+            CreateMap<FaceRegistration, FaceRegistrationListDTO>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName));
 
         }
     }

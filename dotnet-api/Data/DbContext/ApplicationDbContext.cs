@@ -154,6 +154,7 @@ namespace dotnet_api.Data
             modelBuilder.ApplyConfiguration(new ContractTypeConfiguration());
             modelBuilder.ApplyConfiguration(new AllowanceConfiguration());
             modelBuilder.ApplyConfiguration(new Contract_AllowanceConfiguration());
+            modelBuilder.ApplyConfiguration(new FaceRegistrationConfiguration());
 
             // Family & Payroll configs
             modelBuilder.ApplyConfiguration(new FamilyRelationConfiguration());

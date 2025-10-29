@@ -3475,6 +3475,19 @@ namespace dotnet_api.Data.Extensions
             }
 
             // Seed FaceRegistration data - Using actual employee IDs from existing data
+            // Generate 512-dimensional embeddings (FaceNet standard) for each face registration
+            // Helper function to generate mock embedding
+            string GenerateMockEmbeddingJson(int seedOffset)
+            {
+                var r = new Random(12345 + seedOffset);
+                var embedding = new List<float>();
+                for (int i = 0; i < 512; i++)
+                {
+                    embedding.Add((float)(r.NextDouble() * 2 - 1)); // Random values between -1 and 1
+                }
+                return System.Text.Json.JsonSerializer.Serialize(embedding);
+            }
+
             modelBuilder.Entity<FaceRegistration>().HasData(
                 new FaceRegistration
                 {
@@ -3482,8 +3495,10 @@ namespace dotnet_api.Data.Extensions
                     EmployeeId = "worker1-id",
                     FaceId = "face-worker1-001",
                     ImagePath = "/uploads/faces/worker1-20241217080000.jpg",
-                    EmbeddingData = "[0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234, 0.5678, -0.9012, 0.3456, -0.7890]",
+                    EmbeddingData = GenerateMockEmbeddingJson(1), // 512-d embedding
+                    FaceFeaturesData = "{\"bounds\":{\"x\":0.2,\"y\":0.3,\"width\":0.6,\"height\":0.7},\"landmarks\":[{\"type\":\"leftEye\",\"x\":0.3,\"y\":0.4},{\"type\":\"rightEye\",\"x\":0.7,\"y\":0.4},{\"type\":\"nose\",\"x\":0.5,\"y\":0.55},{\"type\":\"mouth\",\"x\":0.5,\"y\":0.7}],\"contours\":[{\"type\":\"face\",\"points\":[{\"x\":0.1,\"y\":0.2},{\"x\":0.9,\"y\":0.2},{\"x\":0.9,\"y\":0.9},{\"x\":0.1,\"y\":0.9}]}],\"headEulerAngles\":{\"x\":2.5,\"y\":-1.2,\"z\":0.8},\"probabilities\":{\"leftEyeOpenProbability\":0.9,\"rightEyeOpenProbability\":0.85,\"smilingProbability\":0.7},\"trackingId\":null,\"confidence\":0.95}",
                     Confidence = 0.95f,
+                    FaceQualityScore = 88.5f,
                     RegisteredDate = DateTime.Now.AddDays(-30),
                     LastUpdated = DateTime.Now.AddDays(-30),
                     IsActive = true,
@@ -3496,8 +3511,10 @@ namespace dotnet_api.Data.Extensions
                     EmployeeId = "worker2-id",
                     FaceId = "face-worker2-002",
                     ImagePath = "/uploads/faces/worker2-20241217080100.jpg",
-                    EmbeddingData = "[0.2345, -0.6789, 0.0123, -0.4567, 0.8901, -0.2345, 0.6789, -0.0123, 0.4567, -0.8901]",
+                    EmbeddingData = GenerateMockEmbeddingJson(2), // 512-d embedding
+                    FaceFeaturesData = "{\"bounds\":{\"x\":0.25,\"y\":0.28,\"width\":0.55,\"height\":0.65},\"landmarks\":[{\"type\":\"leftEye\",\"x\":0.35,\"y\":0.38},{\"type\":\"rightEye\",\"x\":0.65,\"y\":0.38},{\"type\":\"nose\",\"x\":0.5,\"y\":0.53},{\"type\":\"mouth\",\"x\":0.5,\"y\":0.68}],\"contours\":[{\"type\":\"face\",\"points\":[{\"x\":0.15,\"y\":0.18},{\"x\":0.85,\"y\":0.18},{\"x\":0.85,\"y\":0.88},{\"x\":0.15,\"y\":0.88}]}],\"headEulerAngles\":{\"x\":-1.8,\"y\":2.1,\"z\":-0.5},\"probabilities\":{\"leftEyeOpenProbability\":0.8,\"rightEyeOpenProbability\":0.9,\"smilingProbability\":0.6},\"trackingId\":null,\"confidence\":0.92}",
                     Confidence = 0.92f,
+                    FaceQualityScore = 85.2f,
                     RegisteredDate = DateTime.Now.AddDays(-25),
                     LastUpdated = DateTime.Now.AddDays(-25),
                     IsActive = true,
@@ -3510,8 +3527,10 @@ namespace dotnet_api.Data.Extensions
                     EmployeeId = "tech1-id",
                     FaceId = "face-tech1-003",
                     ImagePath = "/uploads/faces/tech1-20241217080200.jpg",
-                    EmbeddingData = "[0.3456, -0.7890, 0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234, 0.5678, -0.9012]",
+                    EmbeddingData = GenerateMockEmbeddingJson(3), // 512-d embedding
+                    FaceFeaturesData = "{\"bounds\":{\"x\":0.18,\"y\":0.32,\"width\":0.62,\"height\":0.72},\"landmarks\":[{\"type\":\"leftEye\",\"x\":0.28,\"y\":0.42},{\"type\":\"rightEye\",\"x\":0.72,\"y\":0.42},{\"type\":\"nose\",\"x\":0.5,\"y\":0.57},{\"type\":\"mouth\",\"x\":0.5,\"y\":0.72}],\"contours\":[{\"type\":\"face\",\"points\":[{\"x\":0.08,\"y\":0.22},{\"x\":0.92,\"y\":0.22},{\"x\":0.92,\"y\":0.92},{\"x\":0.08,\"y\":0.92}]}],\"headEulerAngles\":{\"x\":3.2,\"y\":-2.8,\"z\":1.1},\"probabilities\":{\"leftEyeOpenProbability\":0.75,\"rightEyeOpenProbability\":0.82,\"smilingProbability\":0.8},\"trackingId\":null,\"confidence\":0.88}",
                     Confidence = 0.88f,
+                    FaceQualityScore = 82.1f,
                     RegisteredDate = DateTime.Now.AddDays(-20),
                     LastUpdated = DateTime.Now.AddDays(-20),
                     IsActive = true,
@@ -3524,13 +3543,15 @@ namespace dotnet_api.Data.Extensions
                     EmployeeId = "manager1-id",
                     FaceId = "face-manager1-004",
                     ImagePath = "/uploads/faces/manager1-20241217080300.jpg",
-                    EmbeddingData = "[0.4567, -0.8901, 0.2345, -0.6789, 0.0123, -0.4567, 0.8901, -0.2345, 0.6789, -0.0123]",
+                    EmbeddingData = GenerateMockEmbeddingJson(4), // 512-d embedding
+                    FaceFeaturesData = "{\"bounds\":{\"x\":0.22,\"y\":0.26,\"width\":0.58,\"height\":0.68},\"landmarks\":[{\"type\":\"leftEye\",\"x\":0.32,\"y\":0.36},{\"type\":\"rightEye\",\"x\":0.68,\"y\":0.36},{\"type\":\"nose\",\"x\":0.5,\"y\":0.51},{\"type\":\"mouth\",\"x\":0.5,\"y\":0.66}],\"contours\":[{\"type\":\"face\",\"points\":[{\"x\":0.12,\"y\":0.16},{\"x\":0.88,\"y\":0.16},{\"x\":0.88,\"y\":0.86},{\"x\":0.12,\"y\":0.86}]}],\"headEulerAngles\":{\"x\":-0.9,\"y\":1.5,\"z\":-0.3},\"probabilities\":{\"leftEyeOpenProbability\":0.95,\"rightEyeOpenProbability\":0.92,\"smilingProbability\":0.75},\"trackingId\":null,\"confidence\":0.94}",
                     Confidence = 0.94f,
+                    FaceQualityScore = 91.3f,
                     RegisteredDate = DateTime.Now.AddDays(-15),
                     LastUpdated = DateTime.Now.AddDays(-15),
                     IsActive = true,
                     RegisteredBy = "admin",
-                    Notes = "Face registration for Nguyễn Quản Lý (manager1)"
+                    Notes = "Face registration for Nguyễn Chỉ Huy (manager1)"
                 },
                 new FaceRegistration
                 {
@@ -3538,8 +3559,10 @@ namespace dotnet_api.Data.Extensions
                     EmployeeId = "hr-employee1-id",
                     FaceId = "face-hr1-005",
                     ImagePath = "/uploads/faces/hr1-20241217080400.jpg",
-                    EmbeddingData = "[0.5678, -0.9012, 0.3456, -0.7890, 0.1234, -0.5678, 0.9012, -0.3456, 0.7890, -0.1234]",
+                    EmbeddingData = GenerateMockEmbeddingJson(5), // 512-d embedding
+                    FaceFeaturesData = "{\"bounds\":{\"x\":0.2,\"y\":0.3,\"width\":0.6,\"height\":0.7},\"landmarks\":[{\"type\":\"leftEye\",\"x\":0.3,\"y\":0.4},{\"type\":\"rightEye\",\"x\":0.7,\"y\":0.4},{\"type\":\"nose\",\"x\":0.5,\"y\":0.55},{\"type\":\"mouth\",\"x\":0.5,\"y\":0.7}],\"contours\":[{\"type\":\"face\",\"points\":[{\"x\":0.1,\"y\":0.2},{\"x\":0.9,\"y\":0.2},{\"x\":0.9,\"y\":0.9},{\"x\":0.1,\"y\":0.9}]}],\"headEulerAngles\":{\"x\":1.2,\"y\":-0.8,\"z\":0.4},\"probabilities\":{\"leftEyeOpenProbability\":0.88,\"rightEyeOpenProbability\":0.85,\"smilingProbability\":0.9},\"trackingId\":null,\"confidence\":0.91}",
                     Confidence = 0.91f,
+                    FaceQualityScore = 89.7f,
                     RegisteredDate = DateTime.Now.AddDays(-10),
                     LastUpdated = DateTime.Now.AddDays(-10),
                     IsActive = true,

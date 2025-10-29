@@ -9,7 +9,9 @@ namespace dotnet_api.DTOs
         public string FaceId { get; set; }
         public string ImagePath { get; set; }
         public string EmbeddingData { get; set; }
+        public string FaceFeaturesData { get; set; }
         public float Confidence { get; set; }
+        public float FaceQualityScore { get; set; }
         public DateTime RegisteredDate { get; set; }
         public DateTime LastUpdated { get; set; }
         public bool IsActive { get; set; }
@@ -27,9 +29,56 @@ namespace dotnet_api.DTOs
         public string EmployeeId { get; set; }
         
         [Required]
-        public string ImageBase64 { get; set; }
+        public string FaceFeatures { get; set; } // JSON string containing ML Kit face features
         
         public string Notes { get; set; }
+    }
+
+    // ML Kit Face Detection DTOs
+    public class FaceLandmarkDTO
+    {
+        public string Type { get; set; } // leftEye, rightEye, nose, mouth, leftEar, rightEar, leftCheek, rightCheek
+        public float X { get; set; }
+        public float Y { get; set; }
+    }
+
+    public class FaceContourDTO
+    {
+        public string Type { get; set; } // face, leftEyebrow, rightEyebrow, leftEye, rightEye, upperLip, lowerLip, nose
+        public List<FaceLandmarkDTO> Points { get; set; }
+    }
+
+    public class FaceFeaturesDTO
+    {
+        public FaceBoundsDTO Bounds { get; set; }
+        public List<FaceLandmarkDTO> Landmarks { get; set; }
+        public List<FaceContourDTO> Contours { get; set; }
+        public FaceEulerAnglesDTO HeadEulerAngles { get; set; }
+        public FaceProbabilitiesDTO Probabilities { get; set; }
+        public int? TrackingId { get; set; }
+        public float? Confidence { get; set; }
+    }
+
+    public class FaceBoundsDTO
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
+    }
+
+    public class FaceEulerAnglesDTO
+    {
+        public float X { get; set; } // Up/down tilt
+        public float Y { get; set; } // Left/right tilt  
+        public float Z { get; set; } // Left/right rotation
+    }
+
+    public class FaceProbabilitiesDTO
+    {
+        public float LeftEyeOpenProbability { get; set; }
+        public float RightEyeOpenProbability { get; set; }
+        public float SmilingProbability { get; set; }
     }
 
     public class FaceRegistrationResultDTO
@@ -39,6 +88,7 @@ namespace dotnet_api.DTOs
         public FaceRegistrationDTO FaceRegistration { get; set; }
         public float Confidence { get; set; }
         public string FaceId { get; set; }
+        public float FaceQualityScore { get; set; }
     }
 
     public class FaceVerificationRequestDTO
@@ -48,6 +98,8 @@ namespace dotnet_api.DTOs
         
         [Required]
         public string ImageBase64 { get; set; }
+        
+        public string FaceFeatures { get; set; } // Optional: ML Kit face features JSON string for quality validation
     }
 
     public class FaceVerificationResultDTO
@@ -65,6 +117,7 @@ namespace dotnet_api.DTOs
         public int ID { get; set; }
         public string FaceId { get; set; }
         public float Confidence { get; set; }
+        public float FaceQualityScore { get; set; }
         public DateTime RegisteredDate { get; set; }
         public bool IsActive { get; set; }
         public string Notes { get; set; }

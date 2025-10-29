@@ -9,7 +9,9 @@ namespace dotnet_api.Data.Entities
         public string FaceId { get; set; } // Unique identifier for face
         public string ImagePath { get; set; } // Path to face image
         public string EmbeddingData { get; set; } // FaceNet embedding as JSON string
+        public string FaceFeaturesData { get; set; } // ML Kit face features as JSON string (landmarks, contours, angles, probabilities)
         public float Confidence { get; set; } // Registration confidence
+        public float FaceQualityScore { get; set; } // Face quality score based on ML Kit analysis
         public DateTime RegisteredDate { get; set; }
         public DateTime LastUpdated { get; set; }
         public bool IsActive { get; set; } // For soft delete

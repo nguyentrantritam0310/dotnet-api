@@ -27,7 +27,8 @@ namespace dotnet_api.Controllers
         /// Đăng ký khuôn mặt mới cho người dùng
         /// </summary>
         [HttpPost("register")]
-        public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFace([FromBody] CreateFaceRegistrationDTO request)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFace([FromForm] string employeeId, [FromForm] IFormFile imageFile, [FromForm] string faceFeatures, [FromForm] string notes)
         {
             try
             {
@@ -40,12 +41,30 @@ namespace dotnet_api.Controllers
                 }
 
                 // Only allow users to register their own face
-                if (request.EmployeeId != currentUserId)
+                if (employeeId != currentUserId)
                 {
                     return Forbid("Bạn chỉ có thể đăng ký khuôn mặt của chính mình");
                 }
 
-                var result = await _faceRegistrationService.RegisterFaceAsync(request);
+                // Validate required fields
+                if (imageFile == null || imageFile.Length == 0)
+                {
+                    return BadRequest(new { message = "Vui lòng chọn ảnh để đăng ký" });
+                }
+
+                if (string.IsNullOrEmpty(faceFeatures))
+                {
+                    return BadRequest(new { message = "Dữ liệu đặc điểm khuôn mặt không hợp lệ" });
+                }
+
+                var request = new CreateFaceRegistrationDTO
+                {
+                    EmployeeId = employeeId,
+                    FaceFeatures = faceFeatures,
+                    Notes = notes
+                };
+
+                var result = await _faceRegistrationService.RegisterFaceAsync(request, imageFile);
                 
                 if (result.Success)
                 {

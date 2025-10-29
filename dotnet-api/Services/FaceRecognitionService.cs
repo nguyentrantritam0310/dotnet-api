@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace dotnet_api.Services
 {
@@ -78,10 +79,31 @@ namespace dotnet_api.Services
                     var createRequest = new CreateFaceRegistrationDTO
                     {
                         EmployeeId = employeeId,
-                        ImageBase64 = Convert.ToBase64String(imageBytes),
+                        FaceFeatures = JsonSerializer.Serialize(new
+                        {
+                            bounds = new { x = 0.2, y = 0.3, width = 0.6, height = 0.7 },
+                            landmarks = new object[0],
+                            contours = new object[0],
+                            headEulerAngles = new { x = 0, y = 0, z = 0 },
+                            probabilities = new { leftEyeOpenProbability = 0.9, rightEyeOpenProbability = 0.9, smilingProbability = 0.7 }
+                        }),
                         Notes = "Auto-registered via face recognition"
                     };
-                    var savedRegistration = await _faceRegistrationService.RegisterFaceAsync(createRequest);
+
+                    // Create a temporary file for the image
+                    var tempImageFile = new FormFile(
+                        new MemoryStream(imageBytes), 
+                        0, 
+                        imageBytes.Length, 
+                        "imageFile", 
+                        $"face_{employeeId}_{DateTime.Now:yyyyMMddHHmmss}.jpg"
+                    )
+                    {
+                        Headers = new Microsoft.AspNetCore.Http.HeaderDictionary(),
+                        ContentType = "image/jpeg"
+                    };
+
+                    var savedRegistration = await _faceRegistrationService.RegisterFaceAsync(createRequest, tempImageFile);
 
                     _logger.LogInformation($"Đăng ký khuôn mặt thành công cho nhân viên: {employeeId}");
                     return new FaceRegistrationResult

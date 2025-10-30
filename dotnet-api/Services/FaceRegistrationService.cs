@@ -382,8 +382,8 @@ namespace dotnet_api.Services
                     }
                 }
 
-                // Threshold for match: 0.75 (75% similarity)
-                const float similarityThreshold = 0.75f;
+                // Threshold for match: 0.85 (85% similarity)
+                const float similarityThreshold = 0.85f;
                 var isMatch = bestSimilarity >= similarityThreshold;
 
                 var user = await _context.ApplicationUsers
@@ -438,6 +438,11 @@ namespace dotnet_api.Services
                 // Generate ID and persist
                 var faceId = $"FACE_{request.EmployeeId}_{DateTime.Now:yyyyMMddHHmmss}";
 
+                // Derive a confidence from provided quality score to avoid 0 display
+                var derivedConfidence = (request.FaceQualityScore.HasValue)
+                    ? Math.Max(0f, Math.Min(1f, request.FaceQualityScore.Value / 100f))
+                    : 0f;
+
                 var faceRegistration = new FaceRegistration
                 {
                     EmployeeId = request.EmployeeId,
@@ -445,7 +450,7 @@ namespace dotnet_api.Services
                     ImagePath = string.Empty, // no image stored
                     EmbeddingData = JsonSerializer.Serialize(request.Embedding),
                     FaceFeaturesData = string.Empty,
-                    Confidence = 0f,
+                    Confidence = derivedConfidence,
                     FaceQualityScore = request.FaceQualityScore ?? 0f,
                     RegisteredDate = DateTime.UtcNow,
                     LastUpdated = DateTime.UtcNow,
@@ -533,7 +538,7 @@ namespace dotnet_api.Services
                     }
                 }
 
-                const float similarityThreshold = 0.75f;
+                const float similarityThreshold = 0.85f;
                 var isMatch = bestSimilarity >= similarityThreshold;
 
                 var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);

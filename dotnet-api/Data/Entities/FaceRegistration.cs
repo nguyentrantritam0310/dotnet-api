@@ -18,6 +18,9 @@ namespace dotnet_api.Data.Entities
         public string RegisteredBy { get; set; } // Who registered this face
         public string Notes { get; set; } // Additional notes
 
+        // Optional: Pose label for this embedding (front | left | right | up)
+        public string? Pose { get; set; }
+
         // Navigation properties
         public ApplicationUser Employee { get; set; }
     }

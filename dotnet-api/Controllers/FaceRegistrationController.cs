@@ -83,6 +83,62 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
+        /// Đăng ký khuôn mặt bằng embedding (không gửi ảnh)
+        /// </summary>
+        [HttpPost("register-embedding")]
+        public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFaceEmbedding([FromBody] FaceEmbeddingRegisterRequestDTO request)
+        {
+            try
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId)) return Unauthorized("Không thể xác định người dùng");
+                if (request.EmployeeId != currentUserId) return Forbid("Bạn chỉ có thể đăng ký khuôn mặt của chính mình");
+
+                if (request.Embedding == null || request.Embedding.Length == 0)
+                {
+                    return BadRequest(new { message = "Thiếu embedding" });
+                }
+
+                var result = await _faceRegistrationService.RegisterFaceEmbeddingAsync(request);
+                if (result.Success) return Ok(result);
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in RegisterFaceEmbedding endpoint");
+                return StatusCode(500, new { message = "Có lỗi xảy ra khi đăng ký embedding" });
+            }
+        }
+
+        /// <summary>
+        /// Xác minh khuôn mặt bằng embedding (không gửi ảnh)
+        /// </summary>
+        [HttpPost("verify-embedding")]
+        public async Task<ActionResult<FaceVerificationResultDTO>> VerifyFaceEmbedding([FromBody] FaceEmbeddingVerifyRequestDTO request)
+        {
+            try
+            {
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId)) return Unauthorized("Không thể xác định người dùng");
+                if (request.EmployeeId != currentUserId) return Forbid("Bạn chỉ có thể xác minh khuôn mặt của chính mình");
+
+                if (request.Embedding == null || request.Embedding.Length == 0)
+                {
+                    return BadRequest(new { message = "Thiếu embedding" });
+                }
+
+                var result = await _faceRegistrationService.VerifyFaceEmbeddingAsync(request);
+                if (result.Success) return Ok(result);
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in VerifyFaceEmbedding endpoint");
+                return StatusCode(500, new { message = "Có lỗi xảy ra khi xác minh embedding" });
+            }
+        }
+
+        /// <summary>
         /// Xác minh khuôn mặt của người dùng
         /// </summary>
         [HttpPost("verify")]

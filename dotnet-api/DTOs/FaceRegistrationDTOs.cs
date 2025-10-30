@@ -112,6 +112,29 @@ namespace dotnet_api.DTOs
         public string EmployeeName { get; set; }
     }
 
+    // Embedding-only registration (no image upload)
+    public class FaceEmbeddingRegisterRequestDTO
+    {
+        [Required]
+        public string EmployeeId { get; set; }
+
+        [Required]
+        public float[] Embedding { get; set; }
+
+        public float? FaceQualityScore { get; set; }
+
+        public string? Notes { get; set; }
+    }
+
+    public class FaceEmbeddingVerifyRequestDTO
+    {
+        [Required]
+        public string EmployeeId { get; set; }
+
+        [Required]
+        public float[] Embedding { get; set; }
+    }
+
     public class FaceRegistrationListDTO
     {
         public int ID { get; set; }

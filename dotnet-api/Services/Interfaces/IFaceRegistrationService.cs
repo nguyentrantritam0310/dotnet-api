@@ -7,6 +7,8 @@ namespace dotnet_api.Services.Interfaces
     {
         Task<FaceRegistrationResultDTO> RegisterFaceAsync(CreateFaceRegistrationDTO request, IFormFile imageFile);
         Task<FaceVerificationResultDTO> VerifyFaceAsync(FaceVerificationRequestDTO request);
+        Task<FaceRegistrationResultDTO> RegisterFaceEmbeddingAsync(FaceEmbeddingRegisterRequestDTO request);
+        Task<FaceVerificationResultDTO> VerifyFaceEmbeddingAsync(FaceEmbeddingVerifyRequestDTO request);
         Task<List<FaceRegistrationListDTO>> GetUserFaceRegistrationsAsync(string employeeId);
         Task<bool> DeleteFaceRegistrationAsync(int faceRegistrationId, string employeeId);
         Task<FaceRegistrationDTO> GetFaceRegistrationByIdAsync(int id);

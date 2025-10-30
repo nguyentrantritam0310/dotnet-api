@@ -25,6 +25,20 @@ namespace dotnet_api.Services
             _logger = logger;
             _configuration = configuration;
             _pythonScriptPath = Path.Combine(Directory.GetCurrentDirectory(), "MachineLearning", "face_recognition.py");
+            
+            // Log Python script path and verify it exists
+            _logger.LogInformation($"🔧 Python script path: {_pythonScriptPath}");
+            if (File.Exists(_pythonScriptPath))
+            {
+                _logger.LogInformation($"✅ Python script file exists");
+            }
+            else
+            {
+                _logger.LogError($"❌ Python script file NOT FOUND at: {_pythonScriptPath}");
+            }
+            
+            var pythonPath = _configuration["PythonPath"] ?? "python";
+            _logger.LogInformation($"🔧 Python interpreter: {pythonPath}");
         }
 
         public async Task<FaceRegistrationResultDTO> RegisterFaceAsync(CreateFaceRegistrationDTO request, IFormFile imageFile)
@@ -92,7 +106,7 @@ namespace dotnet_api.Services
 
                 // Extract embedding from image using Python service
                 float[] embedding = null;
-                float confidence = 0.95f;
+                float confidence = 0f; // Start with 0, only update if Python returns valid confidence
                 
                 try
                 {
@@ -119,19 +133,35 @@ namespace dotnet_api.Services
                     if (embeddingResult.Success && embeddingResult.Embedding != null && embeddingResult.Embedding.Length > 0)
                     {
                         embedding = embeddingResult.Embedding;
-                        confidence = embeddingResult.Confidence;
-                        _logger.LogInformation($"Successfully extracted embedding (dimension: {embedding.Length}) for face {faceId}");
+                        // Use Python's confidence if available and valid (between 0 and 1)
+                        if (embeddingResult.Confidence > 0 && embeddingResult.Confidence <= 1)
+                        {
+                            confidence = embeddingResult.Confidence;
+                        }
+                        else
+                        {
+                            // Fallback: calculate confidence from quality score
+                            confidence = Math.Max(0f, Math.Min(1f, qualityScore / 100f));
+                            _logger.LogWarning($"Python confidence invalid ({embeddingResult.Confidence}), using quality-based confidence: {confidence}");
+                        }
+                        _logger.LogInformation($"Successfully extracted embedding (dimension: {embedding.Length}, confidence: {confidence:F3}) for face {faceId}");
                     }
                     else
                     {
                         _logger.LogWarning($"Failed to extract embedding, using mock embedding. Error: {embeddingResult.Message}");
                         embedding = GenerateMockEmbedding().ToArray();
+                        // Use quality score as confidence when using mock embedding
+                        confidence = Math.Max(0f, Math.Min(1f, qualityScore / 100f));
+                        _logger.LogWarning($"Using mock embedding with quality-based confidence: {confidence:F3}");
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"Error extracting embedding from image, using mock embedding");
                     embedding = GenerateMockEmbedding().ToArray();
+                    // Use quality score as confidence when using mock embedding due to error
+                    confidence = Math.Max(0f, Math.Min(1f, qualityScore / 100f));
+                    _logger.LogWarning($"Using mock embedding due to error, quality-based confidence: {confidence:F3}");
                 }
 
                 var faceRegistration = new FaceRegistration
@@ -383,6 +413,148 @@ namespace dotnet_api.Services
             }
         }
 
+        public async Task<FaceRegistrationResultDTO> RegisterFaceEmbeddingAsync(FaceEmbeddingRegisterRequestDTO request)
+        {
+            try
+            {
+                // Validate user
+                var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
+                if (user == null)
+                {
+                    return new FaceRegistrationResultDTO { Success = false, Message = "Người dùng không tồn tại" };
+                }
+
+                // Limit active registrations
+                var existingCount = await _context.FaceRegistrations.CountAsync(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive);
+                if (existingCount >= 5)
+                {
+                    return new FaceRegistrationResultDTO
+                    {
+                        Success = false,
+                        Message = "Bạn đã đăng ký tối đa 5 khuôn mặt. Vui lòng xóa một khuôn mặt cũ trước khi đăng ký mới."
+                    };
+                }
+
+                // Generate ID and persist
+                var faceId = $"FACE_{request.EmployeeId}_{DateTime.Now:yyyyMMddHHmmss}";
+
+                var faceRegistration = new FaceRegistration
+                {
+                    EmployeeId = request.EmployeeId,
+                    FaceId = faceId,
+                    ImagePath = string.Empty, // no image stored
+                    EmbeddingData = JsonSerializer.Serialize(request.Embedding),
+                    FaceFeaturesData = string.Empty,
+                    Confidence = 0f,
+                    FaceQualityScore = request.FaceQualityScore ?? 0f,
+                    RegisteredDate = DateTime.UtcNow,
+                    LastUpdated = DateTime.UtcNow,
+                    IsActive = true,
+                    RegisteredBy = request.EmployeeId,
+                    Notes = request.Notes ?? string.Empty
+                };
+
+                _context.FaceRegistrations.Add(faceRegistration);
+                await _context.SaveChangesAsync();
+
+                return new FaceRegistrationResultDTO
+                {
+                    Success = true,
+                    Message = "Đăng ký embedding khuôn mặt thành công",
+                    FaceRegistration = new FaceRegistrationDTO
+                    {
+                        ID = faceRegistration.ID,
+                        EmployeeId = faceRegistration.EmployeeId,
+                        FaceId = faceRegistration.FaceId,
+                        ImagePath = faceRegistration.ImagePath,
+                        EmbeddingData = faceRegistration.EmbeddingData,
+                        FaceFeaturesData = faceRegistration.FaceFeaturesData,
+                        Confidence = faceRegistration.Confidence,
+                        FaceQualityScore = faceRegistration.FaceQualityScore,
+                        RegisteredDate = faceRegistration.RegisteredDate,
+                        LastUpdated = faceRegistration.LastUpdated,
+                        IsActive = faceRegistration.IsActive,
+                        RegisteredBy = faceRegistration.RegisteredBy,
+                        Notes = faceRegistration.Notes,
+                        EmployeeName = $"{user.FirstName} {user.LastName}",
+                        EmployeeEmail = user.Email
+                    },
+                    FaceId = faceId,
+                    FaceQualityScore = faceRegistration.FaceQualityScore
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in RegisterFaceEmbeddingAsync");
+                return new FaceRegistrationResultDTO { Success = false, Message = "Có lỗi xảy ra khi đăng ký embedding khuôn mặt" };
+            }
+        }
+
+        public async Task<FaceVerificationResultDTO> VerifyFaceEmbeddingAsync(FaceEmbeddingVerifyRequestDTO request)
+        {
+            try
+            {
+                var faceRegistrations = await _context.FaceRegistrations
+                    .Where(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive)
+                    .ToListAsync();
+
+                if (!faceRegistrations.Any())
+                {
+                    return new FaceVerificationResultDTO
+                    {
+                        Success = false,
+                        Message = "Người dùng chưa đăng ký khuôn mặt",
+                        IsMatch = false
+                    };
+                }
+
+                float bestSimilarity = 0f;
+                FaceRegistration? bestMatch = null;
+
+                foreach (var registration in faceRegistrations)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(registration.EmbeddingData)) continue;
+                        var registeredEmbedding = JsonSerializer.Deserialize<float[]>(registration.EmbeddingData);
+                        if (registeredEmbedding == null || registeredEmbedding.Length == 0) continue;
+
+                        var similarity = CalculateCosineSimilarity(request.Embedding, registeredEmbedding);
+                        if (similarity > bestSimilarity)
+                        {
+                            bestSimilarity = similarity;
+                            bestMatch = registration;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error comparing embeddings for registration {registration.FaceId}");
+                        continue;
+                    }
+                }
+
+                const float similarityThreshold = 0.75f;
+                var isMatch = bestSimilarity >= similarityThreshold;
+
+                var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
+
+                return new FaceVerificationResultDTO
+                {
+                    Success = true,
+                    Message = isMatch ? "Nhận diện khuôn mặt thành công" : $"Không nhận diện được khuôn mặt (Similarity: {(bestSimilarity * 100):F1}%, Threshold: {(similarityThreshold * 100):F1}%)",
+                    Confidence = bestSimilarity,
+                    IsMatch = isMatch,
+                    MatchedFaceId = isMatch ? bestMatch?.FaceId : null,
+                    EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in VerifyFaceEmbeddingAsync");
+                return new FaceVerificationResultDTO { Success = false, Message = "Có lỗi xảy ra khi nhận diện khuôn mặt", IsMatch = false };
+            }
+        }
+
         public async Task<List<FaceRegistrationListDTO>> GetUserFaceRegistrationsAsync(string employeeId)
         {
             try
@@ -527,9 +699,14 @@ namespace dotnet_api.Services
 
         private float CalculateFaceQualityScore(FaceFeaturesDTO faceFeatures)
         {
-            if (faceFeatures == null) return 0;
+            if (faceFeatures == null)
+            {
+                _logger.LogWarning("FaceFeatures is null, returning quality score 0");
+                return 0;
+            }
 
             float score = 100;
+            bool hasValidData = false;
 
             // Deduct points for head rotation angles
             if (faceFeatures.HeadEulerAngles != null)
@@ -540,14 +717,30 @@ namespace dotnet_api.Services
 
                 // Deduct 2 points per degree of rotation
                 score -= (angleX + angleY + angleZ) * 2;
+                hasValidData = true;
+                
+                _logger.LogDebug($"Head angles - X: {angleX:F2}°, Y: {angleY:F2}°, Z: {angleZ:F2}°, Score deduction: {(angleX + angleY + angleZ) * 2:F1}");
+            }
+            else
+            {
+                _logger.LogWarning("HeadEulerAngles is null, cannot assess head pose");
+                score -= 20; // Penalty for missing head angle data
             }
 
             // Deduct points for small face size
-            if (faceFeatures.Bounds != null)
+            if (faceFeatures.Bounds != null && faceFeatures.Bounds.Width > 0 && faceFeatures.Bounds.Height > 0)
             {
                 var faceSize = faceFeatures.Bounds.Width * faceFeatures.Bounds.Height;
                 if (faceSize < 0.2) score -= 20;
                 else if (faceSize < 0.3) score -= 10;
+                hasValidData = true;
+                
+                _logger.LogDebug($"Face size: {faceSize:F4}, Score deduction: {(faceSize < 0.2 ? 20 : (faceSize < 0.3 ? 10 : 0))}");
+            }
+            else
+            {
+                _logger.LogWarning("Bounds is null or invalid, cannot assess face size");
+                score -= 15; // Penalty for missing bounds data
             }
 
             // Bonus/penalty for eye openness
@@ -555,19 +748,39 @@ namespace dotnet_api.Services
             {
                 var leftEyeOpen = faceFeatures.Probabilities.LeftEyeOpenProbability;
                 var rightEyeOpen = faceFeatures.Probabilities.RightEyeOpenProbability;
+                
+                // Use probabilities if they are available (even if 0, it means ML Kit detected something)
                 var avgEyeOpen = (leftEyeOpen + rightEyeOpen) / 2;
 
                 if (avgEyeOpen > 0.8) score += 10;
                 else if (avgEyeOpen < 0.5) score -= 15;
-            }
+                hasValidData = true;
+                
+                _logger.LogDebug($"Eye openness - Left: {leftEyeOpen:F2}, Right: {rightEyeOpen:F2}, Avg: {avgEyeOpen:F2}, Score adjustment: {(avgEyeOpen > 0.8 ? 10 : (avgEyeOpen < 0.5 ? -15 : 0))}");
 
-            // Bonus for smiling (optional)
-            if (faceFeatures.Probabilities != null && faceFeatures.Probabilities.SmilingProbability > 0.7)
+                // Bonus for smiling (optional)
+                if (faceFeatures.Probabilities.SmilingProbability > 0.7)
+                {
+                    score += 5;
+                }
+            }
+            else
             {
-                score += 5;
+                _logger.LogWarning("Probabilities is null, cannot assess eye/mouth state");
+                score -= 10; // Penalty for missing probability data
             }
 
-            return Math.Max(0, Math.Min(100, score));
+            // If no valid data was found, return a low score
+            if (!hasValidData)
+            {
+                _logger.LogWarning("No valid face features data found, returning low quality score");
+                return 30; // Low score when data is mostly missing
+            }
+
+            var finalScore = Math.Max(0, Math.Min(100, score));
+            _logger.LogDebug($"Calculated face quality score: {finalScore:F1}/100 (base: 100, deductions/applicable)");
+            
+            return finalScore;
         }
 
         private List<float> GenerateMockEmbedding()
@@ -606,6 +819,9 @@ namespace dotnet_api.Services
                 };
 
                 using var process = new Process { StartInfo = startInfo };
+                
+                _logger.LogInformation($"🚀 Executing Python script: {pythonPath} \"{_pythonScriptPath}\" {arguments}");
+                
                 process.Start();
 
                 var output = await process.StandardOutput.ReadToEndAsync();
@@ -613,13 +829,37 @@ namespace dotnet_api.Services
                 
                 await process.WaitForExitAsync();
 
+                _logger.LogInformation($"📊 Python process exited with code: {process.ExitCode}");
+                _logger.LogInformation($"📤 Python stdout length: {(output != null ? output.Length : 0)} characters");
+                _logger.LogInformation($"📤 Python stdout (first 500 chars): {(output != null ? output.Substring(0, Math.Min(500, output.Length)) : "null")}");
+                if (!string.IsNullOrEmpty(error))
+                {
+                    _logger.LogWarning($"⚠️ Python stderr: {error}");
+                }
+
                 if (process.ExitCode == 0 && !string.IsNullOrEmpty(output))
                 {
                     try
                     {
-                        var result = JsonSerializer.Deserialize<PythonEmbeddingResult>(output);
+                        // Try to parse JSON - Python might output multiple lines (logs before JSON)
+                        // Find the last line that looks like JSON (starts with {)
+                        var jsonOutput = output;
+                        var lines = output.Split('\n');
+                        foreach (var line in lines.Reverse())
+                        {
+                            var trimmedLine = line.Trim();
+                            if (trimmedLine.StartsWith("{") && trimmedLine.EndsWith("}"))
+                            {
+                                jsonOutput = trimmedLine;
+                                _logger.LogInformation($"✅ Found JSON in Python output: {jsonOutput.Substring(0, Math.Min(200, jsonOutput.Length))}...");
+                                break;
+                            }
+                        }
+                        
+                        var result = JsonSerializer.Deserialize<PythonEmbeddingResult>(jsonOutput);
                         if (result != null && result.Success && result.Embedding != null)
                         {
+                            _logger.LogInformation($"✅ Python extract_embedding successful! Embedding dimension: {result.Embedding.Length}, Confidence: {result.Confidence}");
                             return new EmbeddingResult
                             {
                                 Success = true,
@@ -627,10 +867,22 @@ namespace dotnet_api.Services
                                 Confidence = result.Confidence
                             };
                         }
+                        else
+                        {
+                            _logger.LogWarning($"⚠️ Python returned Success={result?.Success}, but Embedding is null or empty. Message: {result?.Message}");
+                        }
                     }
                     catch (JsonException ex)
                     {
-                        _logger.LogWarning(ex, "Failed to parse Python output, trying alternative method");
+                        _logger.LogWarning(ex, $"⚠️ Failed to parse Python output as JSON. Output was: {output?.Substring(0, Math.Min(500, output?.Length ?? 0))}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"⚠️ Python script failed or returned empty output. ExitCode: {process.ExitCode}, Output empty: {string.IsNullOrEmpty(output)}");
+                    if (process.ExitCode != 0)
+                    {
+                        _logger.LogError($"❌ Python script error: {error}");
                     }
                 }
 
@@ -644,7 +896,8 @@ namespace dotnet_api.Services
                 return new EmbeddingResult
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    Confidence = 0f  // Explicitly set to 0 on error
                 };
             }
         }
@@ -671,6 +924,9 @@ namespace dotnet_api.Services
                 };
 
                 using var process = new Process { StartInfo = startInfo };
+                
+                _logger.LogInformation($"🚀 Executing Python register fallback: {pythonPath} \"{_pythonScriptPath}\" {arguments}");
+                
                 process.Start();
 
                 var output = await process.StandardOutput.ReadToEndAsync();
@@ -678,13 +934,36 @@ namespace dotnet_api.Services
                 
                 await process.WaitForExitAsync();
 
+                _logger.LogInformation($"📊 Python register process exited with code: {process.ExitCode}");
+                _logger.LogInformation($"📤 Python register stdout length: {(output != null ? output.Length : 0)} characters");
+                _logger.LogInformation($"📤 Python register stdout (first 500 chars): {(output != null ? output.Substring(0, Math.Min(500, output.Length)) : "null")}");
+                if (!string.IsNullOrEmpty(error))
+                {
+                    _logger.LogWarning($"⚠️ Python register stderr: {error}");
+                }
+
                 if (process.ExitCode == 0 && !string.IsNullOrEmpty(output))
                 {
                     try
                     {
-                        var result = JsonSerializer.Deserialize<PythonEmbeddingResult>(output);
+                        // Try to parse JSON - Python might output multiple lines (logs before JSON)
+                        var jsonOutput = output;
+                        var lines = output.Split('\n');
+                        foreach (var line in lines.Reverse())
+                        {
+                            var trimmedLine = line.Trim();
+                            if (trimmedLine.StartsWith("{") && trimmedLine.EndsWith("}"))
+                            {
+                                jsonOutput = trimmedLine;
+                                _logger.LogInformation($"✅ Found JSON in Python register output: {jsonOutput.Substring(0, Math.Min(200, jsonOutput.Length))}...");
+                                break;
+                            }
+                        }
+                        
+                        var result = JsonSerializer.Deserialize<PythonEmbeddingResult>(jsonOutput);
                         if (result != null && result.Success && result.Embedding != null)
                         {
+                            _logger.LogInformation($"✅ Python register fallback successful! Embedding dimension: {result.Embedding.Length}, Confidence: {result.Confidence}");
                             return new EmbeddingResult
                             {
                                 Success = true,
@@ -692,17 +971,30 @@ namespace dotnet_api.Services
                                 Confidence = result.Confidence
                             };
                         }
+                        else
+                        {
+                            _logger.LogWarning($"⚠️ Python register returned Success={result?.Success}, but Embedding is null. Message: {result?.Message}");
+                        }
                     }
                     catch (JsonException ex)
                     {
-                        _logger.LogError(ex, $"Failed to parse Python register output: {output}");
+                        _logger.LogError(ex, $"⚠️ Failed to parse Python register output as JSON. Output was: {output?.Substring(0, Math.Min(500, output?.Length ?? 0))}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"⚠️ Python register script failed or returned empty output. ExitCode: {process.ExitCode}, Output empty: {string.IsNullOrEmpty(output)}");
+                    if (process.ExitCode != 0)
+                    {
+                        _logger.LogError($"❌ Python register script error: {error}");
                     }
                 }
 
                 return new EmbeddingResult
                 {
                     Success = false,
-                    Message = error ?? "Unknown error extracting embedding"
+                    Message = error ?? "Unknown error extracting embedding",
+                    Confidence = 0f  // Explicitly set to 0 on failure
                 };
             }
             catch (Exception ex)
@@ -711,7 +1003,8 @@ namespace dotnet_api.Services
                 return new EmbeddingResult
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    Confidence = 0f  // Explicitly set to 0 on error
                 };
             }
         }

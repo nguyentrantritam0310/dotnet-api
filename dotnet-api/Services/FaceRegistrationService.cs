@@ -424,15 +424,29 @@ namespace dotnet_api.Services
                     return new FaceRegistrationResultDTO { Success = false, Message = "Người dùng không tồn tại" };
                 }
 
-                // Limit active registrations
+                // Limit active registrations to 4 (one per pose)
                 var existingCount = await _context.FaceRegistrations.CountAsync(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive);
-                if (existingCount >= 5)
+                if (existingCount >= 4)
                 {
                     return new FaceRegistrationResultDTO
                     {
                         Success = false,
-                        Message = "Bạn đã đăng ký tối đa 5 khuôn mặt. Vui lòng xóa một khuôn mặt cũ trước khi đăng ký mới."
+                        Message = "Bạn đã đăng ký đủ 4 góc (front/left/right/up). Không thể đăng ký thêm."
                     };
+                }
+
+                // Prevent duplicate pose for same employee if pose provided
+                if (!string.IsNullOrWhiteSpace(request.Pose))
+                {
+                    var existsSamePose = await _context.FaceRegistrations.AnyAsync(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive && fr.Pose == request.Pose);
+                    if (existsSamePose)
+                    {
+                        return new FaceRegistrationResultDTO
+                        {
+                            Success = false,
+                            Message = $"Bạn đã đăng ký pose '{request.Pose}'. Vui lòng chuyển sang pose khác."
+                        };
+                    }
                 }
 
                 // Generate ID and persist
@@ -456,7 +470,8 @@ namespace dotnet_api.Services
                     LastUpdated = DateTime.UtcNow,
                     IsActive = true,
                     RegisteredBy = request.EmployeeId,
-                    Notes = request.Notes ?? string.Empty
+                    Notes = request.Notes ?? string.Empty,
+                    Pose = request.Pose
                 };
 
                 _context.FaceRegistrations.Add(faceRegistration);

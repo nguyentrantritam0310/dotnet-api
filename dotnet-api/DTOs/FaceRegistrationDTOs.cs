@@ -124,6 +124,9 @@ namespace dotnet_api.DTOs
         public float? FaceQualityScore { get; set; }
 
         public string? Notes { get; set; }
+
+        // Pose label: front | left | right | up
+        public string? Pose { get; set; }
     }
 
     public class FaceEmbeddingVerifyRequestDTO

@@ -399,72 +399,6 @@ class FaceRecognitionSystem:
                 "message": f"Lỗi: {str(e)}"
             }
 
-    def extract_embedding(self, image_path: str) -> Dict:
-        """
-        Chỉ trích xuất embedding từ ảnh (không lưu vào database)
-        
-        Args:
-            image_path: Đường dẫn ảnh
-            
-        Returns:
-            Kết quả extract embedding với embedding vector
-        """
-        try:
-            logger.info(f"Bắt đầu trích xuất embedding từ ảnh: {image_path}")
-            
-            # Load image
-            image = cv2.imread(image_path)
-            if image is None:
-                logger.error(f"Không thể đọc ảnh từ: {image_path}")
-                return {
-                    "success": False,
-                    "message": "Không thể đọc ảnh"
-                }
-            
-            # Detect faces using MTCNN
-            aligned_faces = self.detect_and_align_faces_mtcnn(image)
-            
-            if not aligned_faces:
-                return {
-                    "success": False,
-                    "message": "Không phát hiện được khuôn mặt trong ảnh"
-                }
-            
-            # Lấy khuôn mặt có confidence cao nhất
-            best_face, best_confidence = max(aligned_faces, key=lambda x: x[1])
-            
-            if best_confidence < self.face_detection_confidence:
-                return {
-                    "success": False,
-                    "message": f"Độ tin cậy phát hiện khuôn mặt quá thấp: {best_confidence:.2f}"
-                }
-            
-            # Extract embedding
-            embedding = self.extract_face_embedding(best_face)
-            
-            if embedding is None:
-                return {
-                    "success": False,
-                    "message": "Không thể trích xuất đặc trưng khuôn mặt"
-                }
-            
-            logger.info(f"Trích xuất embedding thành công (dimension: {len(embedding)}, confidence: {best_confidence:.3f})")
-            return {
-                "success": True,
-                "message": "Trích xuất embedding thành công",
-                "embedding": embedding.tolist(),
-                "confidence": float(best_confidence)
-            }
-            
-        except Exception as e:
-            logger.error(f"Lỗi khi trích xuất embedding: {e}")
-            import traceback
-            logger.error(f"Traceback: {traceback.format_exc()}")
-            return {
-                "success": False,
-                "message": f"Lỗi: {str(e)}"
-            }
-
     def detect_face(self, image_path: str) -> Dict:
         """
         Chỉ phát hiện khuôn mặt (không nhận dạng)
@@ -539,7 +473,6 @@ def main():
         print("  register <image_path> <employee_id> - Đăng ký khuôn mặt")
         print("  recognize <image_path> - Nhận dạng khuôn mặt")
         print("  detect <image_path> - Phát hiện khuôn mặt")
-        print("  extract_embedding <image_path> - Chỉ trích xuất embedding (không lưu)")
         sys.exit(1)
     
     command = sys.argv[1]
@@ -561,9 +494,6 @@ def main():
         
     elif command == "detect":
         result = face_system.detect_face(image_path)
-        
-    elif command == "extract_embedding":
-        result = face_system.extract_embedding(image_path)
         
     else:
         result = {

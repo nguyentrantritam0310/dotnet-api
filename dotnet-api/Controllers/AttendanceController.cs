@@ -48,6 +48,29 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
+        /// Chấm công vào (không ảnh)
+        /// </summary>
+        [HttpPost("checkin-noimage")]
+        public async Task<ActionResult<AttendanceCheckInResult>> CheckInNoImage([FromBody] AttendanceCheckInNoImageRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _attendanceService.CheckInNoImageAsync(request);
+                if (result.Success) return Ok(result);
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Chấm công ra (Check-out)
         /// </summary>
         /// <param name="request">Thông tin chấm công ra</param>
@@ -72,6 +95,29 @@ namespace dotnet_api.Controllers
                 {
                     return BadRequest(result);
                 }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Chấm công ra (không ảnh)
+        /// </summary>
+        [HttpPost("checkout-noimage")]
+        public async Task<ActionResult<AttendanceCheckInResult>> CheckOutNoImage([FromBody] AttendanceCheckOutNoImageRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var result = await _attendanceService.CheckOutNoImageAsync(request);
+                if (result.Success) return Ok(result);
+                return BadRequest(result);
             }
             catch (Exception ex)
             {

@@ -94,6 +94,78 @@ namespace dotnet_api.Services
             }
         }
 
+        public async Task<AttendanceCheckInResult> CheckInNoImageAsync(AttendanceCheckInNoImageRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Processing no-image check-in for employee: {request.EmployeeId}");
+
+                var existingAttendance = await GetTodayAttendanceAsync(request.EmployeeId);
+                if (existingAttendance != null && existingAttendance.CheckInDateTime.HasValue)
+                {
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Bạn đã chấm công vào hôm nay",
+                        EmployeeId = request.EmployeeId,
+                        CheckInDateTime = existingAttendance.CheckInDateTime.Value,
+                        Status = existingAttendance.Status ?? AttendanceStatusEnum.Present
+                    };
+                }
+
+                var employee = await _context.Users.FindAsync(request.EmployeeId);
+                if (employee == null)
+                {
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy thông tin nhân viên",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                var attendance = new Attendance
+                {
+                    EmployeeId = request.EmployeeId,
+                    CheckInDateTime = request.CheckInDateTime,
+                    CheckIn = request.CheckInDateTime.TimeOfDay,
+                    ImageCheckIn = string.Empty,
+                    CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}",
+                    AttendanceMachineId = request.AttendanceMachineId,
+                    Status = AttendanceStatusEnum.Present,
+                    Notes = request.Notes,
+                    CreatedDate = DateTime.Now,
+                    LastUpdated = DateTime.Now
+                };
+
+                _context.Attendances.Add(attendance);
+                await _context.SaveChangesAsync();
+
+                return new AttendanceCheckInResult
+                {
+                    Success = true,
+                    Message = "Chấm công thành công",
+                    AttendanceId = attendance.ID ?? 0,
+                    EmployeeId = request.EmployeeId,
+                    EmployeeName = employee.UserName ?? employee.Email ?? "Unknown",
+                    CheckInDateTime = attendance.CheckInDateTime.Value,
+                    Status = attendance.Status.Value,
+                    ImagePath = attendance.ImageCheckIn,
+                    Location = attendance.CheckInLocation
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing no-image check-in for employee: {request.EmployeeId}");
+                return new AttendanceCheckInResult
+                {
+                    Success = false,
+                    Message = $"Lỗi hệ thống: {ex.Message}",
+                    EmployeeId = request.EmployeeId
+                };
+            }
+        }
+
         public async Task<AttendanceCheckInResult> CheckOutAsync(AttendanceCheckOutRequest request)
         {
             try
@@ -159,6 +231,72 @@ namespace dotnet_api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error processing check-out for employee: {request.EmployeeId}");
+                return new AttendanceCheckInResult
+                {
+                    Success = false,
+                    Message = $"Lỗi hệ thống: {ex.Message}",
+                    EmployeeId = request.EmployeeId
+                };
+            }
+        }
+
+        public async Task<AttendanceCheckInResult> CheckOutNoImageAsync(AttendanceCheckOutNoImageRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Processing no-image check-out for employee: {request.EmployeeId}");
+
+                var attendance = await GetTodayAttendanceAsync(request.EmployeeId);
+                if (attendance == null || !attendance.CheckInDateTime.HasValue)
+                {
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy bản ghi chấm công vào hôm nay",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                if (attendance.CheckOutDateTime.HasValue)
+                {
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Bạn đã chấm công ra hôm nay",
+                        EmployeeId = request.EmployeeId,
+                        CheckInDateTime = attendance.CheckInDateTime.Value
+                    };
+                }
+
+                attendance.CheckOutDateTime = request.CheckOutDateTime;
+                attendance.CheckOut = request.CheckOutDateTime.TimeOfDay;
+                attendance.CheckOutLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
+                attendance.LastUpdated = DateTime.Now;
+
+                if (!string.IsNullOrEmpty(request.Notes))
+                {
+                    attendance.Notes = string.IsNullOrEmpty(attendance.Notes)
+                        ? request.Notes
+                        : $"{attendance.Notes}\n{request.Notes}";
+                }
+
+                _context.Attendances.Update(attendance);
+                await _context.SaveChangesAsync();
+
+                return new AttendanceCheckInResult
+                {
+                    Success = true,
+                    Message = "Chấm công ra thành công",
+                    AttendanceId = attendance.ID ?? 0,
+                    EmployeeId = request.EmployeeId,
+                    EmployeeName = attendance.Employee?.UserName ?? attendance.Employee?.Email ?? "Unknown",
+                    CheckInDateTime = attendance.CheckInDateTime.Value,
+                    Status = attendance.Status ?? AttendanceStatusEnum.Present
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing no-image check-out for employee: {request.EmployeeId}");
                 return new AttendanceCheckInResult
                 {
                     Success = false,

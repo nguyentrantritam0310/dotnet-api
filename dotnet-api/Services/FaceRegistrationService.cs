@@ -540,8 +540,10 @@ namespace dotnet_api.Services
         {
             try
             {
-                // Validate embedding dimension upfront
-                const int EXPECTED_EMBEDDING_DIMENSION = 256;
+                // Support both 256-dim (custom) and 512-dim (FaceNet) embeddings
+                const int EXPECTED_EMBEDDING_DIMENSION_CUSTOM = 256;
+                const int EXPECTED_EMBEDDING_DIMENSION_FACENET = 512;
+                
                 if (request.Embedding == null || request.Embedding.Length == 0)
                 {
                     _logger.LogWarning($"🚨 [SECURITY] Invalid embedding: null or empty for employee {request.EmployeeId}");
@@ -553,16 +555,22 @@ namespace dotnet_api.Services
                     };
                 }
 
-                if (request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION)
+                // Accept both 256-dim (custom) and 512-dim (FaceNet) embeddings
+                if (request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION_CUSTOM && 
+                    request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION_FACENET)
                 {
-                    _logger.LogWarning($"🚨 [SECURITY] Embedding dimension mismatch - Expected: {EXPECTED_EMBEDDING_DIMENSION}, Received: {request.Embedding.Length} for employee {request.EmployeeId}");
+                    _logger.LogWarning($"🚨 [SECURITY] Embedding dimension mismatch - Expected: {EXPECTED_EMBEDDING_DIMENSION_CUSTOM} (custom) or {EXPECTED_EMBEDDING_DIMENSION_FACENET} (FaceNet), Received: {request.Embedding.Length} for employee {request.EmployeeId}");
                     return new FaceVerificationResultDTO
                     {
                         Success = false,
-                        Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION} dimensions, got {request.Embedding.Length}). Vui lòng đăng ký lại khuôn mặt.",
+                        Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION_CUSTOM} (custom) or {EXPECTED_EMBEDDING_DIMENSION_FACENET} (FaceNet) dimensions, got {request.Embedding.Length}). Vui lòng đăng ký lại khuôn mặt.",
                         IsMatch = false
                     };
                 }
+                
+                // Determine embedding type and appropriate threshold
+                bool isFaceNet = request.Embedding.Length == EXPECTED_EMBEDDING_DIMENSION_FACENET;
+                _logger.LogInformation($"📊 [VERIFY] Using {(isFaceNet ? "FaceNet 512-dim" : "custom 256-dim")} embedding for employee {request.EmployeeId}");
 
                 var faceRegistrations = await _context.FaceRegistrations
                     .Where(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive)
@@ -617,19 +625,30 @@ namespace dotnet_api.Services
                 // Log all similarity scores for debugging
                 _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.FaceId}:{d.Similarity:F3}"))}");
 
-                // SECURITY: Use very high threshold to prevent false positives (wrong person being recognized)
-                // Threshold: 0.92 (92% similarity) - very strict to prevent security breaches
-                // Note: With 256-dim embedding, same person should achieve 90-95% similarity
-                // If similarity < 92%, likely a different person
-                const float similarityThreshold = 0.92f;
+                // SECURITY: Use appropriate threshold based on embedding type
+                // FaceNet (512-dim): More accurate, can use lower threshold (85-88%)
+                // Custom (256-dim): Less accurate, need higher threshold (92%)
+                float similarityThreshold;
+                if (isFaceNet)
+                {
+                    similarityThreshold = 0.85f; // 85% for FaceNet (more accurate)
+                    _logger.LogInformation($"🎯 [VERIFY] Using FaceNet threshold: {similarityThreshold:F2} (85%)");
+                }
+                else
+                {
+                    similarityThreshold = 0.92f; // 92% for custom embedding (stricter)
+                    _logger.LogInformation($"🎯 [VERIFY] Using custom embedding threshold: {similarityThreshold:F2} (92%)");
+                }
                 
-                // Additional security: require at least 2 poses to match if similarity is borderline (90-92%)
+                // Additional security: require at least 2 poses to match if similarity is borderline
                 // For now, use strict single threshold
                 var isMatch = bestSimilarity >= similarityThreshold;
                 
-                // EXTRA SECURITY: Even if above threshold, reject if similarity is suspiciously low for same person
-                // Same person with good quality should achieve 93%+ with 256-dim embedding
-                if (isMatch && bestSimilarity < 0.93f)
+                // EXTRA SECURITY: Even if above threshold, log warning if similarity is suspiciously low for same person
+                // FaceNet: same person should achieve 90%+ with good quality
+                // Custom: same person should achieve 93%+ with good quality
+                float minExpectedSimilarity = isFaceNet ? 0.90f : 0.93f;
+                if (isMatch && bestSimilarity < minExpectedSimilarity)
                 {
                     _logger.LogWarning($"🚨 [SECURITY ALERT] Borderline match (similarity: {bestSimilarity:F3}) - This might be a different person!");
                     // Still allow but log warning - you can set isMatch = false here if want stricter

@@ -3,6 +3,7 @@ using dotnet_api.Data.Entities;
 using dotnet_api.Data.Enums;
 using dotnet_api.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 
 namespace dotnet_api.Services
 {
@@ -10,11 +11,30 @@ namespace dotnet_api.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SimpleAttendanceService> _logger;
+        
+        // In-memory cache for verification tokens to prevent replay attacks
+        // Key: VerificationToken, Value: Expiry timestamp
+        private static readonly ConcurrentDictionary<string, DateTime> _verificationTokenCache = new();
 
         public SimpleAttendanceService(ApplicationDbContext context, ILogger<SimpleAttendanceService> logger)
         {
             _context = context;
             _logger = logger;
+        }
+        
+        // Clean up expired tokens periodically
+        private void CleanupExpiredTokens()
+        {
+            var now = DateTime.UtcNow;
+            var expiredKeys = _verificationTokenCache
+                .Where(kvp => kvp.Value < now)
+                .Select(kvp => kvp.Key)
+                .ToList();
+            
+            foreach (var key in expiredKeys)
+            {
+                _verificationTokenCache.TryRemove(key, out _);
+            }
         }
 
         public async Task<AttendanceCheckInResult> CheckInAsync(AttendanceCheckInRequest request)
@@ -94,15 +114,126 @@ namespace dotnet_api.Services
             }
         }
 
-        public async Task<AttendanceCheckInResult> CheckInNoImageAsync(AttendanceCheckInNoImageRequest request)
+        public async Task<AttendanceCheckInResult> CheckInNoImageAsync(AttendanceCheckInNoImageRequest request, string authenticatedUserId)
         {
             try
             {
-                _logger.LogInformation($"Processing no-image check-in for employee: {request.EmployeeId}");
+                _logger.LogInformation($"🔒 [SECURITY] Processing no-image check-in for employee: {request.EmployeeId}, Authenticated user: {authenticatedUserId}");
 
+                // SECURITY VALIDATION 1: Verify employee exists
+                var employee = await _context.Users.FindAsync(request.EmployeeId);
+                if (employee == null)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Employee not found: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy thông tin nhân viên",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY VALIDATION 2: Validate MatchedFaceId is provided
+                if (string.IsNullOrWhiteSpace(request.MatchedFaceId))
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Missing MatchedFaceId for employee: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Không có thông tin xác thực khuôn mặt. Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY VALIDATION 3: Validate MatchConfidence meets threshold
+                const float REQUIRED_CONFIDENCE_THRESHOLD = 0.92f;
+                if (!request.MatchConfidence.HasValue || request.MatchConfidence.Value < REQUIRED_CONFIDENCE_THRESHOLD)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Insufficient confidence for employee: {request.EmployeeId}, Confidence: {request.MatchConfidence}, Required: {REQUIRED_CONFIDENCE_THRESHOLD}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = $"Độ tin cậy nhận diện không đạt yêu cầu ({(request.MatchConfidence * 100):F1}% < {REQUIRED_CONFIDENCE_THRESHOLD * 100:F0}%). Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY VALIDATION 4: Verify MatchedFaceId exists and belongs to this employee
+                var faceRegistration = await _context.FaceRegistrations
+                    .FirstOrDefaultAsync(fr => 
+                        fr.FaceId == request.MatchedFaceId && 
+                        fr.EmployeeId == request.EmployeeId && 
+                        fr.IsActive);
+                
+                if (faceRegistration == null)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Invalid or inactive FaceId: {request.MatchedFaceId} for employee: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Khuôn mặt đăng ký không hợp lệ hoặc đã bị vô hiệu hóa. Vui lòng đăng ký lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY VALIDATION 5: Validate VerificationTimestamp (must be within 30 seconds)
+                if (!request.VerificationTimestamp.HasValue)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Missing VerificationTimestamp for employee: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Thông tin xác thực không hợp lệ. Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                var verificationAge = DateTime.UtcNow - request.VerificationTimestamp.Value;
+                const int MAX_VERIFICATION_AGE_SECONDS = 30;
+                if (verificationAge.TotalSeconds > MAX_VERIFICATION_AGE_SECONDS || verificationAge.TotalSeconds < 0)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Verification timestamp expired or invalid for employee: {request.EmployeeId}, Age: {verificationAge.TotalSeconds:F1}s");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Phiên xác thực đã hết hạn. Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY VALIDATION 6: Validate VerificationToken and prevent replay attacks
+                if (string.IsNullOrWhiteSpace(request.VerificationToken))
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Missing VerificationToken for employee: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Thông tin xác thực không hợp lệ. Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // Check if token already used (replay attack detection)
+                if (_verificationTokenCache.ContainsKey(request.VerificationToken))
+                {
+                    _logger.LogWarning($"🚨 [SECURITY ALERT] Replay attack detected! VerificationToken reused: {request.VerificationToken.Substring(0, Math.Min(8, request.VerificationToken.Length))}... for employee: {request.EmployeeId}");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Phiên xác thực đã được sử dụng. Vui lòng quét lại khuôn mặt.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // Add token to cache (expire in 60 seconds)
+                _verificationTokenCache.TryAdd(request.VerificationToken, DateTime.UtcNow.AddSeconds(60));
+                CleanupExpiredTokens();
+
+                // Check if already checked in today
                 var existingAttendance = await GetTodayAttendanceAsync(request.EmployeeId);
                 if (existingAttendance != null && existingAttendance.CheckInDateTime.HasValue)
                 {
+                    _logger.LogInformation($"ℹ️ Employee {request.EmployeeId} already checked in today at {existingAttendance.CheckInDateTime}");
                     return new AttendanceCheckInResult
                     {
                         Success = false,
@@ -113,16 +244,8 @@ namespace dotnet_api.Services
                     };
                 }
 
-                var employee = await _context.Users.FindAsync(request.EmployeeId);
-                if (employee == null)
-                {
-                    return new AttendanceCheckInResult
-                    {
-                        Success = false,
-                        Message = "Không tìm thấy thông tin nhân viên",
-                        EmployeeId = request.EmployeeId
-                    };
-                }
+                // All validations passed - create attendance record
+                _logger.LogInformation($"✅ [SECURITY] All validations passed for employee: {request.EmployeeId}, FaceId: {faceRegistration.FaceId}, Confidence: {request.MatchConfidence:F3}");
 
                 var attendance = new Attendance
                 {
@@ -140,6 +263,8 @@ namespace dotnet_api.Services
 
                 _context.Attendances.Add(attendance);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation($"✅ Check-in successful for employee: {request.EmployeeId}, Attendance ID: {attendance.ID}, FaceId: {faceRegistration.FaceId}, Confidence: {request.MatchConfidence:F3}");
 
                 return new AttendanceCheckInResult
                 {

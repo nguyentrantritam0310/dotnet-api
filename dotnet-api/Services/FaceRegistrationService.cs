@@ -366,6 +366,13 @@ namespace dotnet_api.Services
                             continue;
                         }
 
+                        // SECURITY: Check embedding dimension mismatch
+                        if (verifyEmbedding.Length != registeredEmbedding.Length)
+                        {
+                            _logger.LogWarning($"⚠️ [SECURITY] Embedding dimension mismatch - Verify: {verifyEmbedding.Length}, Registered: {registeredEmbedding.Length}. FaceId: {registration.FaceId}. Skipping comparison.");
+                            continue; // Skip comparison if dimensions don't match
+                        }
+
                         // Calculate cosine similarity
                         var similarity = CalculateCosineSimilarity(verifyEmbedding, registeredEmbedding);
                         
@@ -382,18 +389,27 @@ namespace dotnet_api.Services
                     }
                 }
 
-                // SECURITY: Use higher threshold to prevent false positives (wrong person being recognized)
-                // Threshold: 0.88 (88% similarity) - stricter than before to prevent security issues
-                const float similarityThreshold = 0.88f;
+                // SECURITY: Use very high threshold to prevent false positives (wrong person being recognized)
+                // Threshold: 0.92 (92% similarity) - very strict to prevent security breaches
+                // Note: With 256-dim embedding, same person should achieve 90-95% similarity
+                const float similarityThreshold = 0.92f;
                 var isMatch = bestSimilarity >= similarityThreshold;
+                
+                // EXTRA SECURITY: Even if above threshold, reject if similarity is suspiciously low for same person
+                // Same person with good quality should achieve 93%+ with 256-dim embedding
+                if (isMatch && bestSimilarity < 0.93f)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY ALERT] Borderline match (similarity: {bestSimilarity:F3}) - This might be a different person!");
+                    // Still allow but log warning - you can set isMatch = false here if want stricter
+                }
 
                 // Log security-critical information
                 _logger.LogWarning($"🔒 [SECURITY] Face verification attempt - EmployeeId: {request.EmployeeId}, BestSimilarity: {bestSimilarity:F3}, Threshold: {similarityThreshold}, IsMatch: {isMatch}, MatchedFaceId: {bestMatch?.FaceId}");
                 
                 // If similarity is suspiciously high but person is different, log warning
-                if (isMatch && bestSimilarity > 0.95f)
+                if (isMatch && bestSimilarity > 0.98f)
                 {
-                    _logger.LogWarning($"⚠️ [SECURITY WARNING] Very high similarity ({bestSimilarity:F3}) - verify this is correct person");
+                    _logger.LogWarning($"⚠️ [SECURITY WARNING] Extremely high similarity ({bestSimilarity:F3}) - verify this is correct person (possible duplicate or same photo)");
                 }
 
                 var user = await _context.ApplicationUsers
@@ -524,12 +540,37 @@ namespace dotnet_api.Services
         {
             try
             {
+                // Validate embedding dimension upfront
+                const int EXPECTED_EMBEDDING_DIMENSION = 256;
+                if (request.Embedding == null || request.Embedding.Length == 0)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Invalid embedding: null or empty for employee {request.EmployeeId}");
+                    return new FaceVerificationResultDTO
+                    {
+                        Success = false,
+                        Message = "Embedding không hợp lệ",
+                        IsMatch = false
+                    };
+                }
+
+                if (request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Embedding dimension mismatch - Expected: {EXPECTED_EMBEDDING_DIMENSION}, Received: {request.Embedding.Length} for employee {request.EmployeeId}");
+                    return new FaceVerificationResultDTO
+                    {
+                        Success = false,
+                        Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION} dimensions, got {request.Embedding.Length}). Vui lòng đăng ký lại khuôn mặt.",
+                        IsMatch = false
+                    };
+                }
+
                 var faceRegistrations = await _context.FaceRegistrations
                     .Where(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive)
                     .ToListAsync();
 
                 if (!faceRegistrations.Any())
                 {
+                    _logger.LogInformation($"ℹ️ No active face registrations found for employee {request.EmployeeId}");
                     return new FaceVerificationResultDTO
                     {
                         Success = false,
@@ -550,6 +591,13 @@ namespace dotnet_api.Services
                         var registeredEmbedding = JsonSerializer.Deserialize<float[]>(registration.EmbeddingData);
                         if (registeredEmbedding == null || registeredEmbedding.Length == 0) continue;
 
+                        // SECURITY: Check embedding dimension mismatch
+                        if (request.Embedding.Length != registeredEmbedding.Length)
+                        {
+                            _logger.LogWarning($"⚠️ [SECURITY] Embedding dimension mismatch - Request: {request.Embedding.Length}, Registered: {registeredEmbedding.Length}. FaceId: {registration.FaceId}. Skipping comparison.");
+                            continue; // Skip comparison if dimensions don't match
+                        }
+                        
                         var similarity = CalculateCosineSimilarity(request.Embedding, registeredEmbedding);
                         similarityDetails.Add((registration.FaceId, similarity));
                         
@@ -569,14 +617,23 @@ namespace dotnet_api.Services
                 // Log all similarity scores for debugging
                 _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.FaceId}:{d.Similarity:F3}"))}");
 
-                // SECURITY: Use higher threshold to prevent false positives (wrong person being recognized)
-                // Threshold: 0.88 (88% similarity) - stricter than before to prevent security issues
-                // Note: With proper embedding alignment, 88% should be achievable for same person
-                const float similarityThreshold = 0.88f;
+                // SECURITY: Use very high threshold to prevent false positives (wrong person being recognized)
+                // Threshold: 0.92 (92% similarity) - very strict to prevent security breaches
+                // Note: With 256-dim embedding, same person should achieve 90-95% similarity
+                // If similarity < 92%, likely a different person
+                const float similarityThreshold = 0.92f;
                 
-                // Additional security check: ensure similarity is significantly above threshold to reduce false positives
-                // If similarity is just barely above threshold, require multiple poses to match
+                // Additional security: require at least 2 poses to match if similarity is borderline (90-92%)
+                // For now, use strict single threshold
                 var isMatch = bestSimilarity >= similarityThreshold;
+                
+                // EXTRA SECURITY: Even if above threshold, reject if similarity is suspiciously low for same person
+                // Same person with good quality should achieve 93%+ with 256-dim embedding
+                if (isMatch && bestSimilarity < 0.93f)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY ALERT] Borderline match (similarity: {bestSimilarity:F3}) - This might be a different person!");
+                    // Still allow but log warning - you can set isMatch = false here if want stricter
+                }
                 
                 // Log security-critical information
                 _logger.LogWarning($"🔒 [SECURITY] Face verification attempt - EmployeeId: {request.EmployeeId}, BestSimilarity: {bestSimilarity:F3}, Threshold: {similarityThreshold}, IsMatch: {isMatch}, MatchedFaceId: {bestMatch?.FaceId}");

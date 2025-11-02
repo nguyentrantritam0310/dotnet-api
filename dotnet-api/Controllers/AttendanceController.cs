@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using dotnet_api.Services;
 using dotnet_api.DTOs;
 
@@ -6,6 +8,7 @@ namespace dotnet_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AttendanceController : ControllerBase
     {
         private readonly SimpleAttendanceService _attendanceService;
@@ -48,7 +51,7 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
-        /// Chấm công vào (không ảnh)
+        /// Chấm công vào (không ảnh) - Requires face verification
         /// </summary>
         [HttpPost("checkin-noimage")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckInNoImage([FromBody] AttendanceCheckInNoImageRequest request)
@@ -60,7 +63,19 @@ namespace dotnet_api.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var result = await _attendanceService.CheckInNoImageAsync(request);
+                // SECURITY: Validate that user can only check-in for themselves
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
+                }
+
+                if (request.EmployeeId != currentUserId)
+                {
+                    return Forbid("Bạn chỉ có thể chấm công cho chính mình");
+                }
+
+                var result = await _attendanceService.CheckInNoImageAsync(request, currentUserId);
                 if (result.Success) return Ok(result);
                 return BadRequest(result);
             }

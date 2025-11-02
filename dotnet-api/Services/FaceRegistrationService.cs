@@ -382,8 +382,9 @@ namespace dotnet_api.Services
                     }
                 }
 
-                // Threshold for match: 0.85 (85% similarity)
-                const float similarityThreshold = 0.85f;
+                // Threshold for match: 0.80 (80% similarity) - lowered from 0.85 to accommodate embedding differences
+                // TODO: After users re-register with new embedding algorithm, can increase back to 0.85
+                const float similarityThreshold = 0.80f;
                 var isMatch = bestSimilarity >= similarityThreshold;
 
                 var user = await _context.ApplicationUsers
@@ -553,7 +554,9 @@ namespace dotnet_api.Services
                     }
                 }
 
-                const float similarityThreshold = 0.85f;
+                // Threshold for match: 0.80 (80% similarity) - lowered from 0.85 to accommodate embedding differences
+                // TODO: After users re-register with new embedding algorithm, can increase back to 0.85
+                const float similarityThreshold = 0.80f;
                 var isMatch = bestSimilarity >= similarityThreshold;
 
                 var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
@@ -717,7 +720,7 @@ namespace dotnet_api.Services
             }
         }
 
-        private float CalculateFaceQualityScore(FaceFeaturesDTO faceFeatures)
+        private float CalculateFaceQualityScore(FaceFeaturesDTO faceFeatures, bool isMultiPose = false)
         {
             if (faceFeatures == null)
             {
@@ -729,17 +732,34 @@ namespace dotnet_api.Services
             bool hasValidData = false;
 
             // Deduct points for head rotation angles
+            // For multi-pose registration, we allow rotation up to 45 degrees before penalizing
             if (faceFeatures.HeadEulerAngles != null)
             {
                 var angleX = Math.Abs(faceFeatures.HeadEulerAngles.X);
                 var angleY = Math.Abs(faceFeatures.HeadEulerAngles.Y);
                 var angleZ = Math.Abs(faceFeatures.HeadEulerAngles.Z);
 
-                // Deduct 2 points per degree of rotation
-                score -= (angleX + angleY + angleZ) * 2;
+                if (isMultiPose)
+                {
+                    // For multi-pose: only penalize excessive rotation (>45 degrees)
+                    var excessiveX = Math.Max(0, angleX - 45);
+                    var excessiveY = Math.Max(0, angleY - 45);
+                    var excessiveZ = Math.Max(0, angleZ - 45);
+                    score -= (excessiveX + excessiveY + excessiveZ) * 2; // 2 points per excessive degree
+                    
+                    _logger.LogDebug($"Multi-pose - Head angles - X: {angleX:F2}°, Y: {angleY:F2}°, Z: {angleZ:F2}°, Excessive deduction: {(excessiveX + excessiveY + excessiveZ) * 2:F1}");
+                }
+                else
+                {
+                    // For single-pose: only penalize excessive rotation (>30 degrees)
+                    var excessiveX = Math.Max(0, angleX - 30);
+                    var excessiveY = Math.Max(0, angleY - 30);
+                    var excessiveZ = Math.Max(0, angleZ - 30);
+                    score -= (excessiveX + excessiveY + excessiveZ) * 2;
+                    
+                    _logger.LogDebug($"Single-pose - Head angles - X: {angleX:F2}°, Y: {angleY:F2}°, Z: {angleZ:F2}°, Excessive deduction: {(excessiveX + excessiveY + excessiveZ) * 2:F1}");
+                }
                 hasValidData = true;
-                
-                _logger.LogDebug($"Head angles - X: {angleX:F2}°, Y: {angleY:F2}°, Z: {angleZ:F2}°, Score deduction: {(angleX + angleY + angleZ) * 2:F1}");
             }
             else
             {

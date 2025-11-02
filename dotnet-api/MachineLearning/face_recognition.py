@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
-Face Recognition System using YOLOv8 and FaceNet
-Phát hiện khuôn mặt bằng YOLOv8, nhận dạng bằng FaceNet
+Face Recognition System using MTCNN and FaceNet
+Phát hiện và align khuôn mặt bằng MTCNN, nhận dạng bằng FaceNet
+Note: Client (React Native) đã dùng ML Kit để detect face trước khi gửi ảnh lên server.
+MTCNN ở server chỉ dùng để align face tốt hơn và validate face có trong ảnh.
 """
 
 import sys
@@ -19,13 +21,12 @@ from PIL import Image
 
 # Machine Learning imports
 try:
-    from ultralytics import YOLO
     import torch
     from facenet_pytorch import MTCNN, InceptionResnetV1
     import torch.nn.functional as F
 except ImportError as e:
     print(f"Lỗi import: {e}")
-    print("Vui lòng cài đặt: pip install ultralytics torch facenet-pytorch opencv-python pillow")
+    print("Vui lòng cài đặt: pip install torch facenet-pytorch opencv-python pillow")
     sys.exit(1)
 
 # Setup logging
@@ -45,14 +46,13 @@ class FaceRecognitionSystem:
         
         # Đường dẫn các file
         self.face_db_path = self.model_dir / "face_database.pkl"
-        self.yolo_model_path = self.model_dir / "yolov8n-face.pt"
         
         # Thresholds
         self.face_detection_confidence = 0.5
         self.face_recognition_threshold = 0.6
         
         # Initialize models
-        self.yolo_model = None
+        # Note: YOLO không được dùng vì client đã detect face bằng ML Kit trước khi gửi ảnh
         self.mtcnn = None
         self.facenet_model = None
         
@@ -60,11 +60,10 @@ class FaceRecognitionSystem:
         self.load_face_database()
     
     def load_models(self):
-        """Load các model YOLO và FaceNet"""
+        """Load các model MTCNN và FaceNet"""
         try:
-            logger.info("Đang tải YOLO model...")
-            # Tải YOLO model cho face detection
-            self.yolo_model = YOLO('yolov8n.pt')  # Sẽ fine-tune cho face detection
+            # Note: YOLO không cần vì client (React Native) đã detect face bằng ML Kit
+            # MTCNN chỉ dùng để align face tốt hơn và validate face trong ảnh
             
             logger.info("Đang tải MTCNN model...")
             # MTCNN cho face detection và alignment
@@ -114,38 +113,7 @@ class FaceRecognitionSystem:
         except Exception as e:
             logger.error(f"Lỗi khi save face database: {e}")
     
-    def detect_faces_yolo(self, image: np.ndarray) -> List[Tuple[int, int, int, int, float]]:
-        """
-        Phát hiện khuôn mặt bằng YOLO
-        
-        Args:
-            image: Ảnh input
-            
-        Returns:
-            List of (x1, y1, x2, y2, confidence)
-        """
-        try:
-            results = self.yolo_model(image, conf=self.face_detection_confidence)
-            faces = []
-            
-            for result in results:
-                boxes = result.boxes
-                if boxes is not None:
-                    for box in boxes:
-                        # Lấy class (person) và confidence
-                        cls = int(box.cls[0])
-                        conf = float(box.conf[0])
-                        
-                        # Chỉ lấy class person (class 0 trong COCO dataset)
-                        if cls == 0 and conf > self.face_detection_confidence:
-                            x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
-                            faces.append((int(x1), int(y1), int(x2), int(y2), conf))
-            
-            return faces
-            
-        except Exception as e:
-            logger.error(f"Lỗi trong YOLO face detection: {e}")
-            return []
+    # Removed detect_faces_yolo - không cần vì client đã detect face bằng ML Kit
     
     def detect_and_align_faces_mtcnn(self, image: np.ndarray) -> List[Tuple[np.ndarray, float]]:
         """
@@ -429,7 +397,7 @@ class FaceRecognitionSystem:
                     "message": "MTCNN chưa được khởi tạo"
                 }
             
-            # Detect faces using MTCNN (nhanh hơn YOLO cho detection đơn giản)
+            # Detect faces using MTCNN (client đã detect bằng ML Kit, nhưng MTCNN align tốt hơn)
             aligned_faces = self.detect_and_align_faces_mtcnn(image)
             
             if not aligned_faces:
@@ -473,6 +441,7 @@ def main():
         print("  register <image_path> <employee_id> - Đăng ký khuôn mặt")
         print("  recognize <image_path> - Nhận dạng khuôn mặt")
         print("  detect <image_path> - Phát hiện khuôn mặt")
+        print("  extract_embedding <image_path> - Extract FaceNet embedding từ ảnh")
         sys.exit(1)
     
     command = sys.argv[1]
@@ -494,6 +463,40 @@ def main():
         
     elif command == "detect":
         result = face_system.detect_face(image_path)
+        
+    elif command == "extract_embedding":
+        # Extract embedding từ ảnh (không cần employee_id)
+        image = cv2.imread(image_path)
+        if image is None:
+            result = {
+                "success": False,
+                "message": "Không thể đọc ảnh"
+            }
+        else:
+            # Detect và align face
+            aligned_faces = face_system.detect_and_align_faces_mtcnn(image)
+            if not aligned_faces:
+                result = {
+                    "success": False,
+                    "message": "Không phát hiện được khuôn mặt"
+                }
+            else:
+                # Lấy khuôn mặt tốt nhất
+                best_face, best_confidence = max(aligned_faces, key=lambda x: x[1])
+                # Extract embedding
+                embedding = face_system.extract_face_embedding(best_face)
+                if embedding is not None:
+                    result = {
+                        "success": True,
+                        "message": "Extract embedding thành công",
+                        "embedding": embedding.tolist(),  # Convert numpy array to list for JSON
+                        "confidence": float(best_confidence)
+                    }
+                else:
+                    result = {
+                        "success": False,
+                        "message": "Không thể extract embedding"
+                    }
         
     else:
         result = {

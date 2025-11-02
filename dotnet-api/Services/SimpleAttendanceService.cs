@@ -188,11 +188,23 @@ namespace dotnet_api.Services
                     };
                 }
 
-                var verificationAge = DateTime.UtcNow - request.VerificationTimestamp.Value;
-                const int MAX_VERIFICATION_AGE_SECONDS = 30;
-                if (verificationAge.TotalSeconds > MAX_VERIFICATION_AGE_SECONDS || verificationAge.TotalSeconds < 0)
+                // Parse timestamp and handle timezone issues
+                var verificationTime = request.VerificationTimestamp.Value;
+                // Ensure timestamp is in UTC
+                if (verificationTime.Kind == DateTimeKind.Unspecified)
                 {
-                    _logger.LogWarning($"🚨 [SECURITY] Verification timestamp expired or invalid for employee: {request.EmployeeId}, Age: {verificationAge.TotalSeconds:F1}s");
+                    verificationTime = DateTime.SpecifyKind(verificationTime, DateTimeKind.Utc);
+                }
+                else if (verificationTime.Kind == DateTimeKind.Local)
+                {
+                    verificationTime = verificationTime.ToUniversalTime();
+                }
+
+                var verificationAge = DateTime.UtcNow - verificationTime;
+                const int MAX_VERIFICATION_AGE_SECONDS = 60; // Increased to 60 seconds to allow for network/processing delays
+                if (verificationAge.TotalSeconds > MAX_VERIFICATION_AGE_SECONDS)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Verification timestamp expired for employee: {request.EmployeeId}, Age: {verificationAge.TotalSeconds:F1}s, Max: {MAX_VERIFICATION_AGE_SECONDS}s");
                     return new AttendanceCheckInResult
                     {
                         Success = false,
@@ -200,6 +212,20 @@ namespace dotnet_api.Services
                         EmployeeId = request.EmployeeId
                     };
                 }
+                
+                // Allow small negative time (clock skew between devices, max 5 seconds)
+                if (verificationAge.TotalSeconds < -5)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] Verification timestamp is too far in the future for employee: {request.EmployeeId}, Age: {verificationAge.TotalSeconds:F1}s");
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Thời gian xác thực không hợp lệ. Vui lòng kiểm tra đồng hồ thiết bị.",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+                
+                _logger.LogDebug($"✅ [SECURITY] Verification timestamp valid - Age: {verificationAge.TotalSeconds:F1}s");
 
                 // SECURITY VALIDATION 6: Validate VerificationToken and prevent replay attacks
                 if (string.IsNullOrWhiteSpace(request.VerificationToken))

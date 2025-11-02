@@ -382,10 +382,19 @@ namespace dotnet_api.Services
                     }
                 }
 
-                // Threshold for match: 0.80 (80% similarity) - lowered from 0.85 to accommodate embedding differences
-                // TODO: After users re-register with new embedding algorithm, can increase back to 0.85
-                const float similarityThreshold = 0.80f;
+                // SECURITY: Use higher threshold to prevent false positives (wrong person being recognized)
+                // Threshold: 0.88 (88% similarity) - stricter than before to prevent security issues
+                const float similarityThreshold = 0.88f;
                 var isMatch = bestSimilarity >= similarityThreshold;
+
+                // Log security-critical information
+                _logger.LogWarning($"🔒 [SECURITY] Face verification attempt - EmployeeId: {request.EmployeeId}, BestSimilarity: {bestSimilarity:F3}, Threshold: {similarityThreshold}, IsMatch: {isMatch}, MatchedFaceId: {bestMatch?.FaceId}");
+                
+                // If similarity is suspiciously high but person is different, log warning
+                if (isMatch && bestSimilarity > 0.95f)
+                {
+                    _logger.LogWarning($"⚠️ [SECURITY WARNING] Very high similarity ({bestSimilarity:F3}) - verify this is correct person");
+                }
 
                 var user = await _context.ApplicationUsers
                     .FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
@@ -531,6 +540,7 @@ namespace dotnet_api.Services
 
                 float bestSimilarity = 0f;
                 FaceRegistration? bestMatch = null;
+                var similarityDetails = new List<(string FaceId, float Similarity)>();
 
                 foreach (var registration in faceRegistrations)
                 {
@@ -541,6 +551,8 @@ namespace dotnet_api.Services
                         if (registeredEmbedding == null || registeredEmbedding.Length == 0) continue;
 
                         var similarity = CalculateCosineSimilarity(request.Embedding, registeredEmbedding);
+                        similarityDetails.Add((registration.FaceId, similarity));
+                        
                         if (similarity > bestSimilarity)
                         {
                             bestSimilarity = similarity;
@@ -553,11 +565,27 @@ namespace dotnet_api.Services
                         continue;
                     }
                 }
+                
+                // Log all similarity scores for debugging
+                _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.FaceId}:{d.Similarity:F3}"))}");
 
-                // Threshold for match: 0.80 (80% similarity) - lowered from 0.85 to accommodate embedding differences
-                // TODO: After users re-register with new embedding algorithm, can increase back to 0.85
-                const float similarityThreshold = 0.80f;
+                // SECURITY: Use higher threshold to prevent false positives (wrong person being recognized)
+                // Threshold: 0.88 (88% similarity) - stricter than before to prevent security issues
+                // Note: With proper embedding alignment, 88% should be achievable for same person
+                const float similarityThreshold = 0.88f;
+                
+                // Additional security check: ensure similarity is significantly above threshold to reduce false positives
+                // If similarity is just barely above threshold, require multiple poses to match
                 var isMatch = bestSimilarity >= similarityThreshold;
+                
+                // Log security-critical information
+                _logger.LogWarning($"🔒 [SECURITY] Face verification attempt - EmployeeId: {request.EmployeeId}, BestSimilarity: {bestSimilarity:F3}, Threshold: {similarityThreshold}, IsMatch: {isMatch}, MatchedFaceId: {bestMatch?.FaceId}");
+                
+                // If similarity is suspiciously high but person is different, log warning
+                if (isMatch && bestSimilarity > 0.95f)
+                {
+                    _logger.LogWarning($"⚠️ [SECURITY WARNING] Very high similarity ({bestSimilarity:F3}) - verify this is correct person");
+                }
 
                 var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
 

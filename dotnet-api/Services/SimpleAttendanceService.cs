@@ -29,25 +29,29 @@ namespace dotnet_api.Services
         // If database stores local time, we store: 22:28 directly
         private DateTime ParseAsVietnamTime(DateTime dateTime)
         {
-            // If datetime is unspecified (from string without timezone), treat as Vietnam local time
+            // Client sends local datetime string WITHOUT timezone (e.g., "2025-11-03T22:28:00")
+            // This represents Vietnam local time (GMT+7). We store it directly as-is in database.
+            // Database will store this as Vietnam time, not UTC.
             if (dateTime.Kind == DateTimeKind.Unspecified)
             {
-                // Database appears to store times in UTC (based on the 7-hour difference observed)
-                // Client sends 22:28 Vietnam time → Convert to 15:28 UTC for storage
-                // When querying, UTC will be converted back to local time by client/display layer
-                return DateTime.SpecifyKind(dateTime.AddHours(-7), DateTimeKind.Utc);
-            }
-            
-            // If already UTC, keep as UTC
-            if (dateTime.Kind == DateTimeKind.Utc)
-            {
+                // Treat as Vietnam local time and store directly (no conversion)
+                // Keep as Unspecified so it's stored as-is in database
                 return dateTime;
             }
             
-            // If already local, convert to UTC (Vietnam is UTC+7)
+            // If datetime comes with timezone info (Local or UTC), extract the actual time value
             if (dateTime.Kind == DateTimeKind.Local)
             {
-                return dateTime.ToUniversalTime();
+                // Convert Local to Unspecified to store the actual time value (not timezone-aware)
+                // This preserves the actual hour:minute:second as sent by client
+                return DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
+            }
+            
+            // If UTC, convert back to Vietnam time by adding 7 hours, then store as Unspecified
+            if (dateTime.Kind == DateTimeKind.Utc)
+            {
+                // Convert UTC to Vietnam time (+7 hours) and store as Unspecified
+                return DateTime.SpecifyKind(dateTime.AddHours(7), DateTimeKind.Unspecified);
             }
             
             return dateTime;
@@ -222,15 +226,19 @@ namespace dotnet_api.Services
 
                 // Parse timestamp and handle timezone issues
                 var verificationTime = request.VerificationTimestamp.Value;
+                _logger.LogInformation($"🕐 [SECURITY] Received VerificationTimestamp: {verificationTime}, Kind: {verificationTime.Kind}");
                 // Ensure timestamp is in UTC
                 if (verificationTime.Kind == DateTimeKind.Unspecified)
                 {
+                    _logger.LogWarning($"⚠️ [SECURITY] VerificationTimestamp is Unspecified, assuming UTC");
                     verificationTime = DateTime.SpecifyKind(verificationTime, DateTimeKind.Utc);
                 }
                 else if (verificationTime.Kind == DateTimeKind.Local)
                 {
+                    _logger.LogInformation($"🕐 [SECURITY] Converting VerificationTimestamp from Local to UTC");
                     verificationTime = verificationTime.ToUniversalTime();
                 }
+                _logger.LogInformation($"🕐 [SECURITY] Final VerificationTimestamp (UTC): {verificationTime}, Kind: {verificationTime.Kind}");
 
                 var verificationAge = DateTime.UtcNow - verificationTime;
                 const int MAX_VERIFICATION_AGE_SECONDS = 60; // Increased to 60 seconds to allow for network/processing delays
@@ -306,7 +314,9 @@ namespace dotnet_api.Services
                 _logger.LogInformation($"✅ [SECURITY] All validations passed for employee: {request.EmployeeId}, FaceId: {faceRegistration.FaceId}, Confidence: {request.MatchConfidence:F3}");
 
                 // Parse CheckInDateTime as Vietnam local time (GMT+7)
+                _logger.LogInformation($"📅 [CHECKIN] Received CheckInDateTime: {request.CheckInDateTime}, Kind: {request.CheckInDateTime.Kind}");
                 var checkInDateTime = ParseAsVietnamTime(request.CheckInDateTime);
+                _logger.LogInformation($"📅 [CHECKIN] Parsed CheckInDateTime: {checkInDateTime}, Kind: {checkInDateTime.Kind}");
                 
                 var attendance = new Attendance
                 {

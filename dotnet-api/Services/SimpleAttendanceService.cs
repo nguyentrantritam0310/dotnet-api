@@ -22,6 +22,37 @@ namespace dotnet_api.Services
             _logger = logger;
         }
         
+        // Helper method to parse datetime string as Vietnam local time (GMT+7)
+        // Client sends local datetime string without timezone info (e.g., "2025-11-03T22:28:00")
+        // This represents Vietnam local time. We need to store it in database.
+        // If database stores UTC, we convert: 22:28 Vietnam → 15:28 UTC
+        // If database stores local time, we store: 22:28 directly
+        private DateTime ParseAsVietnamTime(DateTime dateTime)
+        {
+            // If datetime is unspecified (from string without timezone), treat as Vietnam local time
+            if (dateTime.Kind == DateTimeKind.Unspecified)
+            {
+                // Database appears to store times in UTC (based on the 7-hour difference observed)
+                // Client sends 22:28 Vietnam time → Convert to 15:28 UTC for storage
+                // When querying, UTC will be converted back to local time by client/display layer
+                return DateTime.SpecifyKind(dateTime.AddHours(-7), DateTimeKind.Utc);
+            }
+            
+            // If already UTC, keep as UTC
+            if (dateTime.Kind == DateTimeKind.Utc)
+            {
+                return dateTime;
+            }
+            
+            // If already local, convert to UTC (Vietnam is UTC+7)
+            if (dateTime.Kind == DateTimeKind.Local)
+            {
+                return dateTime.ToUniversalTime();
+            }
+            
+            return dateTime;
+        }
+        
         // Clean up expired tokens periodically
         private void CleanupExpiredTokens()
         {
@@ -273,11 +304,14 @@ namespace dotnet_api.Services
                 // All validations passed - create attendance record
                 _logger.LogInformation($"✅ [SECURITY] All validations passed for employee: {request.EmployeeId}, FaceId: {faceRegistration.FaceId}, Confidence: {request.MatchConfidence:F3}");
 
+                // Parse CheckInDateTime as Vietnam local time (GMT+7)
+                var checkInDateTime = ParseAsVietnamTime(request.CheckInDateTime);
+                
                 var attendance = new Attendance
                 {
                     EmployeeId = request.EmployeeId,
-                    CheckInDateTime = request.CheckInDateTime,
-                    CheckIn = request.CheckInDateTime.TimeOfDay,
+                    CheckInDateTime = checkInDateTime,
+                    CheckIn = checkInDateTime.TimeOfDay,
                     ImageCheckIn = string.Empty,
                     CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}",
                     AttendanceMachineId = request.AttendanceMachineId,
@@ -345,9 +379,12 @@ namespace dotnet_api.Services
                     };
                 }
 
+                // Parse CheckOutDateTime as Vietnam local time (GMT+7)
+                var checkOutDateTime = ParseAsVietnamTime(request.CheckOutDateTime);
+
                 // Cập nhật thông tin check-out
-                attendance.CheckOutDateTime = request.CheckOutDateTime;
-                attendance.CheckOut = request.CheckOutDateTime.TimeOfDay;
+                attendance.CheckOutDateTime = checkOutDateTime;
+                attendance.CheckOut = checkOutDateTime.TimeOfDay;
                 attendance.CheckOutLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
                 attendance.LastUpdated = DateTime.Now;
 

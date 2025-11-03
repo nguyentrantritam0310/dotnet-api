@@ -149,20 +149,4 @@ namespace dotnet_api.DTOs
         public string Notes { get; set; }
         public string EmployeeName { get; set; }
     }
-
-    // Extract embedding from image request/response
-    public class ExtractEmbeddingRequestDTO
-    {
-        [Required]
-        public string ImageBase64 { get; set; }
-    }
-
-    public class ExtractEmbeddingResponseDTO
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; }
-        public float[] Embedding { get; set; }
-        public float Confidence { get; set; }
-        public string EmbeddingType { get; set; } // "facenet" or "custom"
-    }
 }

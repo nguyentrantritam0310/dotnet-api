@@ -177,7 +177,8 @@ namespace dotnet_api.Services
                 }
 
                 // SECURITY VALIDATION 3: Validate MatchConfidence meets threshold
-                const float REQUIRED_CONFIDENCE_THRESHOLD = 0.92f;
+                // Reduced to 80% to match face verification threshold
+                const float REQUIRED_CONFIDENCE_THRESHOLD = 0.80f;
                 if (!request.MatchConfidence.HasValue || request.MatchConfidence.Value < REQUIRED_CONFIDENCE_THRESHOLD)
                 {
                     _logger.LogWarning($"🚨 [SECURITY] Insufficient confidence for employee: {request.EmployeeId}, Confidence: {request.MatchConfidence}, Required: {REQUIRED_CONFIDENCE_THRESHOLD}");

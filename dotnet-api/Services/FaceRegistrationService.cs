@@ -389,14 +389,14 @@ namespace dotnet_api.Services
                     }
                 }
 
-                // SECURITY: Use very high threshold to prevent false positives (wrong person being recognized)
-                // Threshold: 0.94 (94% similarity) - increased from 0.92 for stricter security
-                // Note: With 256-dim embedding, same person should achieve 93-95% similarity
-                const float similarityThreshold = 0.94f;
+                // SECURITY: Use threshold to prevent false positives (wrong person being recognized)
+                // Threshold: 0.80 (80% similarity) - reduced for less strict recognition
+                // Note: With FaceNet 512-dim embedding, same person should achieve 80%+ similarity
+                const float similarityThreshold = 0.80f;
                 
                 // FIX 1: Reject immediately if similarity too low (definitely wrong person)
                 bool isMatch;
-                if (bestSimilarity < 0.88f)
+                if (bestSimilarity < 0.75f)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Similarity too low ({bestSimilarity:F3}) - Definitely wrong person! Rejecting.");
                     isMatch = false;
@@ -407,8 +407,8 @@ namespace dotnet_api.Services
                 }
                 
                 // FIX 2: Reject if similarity below minimum expected (borderline match = likely wrong person)
-                // Same person with good quality should achieve 94%+ with 256-dim embedding
-                const float minExpectedSimilarity = 0.94f;
+                // Same person with good quality should achieve 83%+ with FaceNet 512-dim embedding
+                const float minExpectedSimilarity = 0.83f;
                 if (isMatch && bestSimilarity < minExpectedSimilarity)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Borderline match (similarity: {bestSimilarity:F3}) < minExpected ({minExpectedSimilarity:F3}) - REJECTING! This is likely a different person.");
@@ -552,9 +552,11 @@ namespace dotnet_api.Services
         {
             try
             {
-                // Support both 256-dim (custom) and 512-dim (FaceNet) embeddings
-                const int EXPECTED_EMBEDDING_DIMENSION_CUSTOM = 256;
+                // ONLY support FaceNet 512-dim embeddings
                 const int EXPECTED_EMBEDDING_DIMENSION_FACENET = 512;
+                
+                // Load user once to avoid duplicate declarations in different scopes
+                var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
                 
                 if (request.Embedding == null || request.Embedding.Length == 0)
                 {
@@ -567,25 +569,19 @@ namespace dotnet_api.Services
                     };
                 }
 
-                // Accept both 256-dim (custom) and 512-dim (FaceNet) embeddings
-                if (request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION_CUSTOM && 
-                    request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION_FACENET)
+                // ONLY accept FaceNet 512-dim embeddings
+                if (request.Embedding.Length != EXPECTED_EMBEDDING_DIMENSION_FACENET)
                 {
-                    _logger.LogWarning($"🚨 [SECURITY] Embedding dimension mismatch - Expected: {EXPECTED_EMBEDDING_DIMENSION_CUSTOM} (custom) or {EXPECTED_EMBEDDING_DIMENSION_FACENET} (FaceNet), Received: {request.Embedding.Length} for employee {request.EmployeeId}");
+                    _logger.LogWarning($"🚨 [SECURITY] Embedding dimension mismatch - Expected: {EXPECTED_EMBEDDING_DIMENSION_FACENET} (FaceNet), Received: {request.Embedding.Length} for employee {request.EmployeeId}");
                     return new FaceVerificationResultDTO
                     {
                         Success = false,
-                        Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION_CUSTOM} (custom) or {EXPECTED_EMBEDDING_DIMENSION_FACENET} (FaceNet) dimensions, got {request.Embedding.Length}). Vui lòng đăng ký lại khuôn mặt.",
+                        Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION_FACENET} dimensions FaceNet, got {request.Embedding.Length}). Vui lòng đăng ký lại khuôn mặt.",
                         IsMatch = false
                     };
                 }
                 
-                // Determine embedding type and appropriate threshold
-                bool isFaceNet = request.Embedding.Length == EXPECTED_EMBEDDING_DIMENSION_FACENET;
-                _logger.LogInformation($"📊 [VERIFY] Using {(isFaceNet ? "FaceNet 512-dim" : "custom 256-dim")} embedding for employee {request.EmployeeId}");
-
-                // Load user info once at the beginning
-                var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Id == request.EmployeeId);
+                _logger.LogInformation($"📊 [VERIFY] Using FaceNet 512-dim embedding for employee {request.EmployeeId}");
 
                 var faceRegistrations = await _context.FaceRegistrations
                     .Where(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive)
@@ -640,25 +636,16 @@ namespace dotnet_api.Services
                 // Log all similarity scores for debugging
                 _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.FaceId}:{d.Similarity:F3}"))}");
 
-                // SECURITY: Use appropriate threshold based on embedding type
-                // FaceNet (512-dim): More accurate, can use lower threshold (88%)
-                // Custom (256-dim): Less accurate, need higher threshold (94%)
-                float similarityThreshold;
-                if (isFaceNet)
-                {
-                    similarityThreshold = 0.88f; // 88% for FaceNet (increased from 85% for security)
-                    _logger.LogInformation($"🎯 [VERIFY] Using FaceNet threshold: {similarityThreshold:F2} (88%)");
-                }
-                else
-                {
-                    similarityThreshold = 0.94f; // 94% for custom embedding (increased from 92% for security)
-                    _logger.LogInformation($"🎯 [VERIFY] Using custom embedding threshold: {similarityThreshold:F2} (94%)");
-                }
+                // SECURITY: Use FaceNet threshold (512-dim embeddings only)
+                // FaceNet (512-dim): More accurate, use 80% threshold (reduced from 88% for less strict recognition)
+                const float similarityThreshold = 0.80f;
+                _logger.LogInformation($"🎯 [VERIFY] Using FaceNet threshold: {similarityThreshold:F2} (80%)");
                 
                 // FIX 1: Reject immediately if similarity too low (definitely wrong person)
-                if (bestSimilarity < 0.88f)
+                if (bestSimilarity < 0.75f)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Similarity too low ({bestSimilarity:F3}) - Definitely wrong person! Rejecting.");
+                    // User already loaded at beginning of method
                     return new FaceVerificationResultDTO
                     {
                         Success = true,
@@ -674,9 +661,8 @@ namespace dotnet_api.Services
                 var isMatch = bestSimilarity >= similarityThreshold;
                 
                 // FIX 2: Reject if similarity below minimum expected (borderline match = likely wrong person)
-                // FaceNet: same person should achieve 91%+ with good quality
-                // Custom: same person should achieve 94%+ with good quality
-                float minExpectedSimilarity = isFaceNet ? 0.91f : 0.94f;
+                // FaceNet: same person should achieve 83%+ with good quality
+                const float minExpectedSimilarity = 0.83f;
                 if (isMatch && bestSimilarity < minExpectedSimilarity)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Borderline match (similarity: {bestSimilarity:F3}) < minExpected ({minExpectedSimilarity:F3}) - REJECTING! This is likely a different person.");
@@ -691,6 +677,8 @@ namespace dotnet_api.Services
                 {
                     _logger.LogWarning($"⚠️ [SECURITY WARNING] Very high similarity ({bestSimilarity:F3}) - verify this is correct person");
                 }
+
+                // User already loaded at beginning of method - no need to reload
 
                 return new FaceVerificationResultDTO
                 {
@@ -969,94 +957,9 @@ namespace dotnet_api.Services
         }
 
         /// <summary>
-        /// Extract FaceNet embedding from image (public API method)
+        /// Extract embedding from image using Python face recognition service
         /// </summary>
-        public async Task<ExtractEmbeddingResponseDTO> ExtractEmbeddingFromImageAsync(string imageBase64)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(imageBase64))
-                {
-                    return new ExtractEmbeddingResponseDTO
-                    {
-                        Success = false,
-                        Message = "ImageBase64 không được để trống"
-                    };
-                }
-
-                // Decode base64 to image bytes
-                byte[] imageBytes;
-                try
-                {
-                    imageBytes = Convert.FromBase64String(imageBase64);
-                }
-                catch (FormatException ex)
-                {
-                    _logger.LogError(ex, "Invalid base64 image format");
-                    return new ExtractEmbeddingResponseDTO
-                    {
-                        Success = false,
-                        Message = "Định dạng base64 không hợp lệ"
-                    };
-                }
-
-                // Save image to temp file
-                var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
-                Directory.CreateDirectory(tempDir);
-                var tempImagePath = Path.Combine(tempDir, $"extract_embedding_{DateTime.Now:yyyyMMddHHmmss}_{Guid.NewGuid():N}.jpg");
-                
-                try
-                {
-                    await File.WriteAllBytesAsync(tempImagePath, imageBytes);
-                    
-                    // Extract embedding using Python FaceNet service
-                    var embeddingResult = await ExtractEmbeddingFromImagePathAsync(tempImagePath);
-                    
-                    if (embeddingResult.Success && embeddingResult.Embedding != null && embeddingResult.Embedding.Length > 0)
-                    {
-                        _logger.LogInformation($"✅ Successfully extracted FaceNet embedding: {embeddingResult.Embedding.Length} dimensions");
-                        return new ExtractEmbeddingResponseDTO
-                        {
-                            Success = true,
-                            Message = "Extract embedding thành công",
-                            Embedding = embeddingResult.Embedding,
-                            Confidence = embeddingResult.Confidence,
-                            EmbeddingType = embeddingResult.Embedding.Length == 512 ? "facenet" : "custom"
-                        };
-                    }
-                    else
-                    {
-                        return new ExtractEmbeddingResponseDTO
-                        {
-                            Success = false,
-                            Message = embeddingResult.Message ?? "Không thể extract embedding từ ảnh"
-                        };
-                    }
-                }
-                finally
-                {
-                    // Clean up temp file
-                    if (File.Exists(tempImagePath))
-                    {
-                        try { File.Delete(tempImagePath); } catch { }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error extracting embedding from image");
-                return new ExtractEmbeddingResponseDTO
-                {
-                    Success = false,
-                    Message = $"Có lỗi xảy ra: {ex.Message}"
-                };
-            }
-        }
-
-        /// <summary>
-        /// Extract embedding from image using Python face recognition service (private helper)
-        /// </summary>
-        private async Task<EmbeddingResult> ExtractEmbeddingFromImagePathAsync(string imagePath)
+        private async Task<EmbeddingResult> ExtractEmbeddingFromImageAsync(string imagePath)
         {
             try
             {

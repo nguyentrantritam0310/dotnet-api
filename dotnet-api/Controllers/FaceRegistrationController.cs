@@ -277,37 +277,6 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
-        /// Extract FaceNet embedding from image (không cần đăng ký, chỉ extract embedding)
-        /// </summary>
-        [HttpPost("extract-embedding")]
-        public async Task<ActionResult<ExtractEmbeddingResponseDTO>> ExtractEmbedding([FromBody] ExtractEmbeddingRequestDTO request)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(request.ImageBase64))
-                {
-                    return BadRequest(new { message = "ImageBase64 không được để trống" });
-                }
-
-                var result = await _faceRegistrationService.ExtractEmbeddingFromImageAsync(request.ImageBase64);
-                
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in ExtractEmbedding endpoint");
-                return StatusCode(500, new { message = "Có lỗi xảy ra khi extract embedding" });
-            }
-        }
-
-        /// <summary>
         /// Cập nhật ghi chú của khuôn mặt đã đăng ký
         /// </summary>
         [HttpPut("{id}")]

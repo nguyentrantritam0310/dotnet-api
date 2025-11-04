@@ -71,6 +71,22 @@ namespace dotnet_api.DTOs
         public string? Location { get; set; }
 
         public string? Notes { get; set; }
+
+        // Face recognition metadata (REQUIRED for security - same as checkin)
+        [Required(ErrorMessage = "MatchedFaceId is required for face verification")]
+        public string? MatchedFaceId { get; set; }
+        
+        [Required(ErrorMessage = "MatchConfidence is required for face verification")]
+        public float? MatchConfidence { get; set; }
+        
+        public float? FaceQualityScore { get; set; }
+        
+        // Security fields for replay attack protection (same as checkin)
+        [Required(ErrorMessage = "VerificationTimestamp is required")]
+        public DateTime? VerificationTimestamp { get; set; }
+        
+        [Required(ErrorMessage = "VerificationToken is required")]
+        public string? VerificationToken { get; set; }
     }
 }
 

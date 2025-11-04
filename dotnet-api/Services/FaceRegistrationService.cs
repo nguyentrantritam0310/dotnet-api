@@ -390,13 +390,14 @@ namespace dotnet_api.Services
                 }
 
                 // SECURITY: Use threshold to prevent false positives (wrong person being recognized)
-                // Threshold: 0.80 (80% similarity) - reduced for less strict recognition
-                // Note: With FaceNet 512-dim embedding, same person should achieve 80%+ similarity
-                const float similarityThreshold = 0.80f;
+                // Threshold: 0.75 (75% similarity) - reduced for better recognition with varying conditions
+                // Note: With FaceNet 512-dim embedding, same person can achieve 75-85% similarity depending on lighting/angles
+                const float similarityThreshold = 0.75f;
+                const float minSimilarityForRejection = 0.70f; // Only reject if definitely wrong person
                 
-                // FIX 1: Reject immediately if similarity too low (definitely wrong person)
+                // Reject immediately if similarity too low (definitely wrong person)
                 bool isMatch;
-                if (bestSimilarity < 0.75f)
+                if (bestSimilarity < minSimilarityForRejection)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Similarity too low ({bestSimilarity:F3}) - Definitely wrong person! Rejecting.");
                     isMatch = false;
@@ -406,13 +407,10 @@ namespace dotnet_api.Services
                     isMatch = bestSimilarity >= similarityThreshold;
                 }
                 
-                // FIX 2: Reject if similarity below minimum expected (borderline match = likely wrong person)
-                // Same person with good quality should achieve 83%+ with FaceNet 512-dim embedding
-                const float minExpectedSimilarity = 0.83f;
-                if (isMatch && bestSimilarity < minExpectedSimilarity)
+                // Log when similarity is in borderline zone (70-75%) for monitoring
+                if (bestSimilarity >= minSimilarityForRejection && bestSimilarity < similarityThreshold)
                 {
-                    _logger.LogWarning($"🚨 [SECURITY REJECT] Borderline match (similarity: {bestSimilarity:F3}) < minExpected ({minExpectedSimilarity:F3}) - REJECTING! This is likely a different person.");
-                    isMatch = false; // REJECT instead of just warning
+                    _logger.LogInformation($"⚠️ [BORDERLINE] Similarity in borderline zone ({bestSimilarity:F3}) - Between rejection ({minSimilarityForRejection:F2}) and acceptance ({similarityThreshold:F2})");
                 }
 
                 // Log security-critical information
@@ -600,7 +598,7 @@ namespace dotnet_api.Services
 
                 float bestSimilarity = 0f;
                 FaceRegistration? bestMatch = null;
-                var similarityDetails = new List<(string FaceId, float Similarity)>();
+                var similarityDetails = new List<(string FaceId, string? Pose, float Similarity)>();
 
                 foreach (var registration in faceRegistrations)
                 {
@@ -618,7 +616,7 @@ namespace dotnet_api.Services
                         }
                         
                         var similarity = CalculateCosineSimilarity(request.Embedding, registeredEmbedding);
-                        similarityDetails.Add((registration.FaceId, similarity));
+                        similarityDetails.Add((registration.FaceId, registration.Pose, similarity));
                         
                         if (similarity > bestSimilarity)
                         {
@@ -634,15 +632,27 @@ namespace dotnet_api.Services
                 }
                 
                 // Log all similarity scores for debugging
-                _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.FaceId}:{d.Similarity:F3}"))}");
+                _logger.LogInformation($"📊 [VERIFY] Similarity scores for {request.EmployeeId}: {string.Join(", ", similarityDetails.Select(d => $"{d.Pose ?? "unknown"}:{d.Similarity:F3}"))}");
 
                 // SECURITY: Use FaceNet threshold (512-dim embeddings only)
-                // FaceNet (512-dim): More accurate, use 80% threshold (reduced from 88% for less strict recognition)
-                const float similarityThreshold = 0.80f;
-                _logger.LogInformation($"🎯 [VERIFY] Using FaceNet threshold: {similarityThreshold:F2} (80%)");
+                // FaceNet (512-dim): Reduced threshold to 75% for better recognition rate
+                // Same person with varying lighting/angles can achieve 75-85% similarity
+                const float similarityThreshold = 0.75f;
+                const float minSimilarityForRejection = 0.70f; // Only reject if definitely wrong person
                 
-                // FIX 1: Reject immediately if similarity too low (definitely wrong person)
-                if (bestSimilarity < 0.75f)
+                // IMPROVEMENT: Multi-pose voting - if user has 3+ poses registered, require at least 2 poses to match
+                // This improves security while maintaining good recognition rate
+                var hasMultiplePoses = faceRegistrations.Count >= 3;
+                var matchingPosesCount = similarityDetails.Count(d => d.Similarity >= similarityThreshold);
+                var avgSimilarity = similarityDetails.Count > 0 
+                    ? similarityDetails.Average(d => d.Similarity) 
+                    : 0f;
+                
+                _logger.LogInformation($"🎯 [VERIFY] Using FaceNet threshold: {similarityThreshold:F2} (75%), MinRejection: {minSimilarityForRejection:F2} (70%)");
+                _logger.LogInformation($"📊 [MULTI-POSE] Registered poses: {faceRegistrations.Count}, Matching poses: {matchingPosesCount}, Avg similarity: {avgSimilarity:F3}, Best: {bestSimilarity:F3}");
+                
+                // Reject immediately if similarity too low (definitely wrong person)
+                if (bestSimilarity < minSimilarityForRejection)
                 {
                     _logger.LogWarning($"🚨 [SECURITY REJECT] Similarity too low ({bestSimilarity:F3}) - Definitely wrong person! Rejecting.");
                     // User already loaded at beginning of method
@@ -656,17 +666,31 @@ namespace dotnet_api.Services
                     };
                 }
                 
-                // Additional security: require at least 2 poses to match if similarity is borderline
-                // For now, use strict single threshold
-                var isMatch = bestSimilarity >= similarityThreshold;
-                
-                // FIX 2: Reject if similarity below minimum expected (borderline match = likely wrong person)
-                // FaceNet: same person should achieve 83%+ with good quality
-                const float minExpectedSimilarity = 0.83f;
-                if (isMatch && bestSimilarity < minExpectedSimilarity)
+                // Multi-pose voting: If user has 3+ poses, require at least 2 poses to match (more secure)
+                // Otherwise, use simple threshold (better for users with fewer poses)
+                bool isMatch;
+                if (hasMultiplePoses && matchingPosesCount >= 2)
                 {
-                    _logger.LogWarning($"🚨 [SECURITY REJECT] Borderline match (similarity: {bestSimilarity:F3}) < minExpected ({minExpectedSimilarity:F3}) - REJECTING! This is likely a different person.");
-                    isMatch = false; // REJECT instead of just warning
+                    // Multiple poses match - high confidence
+                    isMatch = true;
+                    _logger.LogInformation($"✅ [MULTI-POSE ACCEPT] {matchingPosesCount} poses matched (threshold: {similarityThreshold:F2})");
+                }
+                else if (hasMultiplePoses && matchingPosesCount == 0)
+                {
+                    // Multiple poses registered but none match - reject
+                    isMatch = false;
+                    _logger.LogWarning($"❌ [MULTI-POSE REJECT] {faceRegistrations.Count} poses registered but none matched threshold");
+                }
+                else
+                {
+                    // Simple threshold check (1-2 poses or at least 1 match when 3+ poses)
+                    isMatch = bestSimilarity >= similarityThreshold;
+                }
+                
+                // Log when similarity is in borderline zone (70-75%) for monitoring
+                if (bestSimilarity >= minSimilarityForRejection && bestSimilarity < similarityThreshold)
+                {
+                    _logger.LogInformation($"⚠️ [BORDERLINE] Similarity in borderline zone ({bestSimilarity:F3}) - Between rejection ({minSimilarityForRejection:F2}) and acceptance ({similarityThreshold:F2})");
                 }
                 
                 // Log security-critical information

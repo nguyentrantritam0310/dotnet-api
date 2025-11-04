@@ -130,7 +130,19 @@ namespace dotnet_api.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var result = await _attendanceService.CheckOutNoImageAsync(request);
+                // SECURITY: Validate that user can only check-out for themselves
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
+                }
+
+                if (request.EmployeeId != currentUserId)
+                {
+                    return Forbid("Bạn chỉ có thể chấm công cho chính mình");
+                }
+
+                var result = await _attendanceService.CheckOutNoImageAsync(request, currentUserId);
                 if (result.Success) return Ok(result);
                 return BadRequest(result);
             }

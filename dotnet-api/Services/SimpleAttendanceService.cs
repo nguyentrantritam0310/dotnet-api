@@ -816,11 +816,11 @@ namespace dotnet_api.Services
                     .Include(a => a.ShiftAssignment)
                     .Where(a => 
                         a.EmployeeId == employeeId && 
-                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.HasValue &&
                         a.CheckInDateTime.Value.Date == today &&
                         a.ShiftAssignment != null &&
-                        a.ShiftAssignment.WorkShiftID.HasValue)
-                    .Select(a => a.ShiftAssignment.WorkShiftID.Value)
+                        a.ShiftAssignment.WorkShiftID > 0)
+                    .Select(a => a.ShiftAssignment.WorkShiftID)
                     .Distinct()
                     .ToListAsync();
 

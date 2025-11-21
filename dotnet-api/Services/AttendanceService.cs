@@ -230,6 +230,31 @@ namespace dotnet_api.Services
             }
         }
 
+        public async Task<List<int>> GetTodayCheckedShiftsAsync(string employeeId)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                var checkedShifts = await _context.Attendances
+                    .Include(a => a.ShiftAssignment)
+                    .Where(a =>
+                        a.EmployeeId == employeeId &&
+                        a.CheckInDateTime.HasValue &&
+                        a.CheckInDateTime.Value.Date == today &&
+                        a.ShiftAssignment != null &&
+                        a.ShiftAssignment.WorkShiftID > 0)
+                    .Select(a => a.ShiftAssignment.WorkShiftID)
+                    .Distinct()
+                    .ToListAsync();
+
+                return checkedShifts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting today's checked shifts for employee: {employeeId}");
+                throw;
+            }
+        }
 
     }
 }

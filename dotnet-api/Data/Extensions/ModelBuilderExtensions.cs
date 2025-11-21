@@ -90,6 +90,22 @@ namespace dotnet_api.Data.Extensions
                     .Property(m => m.Status)
                     .HasConversion<string>();
 
+                // Configure ApprovalHistory enum conversions
+                modelBuilder.Entity<ApprovalHistory>()
+                    .Property(m => m.OldStatus)
+                    .HasConversion<string>();
+
+                modelBuilder.Entity<ApprovalHistory>()
+                    .Property(m => m.NewStatus)
+                    .HasConversion<string>();
+
+                // Configure ApprovalHistory relationships
+                modelBuilder.Entity<ApprovalHistory>()
+                    .HasOne(ah => ah.Approver)
+                    .WithMany(u => u.ApprovalHistories)
+                    .HasForeignKey(ah => ah.ApproverID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
                 // Seed data for Role
                 modelBuilder.Entity<Role>().HasData(
                     new Role { ID = 1, RoleName = "Nhân viên kỹ thuật" },
@@ -3217,8 +3233,6 @@ namespace dotnet_api.Data.Extensions
             CheckOutDateTime = DateTime.Now.AddDays(-1).Date.AddHours(17),
             CheckIn = new TimeSpan(8, 0, 0),
             CheckOut = new TimeSpan(17, 0, 0),
-            ImageCheckIn = "/uploads/attendance/worker1-20240912-checkin.jpg",
-            ImageCheckOut = "/uploads/attendance/worker1-20240912-checkout.jpg",
             CheckInLocation = "Construction Site A",
             CheckOutLocation = "Construction Site A",
             AttendanceMachineId = 2,

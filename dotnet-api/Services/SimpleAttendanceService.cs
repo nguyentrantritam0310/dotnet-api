@@ -104,13 +104,52 @@ namespace dotnet_api.Services
                     };
                 }
 
+                // Find or create ShiftAssignment if WorkShiftID is provided
+                int? shiftAssignmentId = null;
+                if (request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0)
+                {
+                    var workDate = request.CheckInDateTime.Date;
+                    
+                    // Check if ShiftAssignment already exists for this employee, work shift, and date
+                    var existingShiftAssignment = await _context.ShiftAssignments
+                        .FirstOrDefaultAsync(sa => sa.EmployeeID == request.EmployeeId 
+                                                 && sa.WorkShiftID == request.WorkShiftID.Value 
+                                                 && sa.WorkDate.Date == workDate.Date);
+                    
+                    if (existingShiftAssignment != null)
+                    {
+                        shiftAssignmentId = existingShiftAssignment.ID;
+                        _logger.LogInformation($"📋 [SHIFT] Found existing ShiftAssignment ID: {shiftAssignmentId} for employee {request.EmployeeId}, WorkShiftID: {request.WorkShiftID.Value}, Date: {workDate:yyyy-MM-dd}");
+                    }
+                    else
+                    {
+                        // Create new ShiftAssignment
+                        var newShiftAssignment = new ShiftAssignment
+                        {
+                            EmployeeID = request.EmployeeId,
+                            WorkShiftID = request.WorkShiftID.Value,
+                            WorkDate = workDate
+                        };
+                        
+                        _context.ShiftAssignments.Add(newShiftAssignment);
+                        await _context.SaveChangesAsync();
+                        shiftAssignmentId = newShiftAssignment.ID;
+                        
+                        _logger.LogInformation($"📋 [SHIFT] Created new ShiftAssignment ID: {shiftAssignmentId} for employee {request.EmployeeId}, WorkShiftID: {request.WorkShiftID.Value}, Date: {workDate:yyyy-MM-dd}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"⚠️ [SHIFT] No WorkShiftID provided in check-in request for employee: {request.EmployeeId}");
+                }
+
                 // Tạo attendance record mới
                 var attendance = new Attendance
                 {
                     EmployeeId = request.EmployeeId,
+                    ShiftAssignmentID = shiftAssignmentId,
                     CheckInDateTime = request.CheckInDateTime,
                     CheckIn = request.CheckInDateTime.TimeOfDay,
-                    ImageCheckIn = await SaveAttendanceImageAsync(request.ImageBase64, "checkin", request.EmployeeId),
                     CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}",
                     AttendanceMachineId = request.AttendanceMachineId,
                     Status = AttendanceStatusEnum.Present,
@@ -133,7 +172,6 @@ namespace dotnet_api.Services
                     EmployeeName = employee.UserName ?? employee.Email ?? "Unknown",
                     CheckInDateTime = attendance.CheckInDateTime.Value,
                     Status = attendance.Status.Value,
-                    ImagePath = attendance.ImageCheckIn,
                     Location = attendance.CheckInLocation
                 };
             }
@@ -318,12 +356,51 @@ namespace dotnet_api.Services
                 var checkInDateTime = ParseAsVietnamTime(request.CheckInDateTime);
                 _logger.LogInformation($"📅 [CHECKIN] Parsed CheckInDateTime: {checkInDateTime}, Kind: {checkInDateTime.Kind}");
                 
+                // Find or create ShiftAssignment if WorkShiftID is provided
+                int? shiftAssignmentId = null;
+                if (request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0)
+                {
+                    var workDate = checkInDateTime.Date;
+                    
+                    // Check if ShiftAssignment already exists for this employee, work shift, and date
+                    var existingShiftAssignment = await _context.ShiftAssignments
+                        .FirstOrDefaultAsync(sa => sa.EmployeeID == request.EmployeeId 
+                                                 && sa.WorkShiftID == request.WorkShiftID.Value 
+                                                 && sa.WorkDate.Date == workDate.Date);
+                    
+                    if (existingShiftAssignment != null)
+                    {
+                        shiftAssignmentId = existingShiftAssignment.ID;
+                        _logger.LogInformation($"📋 [SHIFT] Found existing ShiftAssignment ID: {shiftAssignmentId} for employee {request.EmployeeId}, WorkShiftID: {request.WorkShiftID.Value}, Date: {workDate:yyyy-MM-dd}");
+                    }
+                    else
+                    {
+                        // Create new ShiftAssignment
+                        var newShiftAssignment = new ShiftAssignment
+                        {
+                            EmployeeID = request.EmployeeId,
+                            WorkShiftID = request.WorkShiftID.Value,
+                            WorkDate = workDate
+                        };
+                        
+                        _context.ShiftAssignments.Add(newShiftAssignment);
+                        await _context.SaveChangesAsync();
+                        shiftAssignmentId = newShiftAssignment.ID;
+                        
+                        _logger.LogInformation($"📋 [SHIFT] Created new ShiftAssignment ID: {shiftAssignmentId} for employee {request.EmployeeId}, WorkShiftID: {request.WorkShiftID.Value}, Date: {workDate:yyyy-MM-dd}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"⚠️ [SHIFT] No WorkShiftID provided in check-in request for employee: {request.EmployeeId}");
+                }
+                
                 var attendance = new Attendance
                 {
                     EmployeeId = request.EmployeeId,
+                    ShiftAssignmentID = shiftAssignmentId,
                     CheckInDateTime = checkInDateTime,
                     CheckIn = checkInDateTime.TimeOfDay,
-                    ImageCheckIn = string.Empty,
                     CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}",
                     AttendanceMachineId = request.AttendanceMachineId,
                     Status = AttendanceStatusEnum.Present,
@@ -346,7 +423,6 @@ namespace dotnet_api.Services
                     EmployeeName = employee.UserName ?? employee.Email ?? "Unknown",
                     CheckInDateTime = attendance.CheckInDateTime.Value,
                     Status = attendance.Status.Value,
-                    ImagePath = attendance.ImageCheckIn,
                     Location = attendance.CheckInLocation
                 };
             }
@@ -398,11 +474,6 @@ namespace dotnet_api.Services
                 attendance.CheckOut = checkOutDateTime.TimeOfDay;
                 attendance.CheckOutLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
                 attendance.LastUpdated = DateTime.Now;
-
-                if (!string.IsNullOrEmpty(request.ImageBase64))
-                {
-                    attendance.ImageCheckOut = await SaveAttendanceImageAsync(request.ImageBase64, "checkout", request.EmployeeId);
-                }
 
                 if (!string.IsNullOrEmpty(request.Notes))
                 {
@@ -703,27 +774,7 @@ namespace dotnet_api.Services
             }
         }
 
-        private async Task<string> SaveAttendanceImageAsync(string imageBase64, string type, string employeeId)
-        {
-            try
-            {
-                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "attendance");
-                Directory.CreateDirectory(uploadsDir);
 
-                var fileName = $"{employeeId}_{type}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
-                var filePath = Path.Combine(uploadsDir, fileName);
-
-                var imageBytes = Convert.FromBase64String(imageBase64);
-                await File.WriteAllBytesAsync(filePath, imageBytes);
-
-                return $"/uploads/attendance/{fileName}";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error saving attendance image for employee: {employeeId}");
-                return string.Empty;
-            }
-        }
     }
 }
 

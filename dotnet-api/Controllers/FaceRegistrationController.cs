@@ -24,10 +24,11 @@ namespace dotnet_api.Controllers
         }
 
         /// <summary>
-        /// Đăng ký khuôn mặt mới cho người dùng
+        /// Đăng ký khuôn mặt mới cho người dùng (Deprecated - không dùng nữa, dùng register-embedding thay thế)
         /// </summary>
         [HttpPost("register")]
         [Consumes("multipart/form-data")]
+        [ApiExplorerSettings(IgnoreApi = true)] // Ẩn khỏi Swagger vì không dùng nữa
         public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFace([FromForm] string employeeId, [FromForm] IFormFile imageFile, [FromForm] string faceFeatures, [FromForm] string notes)
         {
             try

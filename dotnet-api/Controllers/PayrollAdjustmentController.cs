@@ -4,21 +4,36 @@ using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
 using dotnet_api.Services;
 using dotnet_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using dotnet_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PayrollAdjustmentController : ControllerBase
     {
         private readonly IPayrollAdjustmentService _PayrollAdjustmentService;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public PayrollAdjustmentController(IPayrollAdjustmentService PayrollAdjustmentService, IMapper mapper)
+        public PayrollAdjustmentController(IPayrollAdjustmentService PayrollAdjustmentService, IMapper mapper, ApplicationDbContext context)
         {
             _PayrollAdjustmentService = PayrollAdjustmentService;
             _mapper = mapper;
+            _context = context;
+        }
+
+        private string GetCurrentUserId()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email)) return null;
+            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Email == email);
+            return user?.Id;
         }
 
         [HttpGet]
@@ -80,6 +95,77 @@ namespace dotnet_api.Controllers
             return Ok(deleted);
         }
 
+        // Approval workflow endpoints
+        [HttpPut("{voucherNo}/submit")]
+        public async Task<IActionResult> SubmitPayrollAdjustmentForApproval(string voucherNo, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var submitterId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(submitterId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
 
+                var result = await _PayrollAdjustmentService.SubmitPayrollAdjustmentForApprovalAsync(voucherNo, submitterId, dto?.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{voucherNo}/approve")]
+        public async Task<IActionResult> ApprovePayrollAdjustment(string voucherNo, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _PayrollAdjustmentService.ApprovePayrollAdjustmentAsync(voucherNo, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{voucherNo}/reject")]
+        public async Task<IActionResult> RejectPayrollAdjustment(string voucherNo, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _PayrollAdjustmentService.RejectPayrollAdjustmentAsync(voucherNo, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{voucherNo}/return")]
+        public async Task<IActionResult> ReturnPayrollAdjustment(string voucherNo, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _PayrollAdjustmentService.ReturnPayrollAdjustmentAsync(voucherNo, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

@@ -55,8 +55,8 @@ namespace dotnet_api.Data
         public DbSet<ContractType> ContractTypes { get; set; }
         public DbSet<Allowance> Allowances { get; set; }
         public DbSet<Contract_Allowance> Contract_Allowances { get; set; }
-    public DbSet<ApplicationUser_PayrollAdjustment> ApplicationUser_PayrollAdjustments { get; set; }
-        
+        public DbSet<ApplicationUser_PayrollAdjustment> ApplicationUser_PayrollAdjustments { get; set; }
+        public DbSet<ApprovalHistory> ApprovalHistories { get; set; }
 
     // Family & Payroll
     public DbSet<FamilyRelation> FamilyRelations { get; set; }

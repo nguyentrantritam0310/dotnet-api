@@ -21,6 +21,9 @@ namespace dotnet_api.DTOs
         public int? AttendanceMachineId { get; set; }
 
         public string? Notes { get; set; }
+
+        // Shift assignment - WorkShiftID selected by user
+        public int? WorkShiftID { get; set; }
     }
 
     public class AttendanceCheckInNoImageRequest
@@ -39,6 +42,9 @@ namespace dotnet_api.DTOs
         public int? AttendanceMachineId { get; set; }
 
         public string? Notes { get; set; }
+
+        // Shift assignment - WorkShiftID selected by user
+        public int? WorkShiftID { get; set; }
 
         // Face recognition metadata (REQUIRED for security)
         [Required(ErrorMessage = "MatchedFaceId is required for face verification")]

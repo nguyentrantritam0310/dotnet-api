@@ -574,6 +574,9 @@ namespace dotnet_api.Mapping
             CreateMap<FaceRegistration, FaceRegistrationListDTO>()
                 .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName));
 
+            // ApprovalHistory mapping
+            CreateMap<ApprovalHistory, ApprovalHistoryDTO>();
+
         }
     }
 }

@@ -11,7 +11,6 @@ namespace dotnet_api.DTOs
         public string EmployeeName { get; set; } = string.Empty;
         public DateTime CheckInDateTime { get; set; }
         public AttendanceStatusEnum Status { get; set; }
-        public string? ImagePath { get; set; }
         public string? Location { get; set; }
     }
 }

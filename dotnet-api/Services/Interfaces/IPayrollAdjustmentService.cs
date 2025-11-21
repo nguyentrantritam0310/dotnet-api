@@ -11,5 +11,11 @@ namespace dotnet_api.Services.Interfaces
         Task<IEnumerable<PayrollAdjustmentDTO>> GetAllPayrollAdjustmentsAsync();
         Task<PayrollAdjustmentDTO> UpdatePayrollAdjustmentAsync(PayrollAdjustmentDTO PayrollAdjustmentDTO);
         Task<PayrollAdjustmentDTO> DeletePayrollAdjustmentAsync(string id);
+
+        // Approval workflow methods
+        Task<PayrollAdjustmentDTO> SubmitPayrollAdjustmentForApprovalAsync(string voucherNo, string submitterId, string? notes);
+        Task<PayrollAdjustmentDTO> ApprovePayrollAdjustmentAsync(string voucherNo, string approverId, string? notes);
+        Task<PayrollAdjustmentDTO> RejectPayrollAdjustmentAsync(string voucherNo, string approverId, string? notes);
+        Task<PayrollAdjustmentDTO> ReturnPayrollAdjustmentAsync(string voucherNo, string approverId, string? notes);
     }
 }

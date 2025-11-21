@@ -24,8 +24,6 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = a.ImageCheckIn,
-                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -44,18 +42,6 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
-                    
-                    // Convert image paths to API URLs
-                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
-                    {
-                        var filename = item.ImageCheckIn.Split('/').Last();
-                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
-                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
-                    {
-                        var filename = item.ImageCheckOut.Split('/').Last();
-                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
                 }
 
                 // Add STT
@@ -83,8 +69,6 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = a.ImageCheckIn,
-                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -103,18 +87,6 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
-                    
-                    // Convert image paths to API URLs
-                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
-                    {
-                        var filename = item.ImageCheckIn.Split('/').Last();
-                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
-                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
-                    {
-                        var filename = item.ImageCheckOut.Split('/').Last();
-                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
                 }
 
                 // Add STT
@@ -144,8 +116,6 @@ namespace dotnet_api.Services
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
-                        ImageCheckIn = a.ImageCheckIn,
-                        ImageCheckOut = a.ImageCheckOut,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
@@ -164,18 +134,6 @@ namespace dotnet_api.Services
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
-                    
-                    // Convert image paths to API URLs
-                    if (!string.IsNullOrEmpty(item.ImageCheckIn))
-                    {
-                        var filename = item.ImageCheckIn.Split('/').Last();
-                        item.ImageCheckIn = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
-                    if (!string.IsNullOrEmpty(item.ImageCheckOut))
-                    {
-                        var filename = item.ImageCheckOut.Split('/').Last();
-                        item.ImageCheckOut = $"https://xaydungvipro.id.vn/api/Attendance/image/{filename}";
-                    }
                 }
 
                 // Add STT
@@ -213,13 +171,7 @@ namespace dotnet_api.Services
                 return $"Máy chấm công {item.WorkShiftID.Value}";
             }
             
-            // Fallback dựa trên image path
-            if (!string.IsNullOrEmpty(item.ImageCheckIn) || !string.IsNullOrEmpty(item.ImageCheckOut))
-            {
-                return "Máy chấm công di động";
-            }
-            
-            return "Chưa xác định";
+            return "Máy chấm công di động";
         }
 
         private string GetLocationFromAttendance(AttendanceDataDto item)
@@ -231,54 +183,59 @@ namespace dotnet_api.Services
                 return $"Công trường {item.WorkShiftID.Value}";
             }
             
-            // Fallback dựa trên image path
-            if (!string.IsNullOrEmpty(item.ImageCheckIn) || !string.IsNullOrEmpty(item.ImageCheckOut))
-            {
-                return "Vị trí di động";
-            }
-            
-            return "Chưa xác định";
+            return "Vị trí di động";
         }
 
         public async Task<List<AttendanceDataDto>> GetAttendanceDataByEmployeeAndDateAsync(string employeeCode, DateTime date)
         {
-            var attendanceData = await _context.Attendances
-                .Include(a => a.Employee)
-                .Where(a => a.Employee != null && a.Employee.Id == employeeCode && 
-                           (a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date == date.Date :
-                            a.CreatedDate.Date == date.Date))
-                .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
-                .Select(a => new AttendanceDataDto
-                {
-                    ImageCheckIn = a.ImageCheckIn,
-                    ImageCheckOut = a.ImageCheckOut,
-                    EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
-                    EmployeeCode = a.ShiftAssignment.Employee.Id,
-                    ShiftName = a.ShiftAssignment.WorkShift.ShiftName,
-                    WorkDate = a.ShiftAssignment.WorkDate,
-                    CheckInTime = a.CheckIn,
-                    CheckOutTime = a.CheckOut,
-                    Status = a.Status,
-                    RefCode = $"MP{a.ID ?? 0:D3}",
-                    WorkShiftID = a.ShiftAssignment.WorkShiftID
-                })
-                .ToListAsync();
-
-            // Process data after query
-            foreach (var item in attendanceData)
+            try
             {
-                item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
+                var attendanceData = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Where(a => a.Employee != null && a.Employee.Id == employeeCode && 
+                               (a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date == date.Date :
+                                a.CreatedDate.Date == date.Date))
+                    .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
+                    .Select(a => new AttendanceDataDto
+                    {
+                        EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
+                        EmployeeCode = a.Employee.Id,
+                        ShiftName = a.ShiftAssignment != null && a.ShiftAssignment.WorkShift != null ? 
+                                   a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        WorkDate = a.ShiftAssignment != null ? a.ShiftAssignment.WorkDate : 
+                                  (a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date),
+                        CheckInTime = a.CheckIn,
+                        CheckOutTime = a.CheckOut,
+                        Status = a.Status,
+                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                    })
+                    .ToListAsync();
+
+                // Process data after query
+                foreach (var item in attendanceData)
+                {
+                    item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
                     item.MachineName = GetMachineNameFromAttendance(item);
                     item.Location = GetLocationFromAttendance(item);
-            }
+                }
 
-            // Add STT
-            for (int i = 0; i < attendanceData.Count; i++)
+                // Add STT
+                for (int i = 0; i < attendanceData.Count; i++)
+                {
+                    attendanceData[i].STT = i + 1;
+                }
+
+                return attendanceData;
+            }
+            catch (Exception ex)
             {
-                attendanceData[i].STT = i + 1;
+                Console.WriteLine($"Error in GetAttendanceDataByEmployeeAndDateAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw; // Re-throw để controller có thể trả về 500 error
             }
-
-            return attendanceData;
         }
 
         public async Task<List<AttendanceDataDto>> GetAttendanceDataByWeekAsync(int year, int weekNumber)
@@ -299,8 +256,6 @@ namespace dotnet_api.Services
                 .OrderBy(a => a.ShiftAssignment.WorkDate)
                 .Select(a => new AttendanceDataDto
                 {
-                    ImageCheckIn = a.ImageCheckIn,
-                    ImageCheckOut = a.ImageCheckOut,
                     EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
                     EmployeeCode = a.ShiftAssignment.Employee.Id,
                     ShiftName = a.ShiftAssignment.WorkShift.ShiftName,

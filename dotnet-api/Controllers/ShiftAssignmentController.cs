@@ -73,6 +73,13 @@ namespace dotnet_api.Controllers
             }
         }
 
+        [HttpGet("task/{constructionTaskId}")]
+        public async Task<IActionResult> GetByConstructionTaskId(int constructionTaskId)
+        {
+            var shiftAssignments = await _shiftAssignmentService.GetShiftAssignmentsByConstructionTaskIdAsync(constructionTaskId);
+            return Ok(shiftAssignments);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ShiftAssignmentDTOPOST shiftAssignmentDTO)
         {
@@ -122,6 +129,34 @@ namespace dotnet_api.Controllers
                     return NotFound(new { message = "Không tìm thấy phân ca với ID đã cho" });
                 }
                 return Ok(new { message = "Xóa phân ca thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("assign-task-to-work-shifts")]
+        public async Task<IActionResult> AssignTaskToWorkShifts([FromBody] AssignTaskToWorkShiftsRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            try
+            {
+                var results = await _shiftAssignmentService.AssignTaskToWorkShiftsAsync(
+                    request.ConstructionTaskID,
+                    request.EmployeeIds,
+                    request.WorkShiftIds,
+                    request.StartDate,
+                    request.EndDate
+                );
+                
+                return Ok(new { 
+                    message = $"Đã phân công nhiệm vụ cho {results.Count()} ca làm việc",
+                    assignments = results,
+                    count = results.Count()
+                });
             }
             catch (Exception ex)
             {

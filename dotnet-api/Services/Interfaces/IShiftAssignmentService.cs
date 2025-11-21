@@ -12,9 +12,11 @@ namespace dotnet_api.Services.Interfaces
         Task<IEnumerable<ShiftAssignmentDTO>> GetShiftAssignmentsByDateAsync(DateTime date);
         Task<IEnumerable<ShiftAssignmentDTO>> GetShiftAssignmentsByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<ShiftScheduleDTO>> GetShiftScheduleByWeekAsync(DateTime weekStartDate);
+        Task<IEnumerable<ShiftAssignmentDTO>> GetShiftAssignmentsByConstructionTaskIdAsync(int constructionTaskId);
         Task<ShiftAssignmentDTO> CreateShiftAssignmentAsync(ShiftAssignmentDTOPOST shiftAssignmentDTO);
         Task<ShiftAssignmentDTO> UpdateShiftAssignmentAsync(ShiftAssignmentDTOPUT shiftAssignmentDTO);
         Task<bool> DeleteShiftAssignmentAsync(int id);
+        Task<IEnumerable<ShiftAssignmentDTO>> AssignTaskToWorkShiftsAsync(int constructionTaskID, List<string> employeeIds, List<int> workShiftIds, DateTime startDate, DateTime endDate);
     }
 }
 

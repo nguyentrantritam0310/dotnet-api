@@ -2,20 +2,35 @@ using dotnet_api.DTOs;
 using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
 using dotnet_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
+using dotnet_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ContractController : ControllerBase
     {
         private readonly IContractService _contractService;
+        private readonly ApplicationDbContext _context;
 
-        public ContractController(IContractService contractService)
+        public ContractController(IContractService contractService, ApplicationDbContext context)
         {
             _contractService = contractService;
+            _context = context;
+        }
+
+        private string GetCurrentUserId()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email)) return null;
+            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Email == email);
+            return user?.Id;
         }
 
         [HttpGet]
@@ -146,45 +161,76 @@ namespace dotnet_api.Controllers
             return Ok(allowances);
         }
 
-        [HttpPut("{id}/approve")]
-        public async Task<IActionResult> ApproveContract(int id)
+        // Approval workflow endpoints
+        [HttpPut("{id}/submit")]
+        public async Task<IActionResult> SubmitContractForApproval(int id, [FromBody] ApprovalActionDTO dto)
         {
             try
             {
-                var result = await _contractService.ApproveContractAsync(id);
+                var submitterId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(submitterId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _contractService.SubmitContractForApprovalAsync(id, submitterId, dto?.Notes);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}/approve")]
+        public async Task<IActionResult> ApproveContract(int id, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _contractService.ApproveContractAsync(id, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
 
         [HttpPut("{id}/reject")]
-        public async Task<IActionResult> RejectContract(int id)
+        public async Task<IActionResult> RejectContract(int id, [FromBody] ApprovalActionDTO dto)
         {
             try
             {
-                var result = await _contractService.RejectContractAsync(id);
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _contractService.RejectContractAsync(id, approverId, dto.Notes);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
 
-        [HttpPut("{id}/pending")]
-        public async Task<IActionResult> PendingContract(int id)
+        [HttpPut("{id}/return")]
+        public async Task<IActionResult> ReturnContract(int id, [FromBody] ApprovalActionDTO dto)
         {
             try
             {
-                var result = await _contractService.PendingContractAsync(id);
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _contractService.ReturnContractAsync(id, approverId, dto.Notes);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

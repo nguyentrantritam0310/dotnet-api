@@ -26,6 +26,8 @@ namespace dotnet_api.DTOs.PUT
         public int? adjustmentItemID { get; set; }
         
         public List<PayrollAdjustmentEmployeeDTOPUT> employees { get; set; } = new List<PayrollAdjustmentEmployeeDTOPUT>();
+        
+        public string? Notes { get; set; } // Ghi chú khi duyệt/từ chối/trả lại
     }
 
     public class PayrollAdjustmentEmployeeDTOPUT

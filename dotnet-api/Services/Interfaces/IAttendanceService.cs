@@ -50,5 +50,12 @@ namespace dotnet_api.Services.Interfaces
         /// <param name="date">Ngày cần lấy</param>
         /// <returns>Danh sách chấm công</returns>
         Task<List<Attendance>> GetAttendanceByDateAsync(DateTime date);
+
+        /// <summary>
+        /// Lấy danh sách WorkShiftID đã chấm công hôm nay (để ẩn khỏi dropdown)
+        /// </summary>
+        /// <param name="employeeId">ID nhân viên</param>
+        /// <returns>Danh sách WorkShiftID đã check-in/checkout hôm nay</returns>
+        Task<List<int>> GetTodayCheckedShiftsAsync(string employeeId);
     }
 }

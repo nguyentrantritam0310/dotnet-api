@@ -184,39 +184,61 @@ namespace dotnet_api.Controllers
                 // Ưu tiên lấy attendance chưa checkout (để checkout)
                 // Nếu không có thì lấy attendance mới nhất (đã checkout)
                 var today = DateTime.Today;
-                var attendances = await _attendanceService.GetEmployeeAttendanceAsync(employeeId, today, today);
                 
-                if (attendances == null || attendances.Count == 0)
+                // Load trực tiếp từ database với include đầy đủ để đảm bảo ShiftAssignment được load
+                var attendance = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Include(a => a.AttendanceMachine)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Where(a => 
+                        a.EmployeeId == employeeId && 
+                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.Value.Date == today)
+                    .OrderByDescending(a => a.CheckInDateTime)
+                    .FirstOrDefaultAsync();
+                
+                // Nếu không có attendance nào, thử lấy từ service (fallback)
+                if (attendance == null)
                 {
-                    return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
-                }
+                    var attendances = await _attendanceService.GetEmployeeAttendanceAsync(employeeId, today, today);
+                    if (attendances == null || attendances.Count == 0)
+                    {
+                        return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
+                    }
 
-                // Ưu tiên lấy attendance chưa checkout
-                var attendance = attendances.FirstOrDefault(a => 
-                    a.CheckInDateTime.HasValue && 
-                    a.CheckInDateTime.Value.Date == today &&
-                    !a.CheckOutDateTime.HasValue) 
-                    ?? attendances.OrderByDescending(a => a.CheckInDateTime).FirstOrDefault();
+                    // Ưu tiên lấy attendance chưa checkout
+                    attendance = attendances.FirstOrDefault(a => 
+                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.Value.Date == today &&
+                        !a.CheckOutDateTime.HasValue) 
+                        ?? attendances.OrderByDescending(a => a.CheckInDateTime).FirstOrDefault();
+                    
+                    if (attendance == null)
+                    {
+                        return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
+                    }
+
+                    // Reload attendance với include đầy đủ nếu ShiftAssignment null
+                    if (attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
+                    {
+                        _logger.LogWarning($"⚠️ [GET_TODAY] Reloading attendance {attendance.ID} with full includes...");
+                        attendance = await _context.Attendances
+                            .Include(a => a.Employee)
+                            .Include(a => a.AttendanceMachine)
+                            .Include(a => a.ShiftAssignment)
+                                .ThenInclude(sa => sa.WorkShift)
+                            .FirstOrDefaultAsync(a => a.ID == attendance.ID);
+                    }
+                }
                 
                 if (attendance == null)
                 {
                     return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                 }
 
-                // Reload attendance với include đầy đủ nếu ShiftAssignment null
-                if (attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
-                {
-                    _logger.LogWarning($"⚠️ [GET_TODAY] Reloading attendance {attendance.ID} with full includes...");
-                    attendance = await _context.Attendances
-                        .Include(a => a.Employee)
-                        .Include(a => a.AttendanceMachine)
-                        .Include(a => a.ShiftAssignment)
-                            .ThenInclude(sa => sa.WorkShift)
-                        .FirstOrDefaultAsync(a => a.ID == attendance.ID);
-                }
-
                 // Log để debug
-                _logger.LogInformation($"📊 [GET_TODAY] Found attendance ID: {attendance.ID}, EmployeeId: {attendance.EmployeeId}, CheckIn: {attendance.CheckInDateTime}, CheckOut: {attendance.CheckOutDateTime}, ShiftAssignmentID: {attendance.ShiftAssignmentID}, WorkShiftID: {attendance.ShiftAssignment?.WorkShiftID}");
+                _logger.LogInformation($"📊 [GET_TODAY] Requested by: {currentUserId}, Found attendance ID: {attendance.ID}, EmployeeId: {attendance.EmployeeId}, CheckIn: {attendance.CheckInDateTime}, CheckOut: {attendance.CheckOutDateTime}, CheckOutIsNull: {attendance.CheckOutDateTime == null}, ShiftAssignmentID: {attendance.ShiftAssignmentID}, WorkShiftID: {attendance.ShiftAssignment?.WorkShiftID}");
 
                 // Fallback: Nếu ShiftAssignment null nhưng có ShiftAssignmentID, load trực tiếp từ database
                 int? workShiftID = attendance.ShiftAssignment?.WorkShiftID;
@@ -236,7 +258,7 @@ namespace dotnet_api.Controllers
                     }
                 }
 
-                return Ok(new
+                var responseData = new
                 {
                     id = attendance.ID,
                     employeeId = attendance.EmployeeId,
@@ -248,7 +270,11 @@ namespace dotnet_api.Controllers
                     status = attendance.Status,
                     notes = attendance.Notes,
                     workShiftID = workShiftID
-                });
+                };
+
+                _logger.LogInformation($"📤 [GET_TODAY] Returning response - EmployeeId: {responseData.employeeId}, CheckIn: {responseData.checkInDateTime}, CheckOut: {responseData.checkOutDateTime}, CheckOutIsNull: {responseData.checkOutDateTime == null}");
+
+                return Ok(responseData);
             }
             catch (Exception ex)
             {

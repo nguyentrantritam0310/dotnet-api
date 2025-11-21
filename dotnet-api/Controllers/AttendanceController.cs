@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using dotnet_api.Services;
 using dotnet_api.DTOs;
+using dotnet_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Controllers
 {
@@ -12,10 +14,14 @@ namespace dotnet_api.Controllers
     public class AttendanceController : ControllerBase
     {
         private readonly SimpleAttendanceService _attendanceService;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<AttendanceController> _logger;
 
-        public AttendanceController(SimpleAttendanceService attendanceService)
+        public AttendanceController(SimpleAttendanceService attendanceService, ApplicationDbContext context, ILogger<AttendanceController> logger)
         {
             _attendanceService = attendanceService;
+            _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -162,11 +168,72 @@ namespace dotnet_api.Controllers
         {
             try
             {
-                var attendance = await _attendanceService.GetTodayAttendanceAsync(employeeId);
+                // SECURITY: Validate that user can only view their own attendance
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
+                }
+
+                if (employeeId != currentUserId)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] User {currentUserId} attempted to access attendance for {employeeId}");
+                    return Forbid("Bạn chỉ có thể xem thông tin chấm công của chính mình");
+                }
+
+                // Ưu tiên lấy attendance chưa checkout (để checkout)
+                // Nếu không có thì lấy attendance mới nhất (đã checkout)
+                var today = DateTime.Today;
+                var attendances = await _attendanceService.GetEmployeeAttendanceAsync(employeeId, today, today);
+                
+                if (attendances == null || attendances.Count == 0)
+                {
+                    return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
+                }
+
+                // Ưu tiên lấy attendance chưa checkout
+                var attendance = attendances.FirstOrDefault(a => 
+                    a.CheckInDateTime.HasValue && 
+                    a.CheckInDateTime.Value.Date == today &&
+                    !a.CheckOutDateTime.HasValue) 
+                    ?? attendances.OrderByDescending(a => a.CheckInDateTime).FirstOrDefault();
                 
                 if (attendance == null)
                 {
                     return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
+                }
+
+                // Reload attendance với include đầy đủ nếu ShiftAssignment null
+                if (attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
+                {
+                    _logger.LogWarning($"⚠️ [GET_TODAY] Reloading attendance {attendance.ID} with full includes...");
+                    attendance = await _context.Attendances
+                        .Include(a => a.Employee)
+                        .Include(a => a.AttendanceMachine)
+                        .Include(a => a.ShiftAssignment)
+                            .ThenInclude(sa => sa.WorkShift)
+                        .FirstOrDefaultAsync(a => a.ID == attendance.ID);
+                }
+
+                // Log để debug
+                _logger.LogInformation($"📊 [GET_TODAY] Found attendance ID: {attendance.ID}, EmployeeId: {attendance.EmployeeId}, CheckIn: {attendance.CheckInDateTime}, CheckOut: {attendance.CheckOutDateTime}, ShiftAssignmentID: {attendance.ShiftAssignmentID}, WorkShiftID: {attendance.ShiftAssignment?.WorkShiftID}");
+
+                // Fallback: Nếu ShiftAssignment null nhưng có ShiftAssignmentID, load trực tiếp từ database
+                int? workShiftID = attendance.ShiftAssignment?.WorkShiftID;
+                if (!workShiftID.HasValue && attendance.ShiftAssignmentID.HasValue)
+                {
+                    _logger.LogWarning($"⚠️ [GET_TODAY] ShiftAssignment is null but ShiftAssignmentID exists: {attendance.ShiftAssignmentID}. Loading directly from database...");
+                    var shiftAssignment = await _context.ShiftAssignments
+                        .FirstOrDefaultAsync(sa => sa.ID == attendance.ShiftAssignmentID.Value);
+                    if (shiftAssignment != null)
+                    {
+                        workShiftID = shiftAssignment.WorkShiftID;
+                        _logger.LogInformation($"✅ [GET_TODAY] Loaded ShiftAssignment directly. WorkShiftID: {workShiftID}");
+                    }
+                    else
+                    {
+                        _logger.LogError($"❌ [GET_TODAY] ShiftAssignment with ID {attendance.ShiftAssignmentID} not found in database!");
+                    }
                 }
 
                 return Ok(new
@@ -179,7 +246,45 @@ namespace dotnet_api.Controllers
                     checkInLocation = attendance.CheckInLocation,
                     checkOutLocation = attendance.CheckOutLocation,
                     status = attendance.Status,
-                    notes = attendance.Notes
+                    notes = attendance.Notes,
+                    workShiftID = workShiftID
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách các ca đã chấm công hôm nay (để ẩn khỏi dropdown khi check-in)
+        /// </summary>
+        /// <param name="employeeId">ID nhân viên</param>
+        /// <returns>Danh sách WorkShiftID đã chấm công hôm nay</returns>
+        [HttpGet("today-shifts/{employeeId}")]
+        public async Task<ActionResult> GetTodayCheckedShifts(string employeeId)
+        {
+            try
+            {
+                // SECURITY: Validate that user can only view their own checked shifts
+                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(currentUserId))
+                {
+                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
+                }
+
+                if (employeeId != currentUserId)
+                {
+                    _logger.LogWarning($"🚨 [SECURITY] User {currentUserId} attempted to access checked shifts for {employeeId}");
+                    return Forbid("Bạn chỉ có thể xem thông tin chấm công của chính mình");
+                }
+
+                var today = DateTime.Today;
+                var checkedShifts = await _attendanceService.GetTodayCheckedShiftsAsync(employeeId);
+                
+                return Ok(new
+                {
+                    checkedShiftIds = checkedShifts
                 });
             }
             catch (Exception ex)

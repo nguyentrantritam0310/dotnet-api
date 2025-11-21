@@ -333,18 +333,47 @@ namespace dotnet_api.Services
                 _verificationTokenCache.TryAdd(request.VerificationToken, DateTime.UtcNow.AddSeconds(60));
                 CleanupExpiredTokens();
 
-                // Check if already checked in today
-                var existingAttendance = await GetTodayAttendanceAsync(request.EmployeeId);
-                if (existingAttendance != null && existingAttendance.CheckInDateTime.HasValue)
+                // Check if this specific shift (WorkShiftID) has already been checked in/out today
+                // Allow multiple check-ins per day for different shifts, but not the same shift twice
+                if (request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0)
                 {
-                    _logger.LogInformation($"ℹ️ Employee {request.EmployeeId} already checked in today at {existingAttendance.CheckInDateTime}");
+                    var today = DateTime.Today;
+                    var existingShiftAttendance = await _context.Attendances
+                        .Include(a => a.ShiftAssignment)
+                        .FirstOrDefaultAsync(a => 
+                            a.EmployeeId == request.EmployeeId && 
+                            a.CheckInDateTime.HasValue && 
+                            a.CheckInDateTime.Value.Date == today &&
+                            a.ShiftAssignment != null &&
+                            a.ShiftAssignment.WorkShiftID == request.WorkShiftID.Value);
+                    
+                    if (existingShiftAttendance != null)
+                    {
+                        _logger.LogInformation($"ℹ️ Employee {request.EmployeeId} already checked in/out for WorkShiftID {request.WorkShiftID.Value} today at {existingShiftAttendance.CheckInDateTime}");
+                        return new AttendanceCheckInResult
+                        {
+                            Success = false,
+                            Message = $"Bạn đã chấm công ca này hôm nay. Vui lòng chọn ca khác.",
+                            EmployeeId = request.EmployeeId,
+                            CheckInDateTime = existingShiftAttendance.CheckInDateTime.Value,
+                            Status = existingShiftAttendance.Status ?? AttendanceStatusEnum.Present
+                        };
+                    }
+                }
+                
+                // Check if there's an active check-in (not checked out yet) for any shift
+                // Must checkout current shift before checking in a new one
+                var activeAttendance = await GetTodayAttendanceAsync(request.EmployeeId);
+                if (activeAttendance != null && activeAttendance.CheckInDateTime.HasValue && !activeAttendance.CheckOutDateTime.HasValue)
+                {
+                    _logger.LogInformation($"ℹ️ Employee {request.EmployeeId} has active check-in today at {activeAttendance.CheckInDateTime} but not checked out yet");
                     return new AttendanceCheckInResult
                     {
                         Success = false,
-                        Message = "Bạn đã chấm công vào hôm nay",
+                        Message = "Bạn đã chấm công vào nhưng chưa chấm công ra. Vui lòng chấm công ra trước khi chấm công vào ca mới.",
                         EmployeeId = request.EmployeeId,
-                        CheckInDateTime = existingAttendance.CheckInDateTime.Value,
-                        Status = existingAttendance.Status ?? AttendanceStatusEnum.Present
+                        CheckInDateTime = activeAttendance.CheckInDateTime.Value,
+                        Status = activeAttendance.Status ?? AttendanceStatusEnum.Present
                     };
                 }
 
@@ -736,6 +765,8 @@ namespace dotnet_api.Services
                 return await _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
                     .FirstOrDefaultAsync(a => 
                         a.EmployeeId == employeeId && 
                         a.CheckInDateTime.HasValue && 
@@ -755,6 +786,8 @@ namespace dotnet_api.Services
                 var query = _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
                     .Where(a => a.EmployeeId == employeeId);
 
                 if (startDate.HasValue)
@@ -770,6 +803,32 @@ namespace dotnet_api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error getting attendance for employee: {employeeId}");
+                throw;
+            }
+        }
+
+        public async Task<List<int>> GetTodayCheckedShiftsAsync(string employeeId)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                var checkedShifts = await _context.Attendances
+                    .Include(a => a.ShiftAssignment)
+                    .Where(a => 
+                        a.EmployeeId == employeeId && 
+                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.Value.Date == today &&
+                        a.ShiftAssignment != null &&
+                        a.ShiftAssignment.WorkShiftID.HasValue)
+                    .Select(a => a.ShiftAssignment.WorkShiftID.Value)
+                    .Distinct()
+                    .ToListAsync();
+
+                return checkedShifts;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting today's checked shifts for employee: {employeeId}");
                 throw;
             }
         }

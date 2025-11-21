@@ -5,8 +5,6 @@ namespace dotnet_api.DTOs
     public class AttendanceDataDto
     {
         public int STT { get; set; }
-        public string? ImageCheckIn { get; set; }
-        public string? ImageCheckOut { get; set; }
         public string? EmployeeCode { get; set; }
         public string? EmployeeName { get; set; }
         public string? ShiftName { get; set; }

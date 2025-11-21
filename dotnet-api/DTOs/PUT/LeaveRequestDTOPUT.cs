@@ -25,5 +25,7 @@ namespace dotnet_api.DTOs.PUT
         [Required(ErrorMessage = "Lý do là bắt buộc")]
         [StringLength(500, ErrorMessage = "Lý do không được vượt quá 500 ký tự")]
         public string Reason { get; set; }
+
+        public string? Notes { get; set; } // Ghi chú khi duyệt/từ chối/trả lại
     }
 }

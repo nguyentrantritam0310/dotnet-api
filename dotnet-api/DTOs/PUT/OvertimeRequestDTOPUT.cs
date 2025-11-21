@@ -19,5 +19,7 @@ namespace dotnet_api.DTOs.PUT
         public DateTime EndDateTime { get; set; }
         [Required]
         public string Reason { get; set; }
+
+        public string? Notes { get; set; } // Ghi chú khi duyệt/từ chối/trả lại
     }
 }

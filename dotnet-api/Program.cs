@@ -122,6 +122,7 @@ builder.Services.AddScoped<IWorkShiftService, WorkShiftService>();
 builder.Services.AddScoped<IAttendanceMachineService, AttendanceMachineService>();
 builder.Services.AddScoped<IEmployeeRequestService, EmployeeRequestService>();
 builder.Services.AddScoped<IPayrollAdjustmentService, PayrollAdjustmentService>();
+builder.Services.AddScoped<IApprovalHistoryService, ApprovalHistoryService>();
 builder.Services.AddScoped<IAdjustmentTypeService, AdjustmentTypeService>();
 builder.Services.AddScoped<IAdjustmentItemService, AdjustmentItemService>();
 builder.Services.AddScoped<ILeaveTypeService, LeaveTypeService>();

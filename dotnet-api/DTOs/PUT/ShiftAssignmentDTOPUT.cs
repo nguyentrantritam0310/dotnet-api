@@ -16,6 +16,8 @@ namespace dotnet_api.DTOs.PUT
 
         [Required(ErrorMessage = "Ngày làm việc là bắt buộc")]
         public DateTime WorkDate { get; set; }
+        
+        public int? ConstructionTaskID { get; set; }
     }
 }
 

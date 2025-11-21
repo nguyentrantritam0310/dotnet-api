@@ -26,5 +26,17 @@ namespace dotnet_api.Services.Interfaces
         Task<IEnumerable<OvertimeRequestDTO>> GetAllOvertimeRequestsAsync();
         Task<OvertimeRequestDTO> UpdateOvertimeRequestAsync(OvertimeRequestDTOPUT overtimeRequestDTO);
         Task<OvertimeRequestDTO> DeleteOvertimeRequestAsync(string voucherCode);
+
+        // Approval workflow methods for Leave Requests
+        Task<LeaveRequestDTO> SubmitLeaveRequestForApprovalAsync(string voucherCode, string submitterId, string? notes);
+        Task<LeaveRequestDTO> ApproveLeaveRequestAsync(string voucherCode, string approverId, string? notes);
+        Task<LeaveRequestDTO> RejectLeaveRequestAsync(string voucherCode, string approverId, string? notes);
+        Task<LeaveRequestDTO> ReturnLeaveRequestAsync(string voucherCode, string approverId, string? notes);
+
+        // Approval workflow methods for Overtime Requests
+        Task<OvertimeRequestDTO> SubmitOvertimeRequestForApprovalAsync(string voucherCode, string submitterId, string? notes);
+        Task<OvertimeRequestDTO> ApproveOvertimeRequestAsync(string voucherCode, string approverId, string? notes);
+        Task<OvertimeRequestDTO> RejectOvertimeRequestAsync(string voucherCode, string approverId, string? notes);
+        Task<OvertimeRequestDTO> ReturnOvertimeRequestAsync(string voucherCode, string approverId, string? notes);
     }
 }

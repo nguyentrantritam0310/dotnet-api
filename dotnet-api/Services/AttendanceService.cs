@@ -78,7 +78,6 @@ namespace dotnet_api.Services
 
                 attendance.CheckInDateTime = request.CheckInDateTime;
                 attendance.CheckIn = request.CheckInDateTime.TimeOfDay;
-                attendance.ImageCheckIn = await SaveAttendanceImageAsync(request.ImageBase64, "checkin", request.EmployeeId);
                 attendance.CheckInLocation = request.Location ?? $"{request.Latitude},{request.Longitude}";
                 attendance.AttendanceMachineId = request.AttendanceMachineId;
                 attendance.Status = AttendanceStatusEnum.Present;
@@ -106,7 +105,6 @@ namespace dotnet_api.Services
                     EmployeeName = employee.UserName,
                     CheckInDateTime = attendance.CheckInDateTime.Value,
                     Status = attendance.Status.Value,
-                    ImagePath = attendance.ImageCheckIn,
                     Location = attendance.CheckInLocation
                 };
             }
@@ -136,11 +134,6 @@ namespace dotnet_api.Services
                 attendance.CheckOutDateTime = checkOutDateTime;
                 attendance.CheckOut = checkOutDateTime.TimeOfDay;
                 attendance.LastUpdated = DateTime.Now;
-
-                if (!string.IsNullOrEmpty(imageBase64))
-                {
-                    attendance.ImageCheckOut = await SaveAttendanceImageAsync(imageBase64, "checkout", employeeId);
-                }
 
                 _context.Attendances.Update(attendance);
                 await _context.SaveChangesAsync();
@@ -237,26 +230,6 @@ namespace dotnet_api.Services
             }
         }
 
-        private async Task<string> SaveAttendanceImageAsync(string imageBase64, string type, string employeeId)
-        {
-            try
-            {
-                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "attendance");
-                Directory.CreateDirectory(uploadsDir);
 
-                var fileName = $"{employeeId}_{type}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
-                var filePath = Path.Combine(uploadsDir, fileName);
-
-                var imageBytes = Convert.FromBase64String(imageBase64);
-                await File.WriteAllBytesAsync(filePath, imageBytes);
-
-                return $"/uploads/attendance/{fileName}";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error saving attendance image for employee: {employeeId}");
-                return string.Empty;
-            }
-        }
     }
 }

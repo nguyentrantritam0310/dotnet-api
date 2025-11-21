@@ -179,8 +179,6 @@ namespace dotnet_api.Controllers
                     checkInLocation = attendance.CheckInLocation,
                     checkOutLocation = attendance.CheckOutLocation,
                     status = attendance.Status,
-                    imageCheckIn = attendance.ImageCheckIn,
-                    imageCheckOut = attendance.ImageCheckOut,
                     notes = attendance.Notes
                 });
             }
@@ -214,8 +212,6 @@ namespace dotnet_api.Controllers
                     checkInLocation = a.CheckInLocation,
                     checkOutLocation = a.CheckOutLocation,
                     status = a.Status,
-                    imageCheckIn = a.ImageCheckIn,
-                    imageCheckOut = a.ImageCheckOut,
                     notes = a.Notes,
                     createdDate = a.CreatedDate,
                     lastUpdated = a.LastUpdated

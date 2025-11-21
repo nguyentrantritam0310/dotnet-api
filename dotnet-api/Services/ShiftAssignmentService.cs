@@ -227,6 +227,7 @@ namespace dotnet_api.Services
             shiftAssignment.EmployeeID = shiftAssignmentDTO.EmployeeID;
             shiftAssignment.WorkShiftID = shiftAssignmentDTO.WorkShiftID;
             shiftAssignment.WorkDate = shiftAssignmentDTO.WorkDate;
+            shiftAssignment.ConstructionTaskID = shiftAssignmentDTO.ConstructionTaskID;
 
             await _context.SaveChangesAsync();
 
@@ -246,5 +247,52 @@ namespace dotnet_api.Services
 
             return true;
         }
+
+        public async Task<IEnumerable<ShiftAssignmentDTO>> GetShiftAssignmentsByConstructionTaskIdAsync(int constructionTaskId)
+        {
+            var shiftAssignments = await _context.ShiftAssignments
+                .Include(sa => sa.Employee)
+                    .ThenInclude(e => e.Role)
+                .Include(sa => sa.WorkShift)
+                    .ThenInclude(ws => ws.ShiftDetails)
+                .Include(sa => sa.ConstructionTask)
+                .Where(sa => sa.ConstructionTaskID == constructionTaskId)
+                .OrderBy(sa => sa.WorkDate)
+                .ThenBy(sa => sa.Employee.FirstName)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<ShiftAssignmentDTO>>(shiftAssignments);
+        }
+
+        public async Task<IEnumerable<ShiftAssignmentDTO>> AssignTaskToWorkShiftsAsync(
+            int constructionTaskID, 
+            List<string> employeeIds, 
+            List<int> workShiftIds,
+            DateTime startDate, 
+            DateTime endDate)
+        {
+            // Update tất cả ShiftAssignment của các công nhân đã chọn, 
+            // có WorkShiftID trong danh sách, trong khoảng thời gian đã chọn
+            var shiftAssignments = await _context.ShiftAssignments
+                .Include(sa => sa.Employee)
+                    .ThenInclude(e => e.Role)
+                .Include(sa => sa.WorkShift)
+                    .ThenInclude(ws => ws.ShiftDetails)
+                .Include(sa => sa.ConstructionTask)
+                .Where(sa => employeeIds.Contains(sa.EmployeeID) 
+                          && workShiftIds.Contains(sa.WorkShiftID)
+                          && sa.WorkDate.Date >= startDate.Date 
+                          && sa.WorkDate.Date <= endDate.Date)
+                .ToListAsync();
+            
+            foreach (var assignment in shiftAssignments)
+            {
+                assignment.ConstructionTaskID = constructionTaskID;
+            }
+            
+            await _context.SaveChangesAsync();
+            return _mapper.Map<IEnumerable<ShiftAssignmentDTO>>(shiftAssignments);
+        }
     }
 }
+// ... existing code ...

@@ -39,6 +39,8 @@ namespace dotnet_api.DTOs.PUT
         [JsonIgnore]
         public ApproveStatusEnum ApproveStatusEnum => (ApproveStatusEnum)ApproveStatus;
         public List<ContractAllowanceDTOPUT> Allowances { get; set; } = new List<ContractAllowanceDTOPUT>();
+        
+        public string? Notes { get; set; } // Ghi chú khi duyệt/từ chối/trả lại
     }
 
     public class ContractAllowanceDTOPUT

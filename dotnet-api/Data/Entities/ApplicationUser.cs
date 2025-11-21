@@ -33,6 +33,7 @@ namespace dotnet_api.Data.Entities
         public ICollection<ApplicationUser_PayrollAdjustment> applicationUser_PayrollAdjustment { get; set; }
         public ICollection<Contract> Contracts { get; set; }
         public ICollection<FaceRegistration> FaceRegistrations { get; set; }
+        public ICollection<ApprovalHistory> ApprovalHistories { get; set; }
         
     }
 } 

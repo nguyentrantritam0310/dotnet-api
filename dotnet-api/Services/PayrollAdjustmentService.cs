@@ -19,13 +19,15 @@ namespace dotnet_api.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
+        private readonly IApprovalHistoryService _approvalHistoryService;
         private const string UPLOAD_DIRECTORY = "uploads/blueprints";
 
-        public PayrollAdjustmentService(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment environment)
+        public PayrollAdjustmentService(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment environment, IApprovalHistoryService approvalHistoryService)
         {
             _context = context;
             _mapper = mapper;
             _environment = environment;
+            _approvalHistoryService = approvalHistoryService;
         }
 
 
@@ -160,6 +162,237 @@ namespace dotnet_api.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<PayrollAdjustmentDTO>(entity);
+        }
+
+        // Approval workflow methods
+        public async Task<PayrollAdjustmentDTO> SubmitPayrollAdjustmentForApprovalAsync(string voucherNo, string submitterId, string? notes)
+        {
+            var entity = await _context.PayrollAdjustments
+                .FirstOrDefaultAsync(x => x.voucherNo == voucherNo);
+
+            if (entity == null) throw new Exception("Không tìm thấy khoản cộng/trừ");
+            if (entity.ApproveStatus != ApproveStatusEnum.Created) throw new Exception("Khoản cộng/trừ đã được gửi duyệt hoặc đã xử lý");
+
+            var submitter = await _context.ApplicationUsers
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == submitterId);
+            if (submitter == null) throw new Exception("Không tìm thấy người gửi");
+
+            var oldStatus = entity.ApproveStatus;
+            entity.ApproveStatus = ApproveStatusEnum.Pending;
+
+            await _context.SaveChangesAsync();
+
+            // Create approval history
+            await _approvalHistoryService.CreateHistoryAsync(
+                "PayrollAdjustment",
+                voucherNo,
+                submitterId,
+                $"{submitter.FirstName} {submitter.LastName}",
+                "Submit",
+                oldStatus,
+                ApproveStatusEnum.Pending,
+                notes
+            );
+
+            return await GetPayrollAdjustmentByIdAsync(voucherNo);
+        }
+
+        public async Task<PayrollAdjustmentDTO> ApprovePayrollAdjustmentAsync(string voucherNo, string approverId, string? notes)
+        {
+            var entity = await _context.PayrollAdjustments
+                .FirstOrDefaultAsync(x => x.voucherNo == voucherNo);
+
+            if (entity == null) throw new Exception("Không tìm thấy khoản cộng/trừ");
+            if (entity.ApproveStatus != ApproveStatusEnum.Pending) throw new Exception("Khoản cộng/trừ không ở trạng thái chờ duyệt");
+
+            var approver = await _context.ApplicationUsers
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == approverId);
+            if (approver == null) throw new Exception("Không tìm thấy người duyệt");
+
+            // Kiểm tra người cùng cấp với người submit không được duyệt/từ chối/trả lại
+            var submitHistory = await _context.ApprovalHistories
+                .Include(h => h.Approver)
+                    .ThenInclude(a => a.Role)
+                .Where(h => h.RequestType == "PayrollAdjustment" && h.RequestID == voucherNo && h.Action == "Submit")
+                .OrderBy(h => h.CreatedAt)
+                .FirstOrDefaultAsync();
+            
+            if (submitHistory != null && submitHistory.Approver?.Role != null && approver.Role != null)
+            {
+                if (submitHistory.Approver.Role.ID == approver.Role.ID)
+                {
+                    throw new Exception("Bạn không thể duyệt đơn của người cùng cấp. Phải đi theo quy trình duyệt");
+                }
+            }
+
+            // Check if approver has permission based on workflow
+            // Contract/Adjustment: HREmployee (6) → HRManager (5) → Director (3)
+            var canApprove = await CanApprovePayrollAdjustmentAsync(entity, approver);
+            if (!canApprove) throw new Exception("Bạn không có quyền duyệt khoản cộng/trừ này ở giai đoạn hiện tại");
+
+            var oldStatus = entity.ApproveStatus;
+            var nextStatus = await GetNextApprovalStatusForPayrollAdjustmentAsync(entity, approver);
+            
+            entity.ApproveStatus = nextStatus;
+
+            await _context.SaveChangesAsync();
+
+            // Create approval history
+            await _approvalHistoryService.CreateHistoryAsync(
+                "PayrollAdjustment",
+                voucherNo,
+                approverId,
+                $"{approver.FirstName} {approver.LastName}",
+                "Approve",
+                oldStatus,
+                nextStatus,
+                notes
+            );
+
+            return await GetPayrollAdjustmentByIdAsync(voucherNo);
+        }
+
+        public async Task<PayrollAdjustmentDTO> RejectPayrollAdjustmentAsync(string voucherNo, string approverId, string? notes)
+        {
+            var entity = await _context.PayrollAdjustments
+                .FirstOrDefaultAsync(x => x.voucherNo == voucherNo);
+
+            if (entity == null) throw new Exception("Không tìm thấy khoản cộng/trừ");
+            if (entity.ApproveStatus != ApproveStatusEnum.Pending) throw new Exception("Khoản cộng/trừ không ở trạng thái chờ duyệt");
+
+            var approver = await _context.ApplicationUsers
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == approverId);
+            if (approver == null) throw new Exception("Không tìm thấy người duyệt");
+
+            // Kiểm tra người cùng cấp với người submit không được duyệt/từ chối/trả lại
+            var submitHistory = await _context.ApprovalHistories
+                .Include(h => h.Approver)
+                    .ThenInclude(a => a.Role)
+                .Where(h => h.RequestType == "PayrollAdjustment" && h.RequestID == voucherNo && h.Action == "Submit")
+                .OrderBy(h => h.CreatedAt)
+                .FirstOrDefaultAsync();
+            
+            if (submitHistory != null && submitHistory.Approver?.Role != null && approver.Role != null)
+            {
+                if (submitHistory.Approver.Role.ID == approver.Role.ID)
+                {
+                    throw new Exception("Bạn không thể từ chối đơn của người cùng cấp. Phải đi theo quy trình duyệt");
+                }
+            }
+
+            var oldStatus = entity.ApproveStatus;
+            entity.ApproveStatus = ApproveStatusEnum.Rejected;
+
+            await _context.SaveChangesAsync();
+
+            // Create approval history
+            await _approvalHistoryService.CreateHistoryAsync(
+                "PayrollAdjustment",
+                voucherNo,
+                approverId,
+                $"{approver.FirstName} {approver.LastName}",
+                "Reject",
+                oldStatus,
+                ApproveStatusEnum.Rejected,
+                notes
+            );
+
+            return await GetPayrollAdjustmentByIdAsync(voucherNo);
+        }
+
+        public async Task<PayrollAdjustmentDTO> ReturnPayrollAdjustmentAsync(string voucherNo, string approverId, string? notes)
+        {
+            var entity = await _context.PayrollAdjustments
+                .FirstOrDefaultAsync(x => x.voucherNo == voucherNo);
+
+            if (entity == null) throw new Exception("Không tìm thấy khoản cộng/trừ");
+            if (entity.ApproveStatus != ApproveStatusEnum.Pending) throw new Exception("Khoản cộng/trừ không ở trạng thái chờ duyệt");
+
+            var approver = await _context.ApplicationUsers
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == approverId);
+            if (approver == null) throw new Exception("Không tìm thấy người duyệt");
+
+            // Kiểm tra người cùng cấp với người submit không được duyệt/từ chối/trả lại
+            var submitHistory = await _context.ApprovalHistories
+                .Include(h => h.Approver)
+                    .ThenInclude(a => a.Role)
+                .Where(h => h.RequestType == "PayrollAdjustment" && h.RequestID == voucherNo && h.Action == "Submit")
+                .OrderBy(h => h.CreatedAt)
+                .FirstOrDefaultAsync();
+            
+            if (submitHistory != null && submitHistory.Approver?.Role != null && approver.Role != null)
+            {
+                if (submitHistory.Approver.Role.ID == approver.Role.ID)
+                {
+                    throw new Exception("Bạn không thể trả lại đơn của người cùng cấp. Phải đi theo quy trình duyệt");
+                }
+            }
+
+            var oldStatus = entity.ApproveStatus;
+            entity.ApproveStatus = ApproveStatusEnum.Created; // Return về "Tạo mới"
+
+            await _context.SaveChangesAsync();
+
+            // Create approval history
+            await _approvalHistoryService.CreateHistoryAsync(
+                "PayrollAdjustment",
+                voucherNo,
+                approverId,
+                $"{approver.FirstName} {approver.LastName}",
+                "Return",
+                oldStatus,
+                ApproveStatusEnum.Created,
+                notes
+            );
+
+            return await GetPayrollAdjustmentByIdAsync(voucherNo);
+        }
+
+        // Helper methods for approval workflow
+        private async Task<bool> CanApprovePayrollAdjustmentAsync(PayrollAdjustment adjustment, ApplicationUser approver)
+        {
+            var approverRoleId = approver.RoleID;
+
+            // Check approval history to determine current level
+            var history = await _context.ApprovalHistories
+                .Where(h => h.RequestType == "PayrollAdjustment" && h.RequestID == adjustment.voucherNo)
+                .OrderByDescending(h => h.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            // If no history, check who created it (must be HREmployee)
+            if (history == null)
+            {
+                // First approval: HREmployee (6) → HRManager (5)
+                return approverRoleId == 5; // HRManager can approve
+            }
+
+            // If last approver was HREmployee (6), next is HRManager (5)
+            if (history != null)
+            {
+                var lastApprover = await _context.ApplicationUsers
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Id == history.ApproverID);
+                
+                if (lastApprover?.RoleID == 6 && approverRoleId == 5) return true; // HREmployee → HRManager
+                if (lastApprover?.RoleID == 5 && approverRoleId == 3) return true; // HRManager → Director
+            }
+
+            return false;
+        }
+
+        private async Task<ApproveStatusEnum> GetNextApprovalStatusForPayrollAdjustmentAsync(PayrollAdjustment adjustment, ApplicationUser approver)
+        {
+            var approverRoleId = approver.RoleID;
+
+            // If Director approves, it's final approval
+            if (approverRoleId == 3) return ApproveStatusEnum.Approved;
+
+            // Otherwise, still pending for next level
+            return ApproveStatusEnum.Pending;
         }
     }
 }

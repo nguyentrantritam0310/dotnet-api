@@ -15,9 +15,10 @@ namespace dotnet_api.Services.Interfaces
        
         Task<IEnumerable<AllowanceDTO>> GetAllowancesAsync();
 
-        // Approve/Reject Contract methods
-        Task<ContractDTO> ApproveContractAsync(int contractId);
-        Task<ContractDTO> RejectContractAsync(int contractId);
-        Task<ContractDTO> PendingContractAsync(int contractId);
+        // Approval workflow methods
+        Task<ContractDTO> SubmitContractForApprovalAsync(int contractId, string submitterId, string? notes);
+        Task<ContractDTO> ApproveContractAsync(int contractId, string approverId, string? notes);
+        Task<ContractDTO> RejectContractAsync(int contractId, string approverId, string? notes);
+        Task<ContractDTO> ReturnContractAsync(int contractId, string approverId, string? notes);
     }
 }

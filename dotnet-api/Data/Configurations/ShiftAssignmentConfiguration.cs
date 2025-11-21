@@ -25,6 +25,10 @@ namespace dotnet_api.Data.Configurations
                    .WithMany(t => t.ShiftAssignments)
                    .HasForeignKey(x => x.WorkShiftID);
 
+            builder.HasOne(x => x.ConstructionTask)
+                   .WithMany(ct => ct.Attendances)
+                   .HasForeignKey(x => x.ConstructionTaskID)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

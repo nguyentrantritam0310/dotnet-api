@@ -4,21 +4,36 @@ using dotnet_api.DTOs.POST;
 using dotnet_api.DTOs.PUT;
 using dotnet_api.Services;
 using dotnet_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using dotnet_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace dotnet_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class EmployeeRequestController : ControllerBase
     {
         private readonly IEmployeeRequestService _EmployeeRequestService;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public EmployeeRequestController(IEmployeeRequestService EmployeeRequestService, IMapper mapper)
+        public EmployeeRequestController(IEmployeeRequestService EmployeeRequestService, IMapper mapper, ApplicationDbContext context)
         {
             _EmployeeRequestService = EmployeeRequestService;
             _mapper = mapper;
+            _context = context;
+        }
+
+        private string GetCurrentUserId()
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email)) return null;
+            var user = _context.ApplicationUsers.FirstOrDefault(u => u.Email == email);
+            return user?.Id;
         }
 
         [HttpGet]
@@ -184,6 +199,152 @@ namespace dotnet_api.Controllers
                 return NotFound(new { message = $"Overtime request with voucher code {voucherCode} not found." });
 
             return Ok(deleted);
+        }
+
+        // Approval workflow endpoints for Leave Requests
+        [HttpPut("leave/{voucherCode}/submit")]
+        public async Task<IActionResult> SubmitLeaveRequestForApproval(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var submitterId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(submitterId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.SubmitLeaveRequestForApprovalAsync(voucherCode, submitterId, dto?.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("leave/{voucherCode}/approve")]
+        public async Task<IActionResult> ApproveLeaveRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.ApproveLeaveRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("leave/{voucherCode}/reject")]
+        public async Task<IActionResult> RejectLeaveRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.RejectLeaveRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("leave/{voucherCode}/return")]
+        public async Task<IActionResult> ReturnLeaveRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.ReturnLeaveRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // Approval workflow endpoints for Overtime Requests
+        [HttpPut("overtime/{voucherCode}/submit")]
+        public async Task<IActionResult> SubmitOvertimeRequestForApproval(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var submitterId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(submitterId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.SubmitOvertimeRequestForApprovalAsync(voucherCode, submitterId, dto?.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("overtime/{voucherCode}/approve")]
+        public async Task<IActionResult> ApproveOvertimeRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.ApproveOvertimeRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("overtime/{voucherCode}/reject")]
+        public async Task<IActionResult> RejectOvertimeRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.RejectOvertimeRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("overtime/{voucherCode}/return")]
+        public async Task<IActionResult> ReturnOvertimeRequest(string voucherCode, [FromBody] ApprovalActionDTO dto)
+        {
+            try
+            {
+                var approverId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(approverId))
+                    return Unauthorized(new { message = "Không thể xác định người dùng" });
+
+                var result = await _EmployeeRequestService.ReturnOvertimeRequestAsync(voucherCode, approverId, dto.Notes);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

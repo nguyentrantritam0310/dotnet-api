@@ -24,168 +24,145 @@ namespace dotnet_api.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Chấm công vào (Check-in)
-        /// </summary>
-        /// <param name="request">Thông tin chấm công vào</param>
-        /// <returns>Kết quả chấm công</returns>
+        private string GetCurrentUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        private ActionResult ValidateUserAccess(string requestedEmployeeId, string operation = "access")
+        {
+            var currentUserId = GetCurrentUserId();
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
+            }
+
+            if (requestedEmployeeId != currentUserId)
+            {
+                _logger.LogWarning("Unauthorized access attempt - UserId: {CurrentUserId}, RequestedEmployeeId: {RequestedEmployeeId}, Operation: {Operation}", 
+                    currentUserId, requestedEmployeeId, operation);
+                return Forbid("Bạn chỉ có thể chấm công cho chính mình");
+            }
+
+            return null;
+        }
+
+        private ActionResult HandleServiceResult<T>(T result) where T : class
+        {
+            if (result is AttendanceCheckInResult attendanceResult)
+            {
+                return attendanceResult.Success ? Ok(result) : BadRequest(result);
+            }
+            return Ok(result);
+        }
+
         [HttpPost("checkin")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckIn([FromBody] AttendanceCheckInRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var result = await _attendanceService.CheckInAsync(request);
-                
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return HandleServiceResult(result);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in CheckIn - EmployeeId: {EmployeeId}", request?.EmployeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Chấm công vào (không ảnh) - Requires face verification
-        /// </summary>
         [HttpPost("checkin-noimage")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckInNoImage([FromBody] AttendanceCheckInNoImageRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var validationResult = ValidateUserAccess(request.EmployeeId, "check-in");
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                // SECURITY: Validate that user can only check-in for themselves
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
-                }
-
-                if (request.EmployeeId != currentUserId)
-                {
-                    return Forbid("Bạn chỉ có thể chấm công cho chính mình");
-                }
-
+                var currentUserId = GetCurrentUserId();
                 var result = await _attendanceService.CheckInNoImageAsync(request, currentUserId);
-                if (result.Success) return Ok(result);
-                return BadRequest(result);
+                return HandleServiceResult(result);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in CheckInNoImage - EmployeeId: {EmployeeId}", request?.EmployeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Chấm công ra (Check-out)
-        /// </summary>
-        /// <param name="request">Thông tin chấm công ra</param>
-        /// <returns>Kết quả chấm công</returns>
         [HttpPost("checkout")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckOut([FromBody] AttendanceCheckOutRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var result = await _attendanceService.CheckOutAsync(request);
-                
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                return HandleServiceResult(result);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in CheckOut - EmployeeId: {EmployeeId}", request?.EmployeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Chấm công ra (không ảnh)
-        /// </summary>
         [HttpPost("checkout-noimage")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckOutNoImage([FromBody] AttendanceCheckOutNoImageRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var validationResult = ValidateUserAccess(request.EmployeeId, "check-out");
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                // SECURITY: Validate that user can only check-out for themselves
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
-                }
-
-                if (request.EmployeeId != currentUserId)
-                {
-                    return Forbid("Bạn chỉ có thể chấm công cho chính mình");
-                }
-
+                var currentUserId = GetCurrentUserId();
                 var result = await _attendanceService.CheckOutNoImageAsync(request, currentUserId);
-                if (result.Success) return Ok(result);
-                return BadRequest(result);
+                return HandleServiceResult(result);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in CheckOutNoImage - EmployeeId: {EmployeeId}", request?.EmployeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Lấy thông tin chấm công hôm nay của nhân viên
-        /// </summary>
-        /// <param name="employeeId">ID nhân viên</param>
-        /// <returns>Thông tin chấm công hôm nay</returns>
         [HttpGet("today/{employeeId}")]
         public async Task<ActionResult> GetTodayAttendance(string employeeId)
         {
+            var validationResult = ValidateUserAccess(employeeId, "view attendance");
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             try
             {
-                // SECURITY: Validate that user can only view their own attendance
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
-                }
-
-                if (employeeId != currentUserId)
-                {
-                    _logger.LogWarning($"🚨 [SECURITY] User {currentUserId} attempted to access attendance for {employeeId}");
-                    return Forbid("Bạn chỉ có thể xem thông tin chấm công của chính mình");
-                }
-
-                // Ưu tiên lấy attendance chưa checkout (để checkout)
-                // Nếu không có thì lấy attendance mới nhất (đã checkout)
                 var today = DateTime.Today;
                 
-                // Load trực tiếp từ database với include đầy đủ để đảm bảo ShiftAssignment được load
                 var attendance = await _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
@@ -198,7 +175,6 @@ namespace dotnet_api.Controllers
                     .OrderByDescending(a => a.CheckInDateTime)
                     .FirstOrDefaultAsync();
                 
-                // Nếu không có attendance nào, thử lấy từ service (fallback)
                 if (attendance == null)
                 {
                     var attendances = await _attendanceService.GetEmployeeAttendanceAsync(employeeId, today, today);
@@ -207,7 +183,6 @@ namespace dotnet_api.Controllers
                         return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                     }
 
-                    // Ưu tiên lấy attendance chưa checkout
                     attendance = attendances.FirstOrDefault(a => 
                         a.CheckInDateTime.HasValue && 
                         a.CheckInDateTime.Value.Date == today &&
@@ -219,10 +194,8 @@ namespace dotnet_api.Controllers
                         return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                     }
 
-                    // Reload attendance với include đầy đủ nếu ShiftAssignment null
                     if (attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
                     {
-                        _logger.LogWarning($"⚠️ [GET_TODAY] Reloading attendance {attendance.ID} with full includes...");
                         attendance = await _context.Attendances
                             .Include(a => a.Employee)
                             .Include(a => a.AttendanceMachine)
@@ -237,26 +210,7 @@ namespace dotnet_api.Controllers
                     return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                 }
 
-                // Log để debug
-                _logger.LogInformation($"📊 [GET_TODAY] Requested by: {currentUserId}, Found attendance ID: {attendance.ID}, EmployeeId: {attendance.EmployeeId}, CheckIn: {attendance.CheckInDateTime}, CheckOut: {attendance.CheckOutDateTime}, CheckOutIsNull: {attendance.CheckOutDateTime == null}, ShiftAssignmentID: {attendance.ShiftAssignmentID}, WorkShiftID: {attendance.ShiftAssignment?.WorkShiftID}");
-
-                // Fallback: Nếu ShiftAssignment null nhưng có ShiftAssignmentID, load trực tiếp từ database
-                int? workShiftID = attendance.ShiftAssignment?.WorkShiftID;
-                if (!workShiftID.HasValue && attendance.ShiftAssignmentID.HasValue)
-                {
-                    _logger.LogWarning($"⚠️ [GET_TODAY] ShiftAssignment is null but ShiftAssignmentID exists: {attendance.ShiftAssignmentID}. Loading directly from database...");
-                    var shiftAssignment = await _context.ShiftAssignments
-                        .FirstOrDefaultAsync(sa => sa.ID == attendance.ShiftAssignmentID.Value);
-                    if (shiftAssignment != null)
-                    {
-                        workShiftID = shiftAssignment.WorkShiftID;
-                        _logger.LogInformation($"✅ [GET_TODAY] Loaded ShiftAssignment directly. WorkShiftID: {workShiftID}");
-                    }
-                    else
-                    {
-                        _logger.LogError($"❌ [GET_TODAY] ShiftAssignment with ID {attendance.ShiftAssignmentID} not found in database!");
-                    }
-                }
+                var workShiftID = await GetWorkShiftIdAsync(attendance);
 
                 var responseData = new
                 {
@@ -272,40 +226,47 @@ namespace dotnet_api.Controllers
                     workShiftID = workShiftID
                 };
 
-                _logger.LogInformation($"📤 [GET_TODAY] Returning response - EmployeeId: {responseData.employeeId}, CheckIn: {responseData.checkInDateTime}, CheckOut: {responseData.checkOutDateTime}, CheckOutIsNull: {responseData.checkOutDateTime == null}");
-
                 return Ok(responseData);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in GetTodayAttendance - EmployeeId: {EmployeeId}", employeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Lấy danh sách các ca đã chấm công hôm nay (để ẩn khỏi dropdown khi check-in)
-        /// </summary>
-        /// <param name="employeeId">ID nhân viên</param>
-        /// <returns>Danh sách WorkShiftID đã chấm công hôm nay</returns>
+        private async Task<int?> GetWorkShiftIdAsync(Data.Entities.Attendance attendance)
+        {
+            if (attendance.ShiftAssignment?.WorkShiftID != null)
+            {
+                return attendance.ShiftAssignment.WorkShiftID;
+            }
+
+            if (attendance.ShiftAssignmentID.HasValue)
+            {
+                var shiftAssignment = await _context.ShiftAssignments
+                    .FirstOrDefaultAsync(sa => sa.ID == attendance.ShiftAssignmentID.Value);
+                
+                if (shiftAssignment != null)
+                {
+                    return shiftAssignment.WorkShiftID;
+                }
+            }
+
+            return null;
+        }
+
         [HttpGet("today-shifts/{employeeId}")]
         public async Task<ActionResult> GetTodayCheckedShifts(string employeeId)
         {
+            var validationResult = ValidateUserAccess(employeeId, "view checked shifts");
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             try
             {
-                // SECURITY: Validate that user can only view their own checked shifts
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized(new { message = "Không thể xác định người dùng từ token" });
-                }
-
-                if (employeeId != currentUserId)
-                {
-                    _logger.LogWarning($"🚨 [SECURITY] User {currentUserId} attempted to access checked shifts for {employeeId}");
-                    return Forbid("Bạn chỉ có thể xem thông tin chấm công của chính mình");
-                }
-
-                var today = DateTime.Today;
                 var checkedShifts = await _attendanceService.GetTodayCheckedShiftsAsync(employeeId);
                 
                 return Ok(new
@@ -315,17 +276,11 @@ namespace dotnet_api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in GetTodayCheckedShifts - EmployeeId: {EmployeeId}", employeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Lấy lịch sử chấm công của nhân viên
-        /// </summary>
-        /// <param name="employeeId">ID nhân viên</param>
-        /// <param name="startDate">Ngày bắt đầu (yyyy-MM-dd)</param>
-        /// <param name="endDate">Ngày kết thúc (yyyy-MM-dd)</param>
-        /// <returns>Danh sách chấm công</returns>
         [HttpGet("history/{employeeId}")]
         public async Task<ActionResult> GetAttendanceHistory(string employeeId, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
         {
@@ -352,69 +307,11 @@ namespace dotnet_api.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in GetAttendanceHistory - EmployeeId: {EmployeeId}, StartDate: {StartDate}, EndDate: {EndDate}", 
+                    employeeId, startDate, endDate);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Serve attendance images
-        /// </summary>
-        /// <param name="filename">Image filename</param>
-        /// <returns>Image file</returns>
-        [HttpGet("image/{filename}")]
-        public IActionResult GetAttendanceImage(string filename)
-        {
-            try
-            {
-                var uploadsPath = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" 
-                    ? "/var/www/backend/uploads" 
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "uploads");
-                
-                var imagePath = Path.Combine(uploadsPath, "attendance", filename);
-                
-                // Debug logging
-                Console.WriteLine($"Looking for image: {imagePath}");
-                Console.WriteLine($"File exists: {System.IO.File.Exists(imagePath)}");
-                Console.WriteLine($"Directory exists: {Directory.Exists(Path.GetDirectoryName(imagePath))}");
-                
-                if (Directory.Exists(Path.GetDirectoryName(imagePath)))
-                {
-                    var files = Directory.GetFiles(Path.GetDirectoryName(imagePath));
-                    Console.WriteLine($"Files in directory: {string.Join(", ", files)}");
-                }
-                
-                if (!System.IO.File.Exists(imagePath))
-                {
-                    return NotFound(new { 
-                        message = "Image not found", 
-                        searchedPath = imagePath,
-                        uploadsPath = uploadsPath,
-                        filename = filename
-                    });
-                }
-                
-                var imageBytes = System.IO.File.ReadAllBytes(imagePath);
-                var contentType = GetContentType(filename);
-                
-                return File(imageBytes, contentType);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error serving image", error = ex.Message });
-            }
-        }
-        
-        private string GetContentType(string filename)
-        {
-            var extension = Path.GetExtension(filename).ToLowerInvariant();
-            return extension switch
-            {
-                ".jpg" or ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                ".gif" => "image/gif",
-                ".webp" => "image/webp",
-                _ => "application/octet-stream"
-            };
-        }
     }
 }

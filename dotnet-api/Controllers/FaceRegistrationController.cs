@@ -23,69 +23,6 @@ namespace dotnet_api.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Đăng ký khuôn mặt mới cho người dùng (Deprecated - không dùng nữa, dùng register-embedding thay thế)
-        /// </summary>
-        [HttpPost("register")]
-        [Consumes("multipart/form-data")]
-        [ApiExplorerSettings(IgnoreApi = true)] // Ẩn khỏi Swagger vì không dùng nữa
-        public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFace([FromForm] string employeeId, [FromForm] IFormFile imageFile, [FromForm] string faceFeatures, [FromForm] string notes)
-        {
-            try
-            {
-                // Get current user ID from JWT token
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized("Không thể xác định người dùng");
-                }
-
-                // Only allow users to register their own face
-                if (employeeId != currentUserId)
-                {
-                    return Forbid("Bạn chỉ có thể đăng ký khuôn mặt của chính mình");
-                }
-
-                // Validate required fields
-                if (imageFile == null || imageFile.Length == 0)
-                {
-                    return BadRequest(new { message = "Vui lòng chọn ảnh để đăng ký" });
-                }
-
-                if (string.IsNullOrEmpty(faceFeatures))
-                {
-                    return BadRequest(new { message = "Dữ liệu đặc điểm khuôn mặt không hợp lệ" });
-                }
-
-                var request = new CreateFaceRegistrationDTO
-                {
-                    EmployeeId = employeeId,
-                    FaceFeatures = faceFeatures,
-                    Notes = notes
-                };
-
-                var result = await _faceRegistrationService.RegisterFaceAsync(request, imageFile);
-                
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in RegisterFace endpoint");
-                return StatusCode(500, new { message = "Có lỗi xảy ra khi đăng ký khuôn mặt" });
-            }
-        }
-
-        /// <summary>
-        /// Đăng ký khuôn mặt bằng embedding (không gửi ảnh)
-        /// </summary>
         [HttpPost("register-embedding")]
         public async Task<ActionResult<FaceRegistrationResultDTO>> RegisterFaceEmbedding([FromBody] FaceEmbeddingRegisterRequestDTO request)
         {
@@ -111,9 +48,6 @@ namespace dotnet_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Xác minh khuôn mặt bằng embedding (không gửi ảnh)
-        /// </summary>
         [HttpPost("verify-embedding")]
         public async Task<ActionResult<FaceVerificationResultDTO>> VerifyFaceEmbedding([FromBody] FaceEmbeddingVerifyRequestDTO request)
         {
@@ -139,49 +73,6 @@ namespace dotnet_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Xác minh khuôn mặt của người dùng
-        /// </summary>
-        [HttpPost("verify")]
-        public async Task<ActionResult<FaceVerificationResultDTO>> VerifyFace([FromBody] FaceVerificationRequestDTO request)
-        {
-            try
-            {
-                // Get current user ID from JWT token
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                
-                if (string.IsNullOrEmpty(currentUserId))
-                {
-                    return Unauthorized("Không thể xác định người dùng");
-                }
-
-                // Only allow users to verify their own face
-                if (request.EmployeeId != currentUserId)
-                {
-                    return Forbid("Bạn chỉ có thể xác minh khuôn mặt của chính mình");
-                }
-
-                var result = await _faceRegistrationService.VerifyFaceAsync(request);
-                
-                if (result.Success)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in VerifyFace endpoint");
-                return StatusCode(500, new { message = "Có lỗi xảy ra khi xác minh khuôn mặt" });
-            }
-        }
-
-        /// <summary>
-        /// Lấy danh sách khuôn mặt đã đăng ký của người dùng
-        /// </summary>
         [HttpGet("my-faces")]
         public async Task<ActionResult<List<FaceRegistrationListDTO>>> GetMyFaceRegistrations()
         {
@@ -205,9 +96,6 @@ namespace dotnet_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Xóa một khuôn mặt đã đăng ký
-        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteFaceRegistration(int id)
         {
@@ -239,9 +127,6 @@ namespace dotnet_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Lấy thông tin chi tiết của một khuôn mặt đã đăng ký
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<FaceRegistrationDTO>> GetFaceRegistration(int id)
         {
@@ -277,9 +162,6 @@ namespace dotnet_api.Controllers
             }
         }
 
-        /// <summary>
-        /// Cập nhật ghi chú của khuôn mặt đã đăng ký
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateFaceRegistration(int id, [FromBody] UpdateFaceRegistrationRequest request)
         {

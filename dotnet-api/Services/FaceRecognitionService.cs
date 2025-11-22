@@ -4,7 +4,6 @@ using dotnet_api.Data;
 using dotnet_api.Data.Entities;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 
@@ -17,7 +16,6 @@ namespace dotnet_api.Services
         private readonly ApplicationDbContext _context;
         private readonly IFaceRegistrationService _faceRegistrationService;
         private readonly string _pythonScriptPath;
-        private readonly string _faceDatabasePath;
 
         public FaceRecognitionService(
             ILogger<FaceRecognitionService> logger, 
@@ -30,152 +28,44 @@ namespace dotnet_api.Services
             _context = context;
             _faceRegistrationService = faceRegistrationService;
             _pythonScriptPath = Path.Combine(Directory.GetCurrentDirectory(), "MachineLearning", "face_recognition.py");
-            _faceDatabasePath = Path.Combine(Directory.GetCurrentDirectory(), "MachineLearning", "face_database.json");
         }
 
         public async Task<FaceRegistrationResult> RegisterFaceAsync(string employeeId, byte[] imageBytes)
         {
-            try
+            _logger.LogWarning("RegisterFaceAsync is deprecated. Use RegisterFaceEmbeddingAsync with embedding from frontend instead.");
+            return new FaceRegistrationResult
             {
-                _logger.LogInformation($"Bắt đầu đăng ký khuôn mặt cho nhân viên: {employeeId}");
-
-                // Tạo thư mục tạm để lưu ảnh
-                var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
-                Directory.CreateDirectory(tempDir);
-                
-                var tempImagePath = Path.Combine(tempDir, $"temp_{employeeId}_{DateTime.Now:yyyyMMddHHmmss}.jpg");
-                
-                // Lưu ảnh tạm
-                await File.WriteAllBytesAsync(tempImagePath, imageBytes);
-
-                // Gọi Python script để xử lý
-                var pythonArgs = $"register {tempImagePath} {employeeId}";
-                var result = await RunPythonScriptAsync(pythonArgs);
-
-                // Xóa file tạm
-                if (File.Exists(tempImagePath))
-                    File.Delete(tempImagePath);
-
-                if (result.Success)
-                {
-                    var faceId = Guid.NewGuid().ToString();
-                    var embeddingJson = JsonSerializer.Serialize(result.Embedding);
-                    
-                    // Lưu ảnh
-                    var imagePath = await SaveFaceImageAsync(imageBytes, employeeId);
-                    
-                    // Lưu vào database
-                    var faceRegistrationDto = new FaceRegistrationDTO
-                    {
-                        EmployeeId = employeeId,
-                        FaceId = faceId,
-                        ImagePath = imagePath,
-                        EmbeddingData = embeddingJson,
-                        Confidence = result.Confidence,
-                        RegisteredBy = "System",
-                        Notes = "Auto-registered via face recognition"
-                    };
-
-                    var createRequest = new CreateFaceRegistrationDTO
-                    {
-                        EmployeeId = employeeId,
-                        FaceFeatures = JsonSerializer.Serialize(new
-                        {
-                            bounds = new { x = 0.2, y = 0.3, width = 0.6, height = 0.7 },
-                            landmarks = new object[0],
-                            contours = new object[0],
-                            headEulerAngles = new { x = 0, y = 0, z = 0 },
-                            probabilities = new { leftEyeOpenProbability = 0.9, rightEyeOpenProbability = 0.9, smilingProbability = 0.7 }
-                        }),
-                        Notes = "Auto-registered via face recognition"
-                    };
-
-                    // Create a temporary file for the image
-                    var tempImageFile = new FormFile(
-                        new MemoryStream(imageBytes), 
-                        0, 
-                        imageBytes.Length, 
-                        "imageFile", 
-                        $"face_{employeeId}_{DateTime.Now:yyyyMMddHHmmss}.jpg"
-                    )
-                    {
-                        Headers = new Microsoft.AspNetCore.Http.HeaderDictionary(),
-                        ContentType = "image/jpeg"
-                    };
-
-                    var savedRegistration = await _faceRegistrationService.RegisterFaceAsync(createRequest, tempImageFile);
-
-                    _logger.LogInformation($"Đăng ký khuôn mặt thành công cho nhân viên: {employeeId}");
-                    return new FaceRegistrationResult
-                    {
-                        Success = true,
-                        Message = "Đăng ký khuôn mặt thành công",
-                        FaceId = faceId,
-                        Confidence = result.Confidence,
-                        FaceRegistrationId = 1 // Will be updated when we get the actual ID
-                    };
-                }
-                else
-                {
-                    _logger.LogWarning($"Đăng ký khuôn mặt thất bại cho nhân viên: {employeeId}, Lỗi: {result.Message}");
-                    return new FaceRegistrationResult
-                    {
-                        Success = false,
-                        Message = result.Message
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi đăng ký khuôn mặt cho nhân viên: {employeeId}");
-                return new FaceRegistrationResult
-                {
-                    Success = false,
-                    Message = $"Lỗi server: {ex.Message}"
-                };
-            }
+                Success = false,
+                Message = "Method này đã bị deprecated. Vui lòng sử dụng endpoint RegisterFaceEmbedding với embedding từ frontend."
+            };
         }
 
         public async Task<FaceRecognitionResult> RecognizeFaceAsync(byte[] imageBytes)
         {
             try
             {
-                _logger.LogInformation("Bắt đầu nhận dạng khuôn mặt");
-
-                // Tạo thư mục tạm để lưu ảnh
-                var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
-                Directory.CreateDirectory(tempDir);
-                
-                var tempImagePath = Path.Combine(tempDir, $"recognize_{DateTime.Now:yyyyMMddHHmmss}.jpg");
-                
-                // Lưu ảnh tạm
-                await File.WriteAllBytesAsync(tempImagePath, imageBytes);
-
-                // Gọi Python script để nhận dạng
-                var pythonArgs = $"recognize {tempImagePath}";
-                var result = await RunPythonScriptAsync(pythonArgs);
-
-                // Xóa file tạm
-                if (File.Exists(tempImagePath))
-                    File.Delete(tempImagePath);
-
-                if (result.Success && !string.IsNullOrEmpty(result.EmployeeId))
+                var tempImagePath = await SaveTempImageAsync(imageBytes, $"recognize_{DateTime.Now:yyyyMMddHHmmss}.jpg");
+                try
                 {
-                    var employeeName = await GetEmployeeNameAsync(result.EmployeeId);
-                    
-                    _logger.LogInformation($"Nhận dạng thành công: {result.EmployeeId} với độ tin cậy: {result.Confidence}");
-                    return new FaceRecognitionResult
+                    var pythonArgs = $"recognize {tempImagePath}";
+                    var result = await RunPythonScriptAsync(pythonArgs);
+
+                    if (result.Success && !string.IsNullOrEmpty(result.EmployeeId))
                     {
-                        Success = true,
-                        Message = "Nhận dạng thành công",
-                        EmployeeId = result.EmployeeId,
-                        EmployeeName = employeeName,
-                        Confidence = result.Confidence
-                    };
-                }
-                else
-                {
-                    _logger.LogWarning($"Nhận dạng thất bại: {result.Message}");
+                        var employeeName = await GetEmployeeNameAsync(result.EmployeeId);
+                        
+                        _logger.LogInformation("Face recognition successful - EmployeeId: {EmployeeId}, Confidence: {Confidence}",
+                            result.EmployeeId, result.Confidence);
+                        return new FaceRecognitionResult
+                        {
+                            Success = true,
+                            Message = "Nhận dạng thành công",
+                            EmployeeId = result.EmployeeId,
+                            EmployeeName = employeeName,
+                            Confidence = result.Confidence
+                        };
+                    }
+
                     return new FaceRecognitionResult
                     {
                         Success = false,
@@ -183,10 +73,14 @@ namespace dotnet_api.Services
                         Confidence = result.Confidence
                     };
                 }
+                finally
+                {
+                    DeleteTempFile(tempImagePath);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi nhận dạng khuôn mặt");
+                _logger.LogError(ex, "Error recognizing face");
                 return new FaceRecognitionResult
                 {
                     Success = false,
@@ -199,25 +93,20 @@ namespace dotnet_api.Services
         {
             try
             {
-                _logger.LogInformation($"Xóa khuôn mặt cho nhân viên: {employeeId}");
-
-                // Get the actual entity to get the ID
                 var registrationEntity = await _context.FaceRegistrations
                     .FirstOrDefaultAsync(fr => fr.EmployeeId == employeeId && fr.IsActive);
                 
                 if (registrationEntity != null)
                 {
                     await _faceRegistrationService.DeleteFaceRegistrationAsync(registrationEntity.ID, employeeId);
-                    _logger.LogInformation($"Xóa khuôn mặt thành công cho nhân viên: {employeeId}");
                     return true;
                 }
 
-                _logger.LogWarning($"Không tìm thấy khuôn mặt để xóa cho nhân viên: {employeeId}");
                 return false;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Lỗi khi xóa khuôn mặt cho nhân viên: {employeeId}");
+                _logger.LogError(ex, "Error unregistering face - EmployeeId: {EmployeeId}", employeeId);
                 return false;
             }
         }
@@ -226,7 +115,6 @@ namespace dotnet_api.Services
         {
             try
             {
-                // Get all face registrations from database directly
                 var registrations = await _context.FaceRegistrations
                     .Where(fr => fr.IsActive)
                     .Include(fr => fr.Employee)
@@ -245,7 +133,7 @@ namespace dotnet_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi lấy danh sách nhân viên đã đăng ký");
+                _logger.LogError(ex, "Error getting registered employees");
                 return new List<RegisteredEmployee>();
             }
         }
@@ -254,14 +142,12 @@ namespace dotnet_api.Services
         {
             try
             {
-                // Check if employee has any active face registrations
-                var hasRegistration = await _context.FaceRegistrations
+                return await _context.FaceRegistrations
                     .AnyAsync(fr => fr.EmployeeId == employeeId && fr.IsActive);
-                return hasRegistration;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error checking if employee {employeeId} is registered");
+                _logger.LogError(ex, "Error checking if employee is registered - EmployeeId: {EmployeeId}", employeeId);
                 return false;
             }
         }
@@ -270,30 +156,21 @@ namespace dotnet_api.Services
         {
             try
             {
-                _logger.LogInformation("Bắt đầu phát hiện khuôn mặt");
-
-                // Tạo thư mục tạm để lưu ảnh
-                var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
-                Directory.CreateDirectory(tempDir);
-                
-                var tempImagePath = Path.Combine(tempDir, $"detect_{DateTime.Now:yyyyMMddHHmmss}.jpg");
-                
-                // Lưu ảnh tạm
-                await File.WriteAllBytesAsync(tempImagePath, imageBytes);
-
-                // Gọi Python script để phát hiện khuôn mặt
-                var pythonArgs = $"detect {tempImagePath}";
-                var result = await RunPythonScriptAsync(pythonArgs);
-
-                // Xóa file tạm
-                if (File.Exists(tempImagePath))
-                    File.Delete(tempImagePath);
-
-                return result.Success;
+                var tempImagePath = await SaveTempImageAsync(imageBytes, $"detect_{DateTime.Now:yyyyMMddHHmmss}.jpg");
+                try
+                {
+                    var pythonArgs = $"detect {tempImagePath}";
+                    var result = await RunPythonScriptAsync(pythonArgs);
+                    return result.Success;
+                }
+                finally
+                {
+                    DeleteTempFile(tempImagePath);
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi phát hiện khuôn mặt");
+                _logger.LogError(ex, "Error detecting face");
                 return false;
             }
         }
@@ -323,17 +200,16 @@ namespace dotnet_api.Services
 
                 if (process.ExitCode == 0)
                 {
-                    return JsonSerializer.Deserialize<PythonResult>(output) ?? new PythonResult { Success = false, Message = "Không thể parse kết quả từ Python" };
+                    return JsonSerializer.Deserialize<PythonResult>(output) ?? 
+                           new PythonResult { Success = false, Message = "Không thể parse kết quả từ Python" };
                 }
-                else
-                {
-                    _logger.LogError($"Python script lỗi: {error}");
-                    return new PythonResult { Success = false, Message = error };
-                }
+
+                _logger.LogError("Python script error - ExitCode: {ExitCode}, Error: {Error}", process.ExitCode, error);
+                return new PythonResult { Success = false, Message = error };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi chạy Python script");
+                _logger.LogError(ex, "Error running Python script");
                 return new PythonResult { Success = false, Message = ex.Message };
             }
         }
@@ -347,31 +223,32 @@ namespace dotnet_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error getting employee name for {employeeId}");
+                _logger.LogError(ex, "Error getting employee name - EmployeeId: {EmployeeId}", employeeId);
                 return $"Nhân viên {employeeId}";
             }
         }
 
-        private async Task<string> SaveFaceImageAsync(byte[] imageBytes, string employeeId)
+        private async Task<string> SaveTempImageAsync(byte[] imageBytes, string fileName)
+        {
+            var tempDir = Path.Combine(Path.GetTempPath(), "face_recognition");
+            Directory.CreateDirectory(tempDir);
+            var tempImagePath = Path.Combine(tempDir, fileName);
+            await File.WriteAllBytesAsync(tempImagePath, imageBytes);
+            return tempImagePath;
+        }
+
+        private void DeleteTempFile(string filePath)
         {
             try
             {
-                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "uploads", "faces");
-                Directory.CreateDirectory(uploadsDir);
-
-                var fileName = $"{employeeId}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
-                var filePath = Path.Combine(uploadsDir, fileName);
-
-                await File.WriteAllBytesAsync(filePath, imageBytes);
-                return $"/uploads/faces/{fileName}";
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error saving face image for employee: {employeeId}");
-                return string.Empty;
+                _logger.LogWarning(ex, "Error deleting temp file: {FilePath}", filePath);
             }
         }
-
 
         private class PythonResult
         {

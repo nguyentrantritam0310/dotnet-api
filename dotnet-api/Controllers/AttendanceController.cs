@@ -313,5 +313,61 @@ namespace dotnet_api.Controllers
             }
         }
 
+        [HttpPut("{attendanceId}/shift")]
+        public async Task<ActionResult> UpdateAttendanceShift(int attendanceId, [FromBody] UpdateAttendanceShiftRequest request)
+        {
+            try
+            {
+                if (!request.ShiftAssignmentID.HasValue)
+                {
+                    return BadRequest(new { message = "ShiftAssignmentID là bắt buộc" });
+                }
+
+                var attendance = await _context.Attendances
+                    .Include(a => a.ShiftAssignment)
+                    .FirstOrDefaultAsync(a => a.ID == attendanceId);
+
+                if (attendance == null)
+                {
+                    return NotFound(new { message = "Không tìm thấy bản ghi chấm công" });
+                }
+
+                // Kiểm tra ShiftAssignment có tồn tại không
+                var shiftAssignment = await _context.ShiftAssignments
+                    .FirstOrDefaultAsync(sa => sa.ID == request.ShiftAssignmentID.Value);
+
+                if (shiftAssignment == null)
+                {
+                    return BadRequest(new { message = "Không tìm thấy phân ca với ID đã cho" });
+                }
+
+                // Cập nhật ShiftAssignmentID
+                attendance.ShiftAssignmentID = request.ShiftAssignmentID.Value;
+                attendance.LastUpdated = DateTime.Now;
+
+                _context.Attendances.Update(attendance);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Updated attendance shift - AttendanceId: {AttendanceId}, ShiftAssignmentID: {ShiftAssignmentID}",
+                    attendanceId, request.ShiftAssignmentID.Value);
+
+                return Ok(new { 
+                    message = "Cập nhật ca làm việc thành công",
+                    attendanceId = attendance.ID,
+                    shiftAssignmentID = attendance.ShiftAssignmentID
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in UpdateAttendanceShift - AttendanceId: {AttendanceId}", attendanceId);
+                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
+            }
+        }
+
+    }
+
+    public class UpdateAttendanceShiftRequest
+    {
+        public int? ShiftAssignmentID { get; set; }
     }
 }

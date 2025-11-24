@@ -20,19 +20,26 @@ namespace dotnet_api.Services
             {
                 var attendanceData = await _context.Attendances
                     .Include(a => a.Employee) // Lấy trực tiếp từ Employee
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Include(a => a.AttendanceMachine) // Lấy thông tin máy chấm công
                     .Where(a => a.Employee != null) // Chỉ lấy records có Employee
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
+                        ID = a.ID,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
-                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        ShiftName = a.ShiftAssignment != null && a.ShiftAssignment.WorkShift != null ? 
+                                   a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
                         WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
                         CheckInTime = a.CheckIn,
                         CheckOutTime = a.CheckOut,
                         Status = a.Status,
-                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
-                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                        RefCode = null, // Không set RefCode cho attendance, chỉ có cho nghỉ phép
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null,
+                        MachineName = a.AttendanceMachine != null ? a.AttendanceMachine.AttendanceMachineName : null, // Lấy tên máy từ AttendanceMachine
+                        Location = a.CheckInLocation ?? a.CheckOutLocation // Lấy location từ CheckInLocation hoặc CheckOutLocation (có thể là coordinates)
                     })
                     .ToListAsync();
 
@@ -40,8 +47,16 @@ namespace dotnet_api.Services
                 foreach (var item in attendanceData)
                 {
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                    item.MachineName = GetMachineNameFromAttendance(item);
-                    item.Location = GetLocationFromAttendance(item);
+                    // MachineName và Location đã được set trong Select từ AttendanceMachine và CheckInLocation/CheckOutLocation
+                    // Chỉ cần fallback nếu chưa có
+                    if (string.IsNullOrEmpty(item.MachineName))
+                    {
+                        item.MachineName = "Máy chấm công di động";
+                    }
+                    if (string.IsNullOrEmpty(item.Location))
+                    {
+                        item.Location = "Vị trí di động";
+                    }
                 }
 
                 // Add STT
@@ -65,19 +80,26 @@ namespace dotnet_api.Services
             {
                 var attendanceData = await _context.Attendances
                     .Include(a => a.Employee)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Include(a => a.AttendanceMachine) // Lấy thông tin máy chấm công
                     .Where(a => a.Employee != null && a.Employee.Id == employeeCode)
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
+                        ID = a.ID,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
-                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        ShiftName = a.ShiftAssignment != null && a.ShiftAssignment.WorkShift != null ? 
+                                   a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
                         WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
                         CheckInTime = a.CheckIn,
                         CheckOutTime = a.CheckOut,
                         Status = a.Status,
-                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
-                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                        RefCode = null, // Không set RefCode cho attendance, chỉ có cho nghỉ phép
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null,
+                        MachineName = a.AttendanceMachine != null ? a.AttendanceMachine.AttendanceMachineName : null, // Lấy tên máy từ AttendanceMachine
+                        Location = a.CheckInLocation ?? a.CheckOutLocation // Lấy location từ CheckInLocation hoặc CheckOutLocation
                     })
                     .ToListAsync();
 
@@ -85,8 +107,16 @@ namespace dotnet_api.Services
                 foreach (var item in attendanceData)
                 {
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                    item.MachineName = GetMachineNameFromAttendance(item);
-                    item.Location = GetLocationFromAttendance(item);
+                    // MachineName và Location đã được set trong Select từ AttendanceMachine và CheckInLocation/CheckOutLocation
+                    // Chỉ cần fallback nếu chưa có
+                    if (string.IsNullOrEmpty(item.MachineName))
+                    {
+                        item.MachineName = "Máy chấm công di động";
+                    }
+                    if (string.IsNullOrEmpty(item.Location))
+                    {
+                        item.Location = "Vị trí di động";
+                    }
                 }
 
                 // Add STT
@@ -110,21 +140,28 @@ namespace dotnet_api.Services
             {
                 var attendanceData = await _context.Attendances
                     .Include(a => a.Employee)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Include(a => a.AttendanceMachine) // Lấy thông tin máy chấm công
                     .Where(a => a.Employee != null && 
                                (a.CheckInDateTime != null ? a.CheckInDateTime.Value.Date >= startDate.Date && a.CheckInDateTime.Value.Date <= endDate.Date :
                                 a.CreatedDate.Date >= startDate.Date && a.CreatedDate.Date <= endDate.Date))
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
+                        ID = a.ID,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
-                        ShiftName = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
+                        ShiftName = a.ShiftAssignment != null && a.ShiftAssignment.WorkShift != null ? 
+                                   a.ShiftAssignment.WorkShift.ShiftName : "Chưa phân ca",
                         WorkDate = a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date : a.CreatedDate.Date,
                         CheckInTime = a.CheckIn,
                         CheckOutTime = a.CheckOut,
                         Status = a.Status,
-                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
-                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                        RefCode = null, // Không set RefCode cho attendance, chỉ có cho nghỉ phép
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null,
+                        MachineName = a.AttendanceMachine != null ? a.AttendanceMachine.AttendanceMachineName : null, // Lấy tên máy từ AttendanceMachine
+                        Location = a.CheckInLocation ?? a.CheckOutLocation // Lấy location từ CheckInLocation hoặc CheckOutLocation
                     })
                     .ToListAsync();
 
@@ -132,8 +169,16 @@ namespace dotnet_api.Services
                 foreach (var item in attendanceData)
                 {
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                    item.MachineName = GetMachineNameFromAttendance(item);
-                    item.Location = GetLocationFromAttendance(item);
+                    // MachineName và Location đã được set trong Select từ AttendanceMachine và CheckInLocation/CheckOutLocation
+                    // Chỉ cần fallback nếu chưa có
+                    if (string.IsNullOrEmpty(item.MachineName))
+                    {
+                        item.MachineName = "Máy chấm công di động";
+                    }
+                    if (string.IsNullOrEmpty(item.Location))
+                    {
+                        item.Location = "Vị trí di động";
+                    }
                 }
 
                 // Add STT
@@ -165,7 +210,13 @@ namespace dotnet_api.Services
 
         private string GetMachineNameFromAttendance(AttendanceDataDto item)
         {
-            // Lấy từ AttendanceMachineId nếu có
+            // Nếu đã có MachineName từ CheckInLocation, dùng nó
+            if (!string.IsNullOrEmpty(item.MachineName))
+            {
+                return item.MachineName;
+            }
+            
+            // Fallback: nếu không có, dùng WorkShiftID
             if (item.WorkShiftID.HasValue)
             {
                 return $"Máy chấm công {item.WorkShiftID.Value}";
@@ -194,12 +245,14 @@ namespace dotnet_api.Services
                     .Include(a => a.Employee)
                     .Include(a => a.ShiftAssignment)
                         .ThenInclude(sa => sa.WorkShift)
+                    .Include(a => a.AttendanceMachine) // Lấy thông tin máy chấm công
                     .Where(a => a.Employee != null && a.Employee.Id == employeeCode && 
                                (a.CheckInDateTime.HasValue ? a.CheckInDateTime.Value.Date == date.Date :
                                 a.CreatedDate.Date == date.Date))
                     .OrderBy(a => a.CheckInDateTime ?? a.CreatedDate)
                     .Select(a => new AttendanceDataDto
                     {
+                        ID = a.ID,
                         EmployeeName = $"{a.Employee.FirstName} {a.Employee.LastName}",
                         EmployeeCode = a.Employee.Id,
                         ShiftName = a.ShiftAssignment != null && a.ShiftAssignment.WorkShift != null ? 
@@ -209,8 +262,10 @@ namespace dotnet_api.Services
                         CheckInTime = a.CheckIn,
                         CheckOutTime = a.CheckOut,
                         Status = a.Status,
-                        RefCode = $"MP{(a.ID.HasValue ? a.ID.Value : 0):D3}",
-                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null
+                        RefCode = null, // Không set RefCode cho attendance, chỉ có cho nghỉ phép
+                        WorkShiftID = a.ShiftAssignment != null ? a.ShiftAssignment.WorkShiftID : null,
+                        MachineName = a.AttendanceMachine != null ? a.AttendanceMachine.AttendanceMachineName : null, // Lấy tên máy từ AttendanceMachine
+                        Location = a.CheckInLocation ?? a.CheckOutLocation // Lấy location từ CheckInLocation hoặc CheckOutLocation
                     })
                     .ToListAsync();
 
@@ -218,8 +273,16 @@ namespace dotnet_api.Services
                 foreach (var item in attendanceData)
                 {
                     item.CheckInOutType = GetCheckInOutType(item.CheckInTime, item.CheckOutTime);
-                    item.MachineName = GetMachineNameFromAttendance(item);
-                    item.Location = GetLocationFromAttendance(item);
+                    // MachineName và Location đã được set trong Select từ AttendanceMachine và CheckInLocation/CheckOutLocation
+                    // Chỉ cần fallback nếu chưa có
+                    if (string.IsNullOrEmpty(item.MachineName))
+                    {
+                        item.MachineName = "Máy chấm công di động";
+                    }
+                    if (string.IsNullOrEmpty(item.Location))
+                    {
+                        item.Location = "Vị trí di động";
+                    }
                 }
 
                 // Add STT
@@ -252,10 +315,12 @@ namespace dotnet_api.Services
                 .ThenInclude(sa => sa.Employee)
                 .Include(a => a.ShiftAssignment)
                 .ThenInclude(sa => sa.WorkShift)
+                .Include(a => a.AttendanceMachine) // Lấy thông tin máy chấm công
                 .Where(a => a.ShiftAssignment.WorkDate >= startDate && a.ShiftAssignment.WorkDate <= endDate)
                 .OrderBy(a => a.ShiftAssignment.WorkDate)
                 .Select(a => new AttendanceDataDto
                 {
+                    ID = a.ID,
                     EmployeeName = $"{a.ShiftAssignment.Employee.FirstName} {a.ShiftAssignment.Employee.LastName}",
                     EmployeeCode = a.ShiftAssignment.Employee.Id,
                     ShiftName = a.ShiftAssignment.WorkShift.ShiftName,
@@ -263,8 +328,10 @@ namespace dotnet_api.Services
                     CheckInTime = a.CheckIn,
                     CheckOutTime = a.CheckOut,
                     Status = a.Status,
-                    RefCode = $"MP{a.ID ?? 0:D3}",
-                    WorkShiftID = a.ShiftAssignment.WorkShiftID
+                    RefCode = null, // Không set RefCode cho attendance, chỉ có cho nghỉ phép
+                    WorkShiftID = a.ShiftAssignment.WorkShiftID,
+                    MachineName = a.AttendanceMachine != null ? a.AttendanceMachine.AttendanceMachineName : null, // Lấy tên máy từ AttendanceMachine
+                    Location = a.CheckInLocation ?? a.CheckOutLocation // Lấy location từ CheckInLocation hoặc CheckOutLocation
                 })
                 .ToListAsync();
 

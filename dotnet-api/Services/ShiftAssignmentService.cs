@@ -176,15 +176,7 @@ namespace dotnet_api.Services
                 throw new Exception("Không tìm thấy ca làm việc với ID đã cho");
             }
 
-            // Check if shift assignment already exists for this employee on this date
-            var existingAssignment = await _context.ShiftAssignments
-                .FirstOrDefaultAsync(sa => sa.EmployeeID == shiftAssignmentDTO.EmployeeID && 
-                                         sa.WorkDate.Date == shiftAssignmentDTO.WorkDate.Date);
-            if (existingAssignment != null)
-            {
-                throw new Exception("Nhân viên đã được phân ca cho ngày này");
-            }
-
+            // Cho phép phân nhiều ca cho cùng một nhân viên trong cùng một ngày
             var shiftAssignment = _mapper.Map<ShiftAssignment>(shiftAssignmentDTO);
             _context.ShiftAssignments.Add(shiftAssignment);
             await _context.SaveChangesAsync();
@@ -214,16 +206,7 @@ namespace dotnet_api.Services
                 throw new Exception("Không tìm thấy ca làm việc với ID đã cho");
             }
 
-            // Check if shift assignment already exists for this employee on this date (excluding current assignment)
-            var existingAssignment = await _context.ShiftAssignments
-                .FirstOrDefaultAsync(sa => sa.EmployeeID == shiftAssignmentDTO.EmployeeID && 
-                                         sa.WorkDate.Date == shiftAssignmentDTO.WorkDate.Date &&
-                                         sa.ID != shiftAssignmentDTO.ID);
-            if (existingAssignment != null)
-            {
-                throw new Exception("Nhân viên đã được phân ca cho ngày này");
-            }
-
+            // Cho phép phân nhiều ca cho cùng một nhân viên trong cùng một ngày
             shiftAssignment.EmployeeID = shiftAssignmentDTO.EmployeeID;
             shiftAssignment.WorkShiftID = shiftAssignmentDTO.WorkShiftID;
             shiftAssignment.WorkDate = shiftAssignmentDTO.WorkDate;

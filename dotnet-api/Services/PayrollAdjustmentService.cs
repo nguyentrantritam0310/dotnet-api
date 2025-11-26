@@ -38,6 +38,7 @@ namespace dotnet_api.Services
                 .Include(pa => pa.AdjustmentItem)
                 .Include(pa => pa.applicationUser_PayrollAdjustment)
                     .ThenInclude(ua => ua.applicationUser)
+                .OrderBy(pa => pa.ApproveStatus) // Sắp xếp theo trạng thái: 0 (Tạo mới) → 1 (Chờ duyệt) → 2 (Đã duyệt) → 3 (Từ chối)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<PayrollAdjustmentDTO>>(PayrollAdjustments);

@@ -39,6 +39,7 @@ namespace dotnet_api.Services
                 .Include(io => io.LeaveType)
                 .Include(io => io.OvertimeType)
                 .Include(io => io.OvertimeForm)
+                .OrderBy(e => e.ApproveStatus) // Sắp xếp theo trạng thái: 0 (Tạo mới) → 1 (Chờ duyệt) → 2 (Đã duyệt) → 3 (Từ chối)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeRequestDTO>>(employeeRequests);
@@ -120,7 +121,7 @@ namespace dotnet_api.Services
                 .Include(e => e.LeaveType)
                 .Include(e => e.WorkShift)
                 .Where(e => e.RequestType == "Leave" || e.RequestType == "Nghỉ phép")
-                .OrderByDescending(e => e.CreatedAt)
+                .OrderBy(e => e.ApproveStatus) // Sắp xếp theo trạng thái: 0 (Tạo mới) → 1 (Chờ duyệt) → 2 (Đã duyệt) → 3 (Từ chối)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<LeaveRequestDTO>>(leaveRequests);
@@ -197,7 +198,7 @@ namespace dotnet_api.Services
                 .Include(e => e.OvertimeType)
                 .Include(e => e.OvertimeForm)
                 .Where(e => e.RequestType == "Tăng ca")
-                .OrderByDescending(e => e.CreatedAt)
+                .OrderBy(e => e.ApproveStatus) // Sắp xếp theo trạng thái: 0 (Tạo mới) → 1 (Chờ duyệt) → 2 (Đã duyệt) → 3 (Từ chối)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<OvertimeRequestDTO>>(overtimeRequests);

@@ -30,6 +30,7 @@ namespace dotnet_api.Services
                 .Include(c => c.ContractType)
                 .Include(c => c.ContractAllowances)
                     .ThenInclude(ca => ca.Allowance)
+                .OrderBy(c => c.ApproveStatus) // Sắp xếp theo trạng thái: 0 (Tạo mới) → 1 (Chờ duyệt) → 2 (Đã duyệt) → 3 (Từ chối)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<ContractDTO>>(contracts);

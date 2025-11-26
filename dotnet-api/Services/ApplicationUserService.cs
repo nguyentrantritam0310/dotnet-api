@@ -136,6 +136,7 @@ namespace dotnet_api.Services
         {
             var users = await _context.ApplicationUsers
                 .Include(u => u.Role)
+                .OrderBy(u => u.RoleID) // Sắp xếp theo chức vụ (RoleID)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<EmployeeDTO>>(users);

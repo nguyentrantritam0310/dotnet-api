@@ -369,13 +369,17 @@ namespace dotnet_api.Services
                 _verificationTokenCache.TryAdd(request.VerificationToken, DateTime.UtcNow.AddSeconds(60));
                 CleanupExpiredTokens();
 
-                var attendance = await GetTodayAttendanceAsync(request.EmployeeId);
+                // Tìm attendance theo ca cụ thể (nếu có WorkShiftID) hoặc lấy bất kỳ attendance nào chưa checkout
+                var attendance = await GetTodayAttendanceByShiftAsync(request.EmployeeId, request.WorkShiftID);
+
                 if (attendance == null || !attendance.CheckInDateTime.HasValue)
                 {
                     return new AttendanceCheckInResult
                     {
                         Success = false,
-                        Message = "Không tìm thấy bản ghi chấm công vào hôm nay",
+                        Message = request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0
+                            ? $"Không tìm thấy bản ghi chấm công vào cho ca này hôm nay"
+                            : "Không tìm thấy bản ghi chấm công vào hôm nay",
                         EmployeeId = request.EmployeeId
                     };
                 }
@@ -385,7 +389,9 @@ namespace dotnet_api.Services
                     return new AttendanceCheckInResult
                     {
                         Success = false,
-                        Message = "Bạn đã chấm công ra hôm nay",
+                        Message = request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0
+                            ? "Bạn đã chấm công ra cho ca này hôm nay"
+                            : "Bạn đã chấm công ra hôm nay",
                         EmployeeId = request.EmployeeId,
                         CheckInDateTime = attendance.CheckInDateTime.Value
                     };
@@ -452,6 +458,39 @@ namespace dotnet_api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting today's attendance - EmployeeId: {EmployeeId}", employeeId);
+                throw;
+            }
+        }
+
+        public async Task<Attendance?> GetTodayAttendanceByShiftAsync(string employeeId, int? workShiftID)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                var query = _context.Attendances
+                    .Include(a => a.Employee)
+                    .Include(a => a.AttendanceMachine)
+                    .Include(a => a.ShiftAssignment)
+                        .ThenInclude(sa => sa.WorkShift)
+                    .Where(a => 
+                        a.EmployeeId == employeeId && 
+                        a.CheckInDateTime.HasValue && 
+                        a.CheckInDateTime.Value.Date == today);
+
+                // Nếu có WorkShiftID, tìm attendance theo ca cụ thể
+                if (workShiftID.HasValue && workShiftID.Value > 0)
+                {
+                    query = query.Where(a => 
+                        a.ShiftAssignment != null && 
+                        a.ShiftAssignment.WorkShiftID == workShiftID.Value);
+                }
+
+                return await query.FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting today's attendance by shift - EmployeeId: {EmployeeId}, WorkShiftID: {WorkShiftID}", 
+                    employeeId, workShiftID);
                 throw;
             }
         }

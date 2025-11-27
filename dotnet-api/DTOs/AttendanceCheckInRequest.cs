@@ -78,6 +78,9 @@ namespace dotnet_api.DTOs
 
         public string? Notes { get; set; }
 
+        // Shift assignment - WorkShiftID selected by user (REQUIRED for multiple shifts per day)
+        public int? WorkShiftID { get; set; }
+
         // Face recognition metadata (REQUIRED for security - same as checkin)
         [Required(ErrorMessage = "MatchedFaceId is required for face verification")]
         public string? MatchedFaceId { get; set; }

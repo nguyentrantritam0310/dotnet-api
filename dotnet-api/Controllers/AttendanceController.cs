@@ -56,26 +56,6 @@ namespace dotnet_api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("checkin")]
-        public async Task<ActionResult<AttendanceCheckInResult>> CheckIn([FromBody] AttendanceCheckInRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var result = await _attendanceService.CheckInAsync(request);
-                return HandleServiceResult(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in CheckIn - EmployeeId: {EmployeeId}", request?.EmployeeId);
-                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
-            }
-        }
-
         [HttpPost("checkin-noimage")]
         public async Task<ActionResult<AttendanceCheckInResult>> CheckInNoImage([FromBody] AttendanceCheckInNoImageRequest request)
         {
@@ -99,26 +79,6 @@ namespace dotnet_api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in CheckInNoImage - EmployeeId: {EmployeeId}", request?.EmployeeId);
-                return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
-            }
-        }
-
-        [HttpPost("checkout")]
-        public async Task<ActionResult<AttendanceCheckInResult>> CheckOut([FromBody] AttendanceCheckOutRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var result = await _attendanceService.CheckOutAsync(request);
-                return HandleServiceResult(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in CheckOut - EmployeeId: {EmployeeId}", request?.EmployeeId);
                 return StatusCode(500, new { message = "Lỗi hệ thống", error = ex.Message });
             }
         }

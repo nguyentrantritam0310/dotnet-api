@@ -131,11 +131,15 @@ namespace dotnet_api.Services
 
                 if (!faceRegistrations.Any())
                 {
+                    _logger.LogWarning("SECURITY: Face verification attempt without any registrations - EmployeeId: {EmployeeId}",
+                        request.EmployeeId);
                     return new FaceVerificationResultDTO
                     {
                         Success = false,
-                        Message = "Người dùng chưa đăng ký khuôn mặt",
-                        IsMatch = false
+                        Message = "Người dùng chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi sử dụng tính năng này.",
+                        IsMatch = false,
+                        Confidence = 0f,
+                        EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
                     };
                 }
 
@@ -174,11 +178,16 @@ namespace dotnet_api.Services
                     }
                 }
                 
-                const float similarityThreshold = 0.75f;
-                const float minSimilarityForRejection = 0.70f;
+                // Updated thresholds based on FaceNet best practices:
+                // - Higher threshold (0.82) for better security and accuracy
+                // - Rejection threshold (0.75) to clearly distinguish between match and non-match
+                const float similarityThreshold = 0.82f;
+                const float minSimilarityForRejection = 0.75f;
                 
                 if (bestSimilarity < minSimilarityForRejection)
                 {
+                    _logger.LogInformation("SECURITY: Face verification rejected - low similarity - EmployeeId: {EmployeeId}, Similarity: {Similarity:F3}, Threshold: {Threshold}",
+                        request.EmployeeId, bestSimilarity, minSimilarityForRejection);
                     return new FaceVerificationResultDTO
                     {
                         Success = true,
@@ -206,8 +215,8 @@ namespace dotnet_api.Services
                     isMatch = bestSimilarity >= similarityThreshold;
                 }
                 
-                _logger.LogInformation("Face verification - EmployeeId: {EmployeeId}, Similarity: {Similarity:F3}, Threshold: {Threshold}, IsMatch: {IsMatch}, MatchedFaceId: {FaceId}",
-                    request.EmployeeId, bestSimilarity, similarityThreshold, isMatch, bestMatch?.FaceId);
+                _logger.LogInformation("Face verification result - EmployeeId: {EmployeeId}, Similarity: {Similarity:F3}, Threshold: {Threshold}, IsMatch: {IsMatch}, MatchedFaceId: {FaceId}, PosesMatched: {PosesMatched}",
+                    request.EmployeeId, bestSimilarity, similarityThreshold, isMatch, bestMatch?.FaceId, matchingPosesCount);
 
                 return new FaceVerificationResultDTO
                 {

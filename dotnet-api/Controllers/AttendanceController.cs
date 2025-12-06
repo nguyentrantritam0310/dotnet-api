@@ -123,6 +123,8 @@ namespace dotnet_api.Controllers
             {
                 var today = DateTime.Today;
                 
+                // Ưu tiên tìm record chưa checkout (CheckOutDateTime == null) để checkout
+                // Nếu không có, mới lấy record mới nhất
                 var attendance = await _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
@@ -131,9 +133,26 @@ namespace dotnet_api.Controllers
                     .Where(a => 
                         a.EmployeeId == employeeId && 
                         a.CheckInDateTime.HasValue && 
-                        a.CheckInDateTime.Value.Date == today)
+                        a.CheckInDateTime.Value.Date == today &&
+                        !a.CheckOutDateTime.HasValue) // Ưu tiên record chưa checkout
                     .OrderByDescending(a => a.CheckInDateTime)
                     .FirstOrDefaultAsync();
+                
+                // Nếu không tìm thấy record chưa checkout, lấy record mới nhất (có thể đã checkout)
+                if (attendance == null)
+                {
+                    attendance = await _context.Attendances
+                        .Include(a => a.Employee)
+                        .Include(a => a.AttendanceMachine)
+                        .Include(a => a.ShiftAssignment)
+                            .ThenInclude(sa => sa.WorkShift)
+                        .Where(a => 
+                            a.EmployeeId == employeeId && 
+                            a.CheckInDateTime.HasValue && 
+                            a.CheckInDateTime.Value.Date == today)
+                        .OrderByDescending(a => a.CheckInDateTime)
+                        .FirstOrDefaultAsync();
+                }
                 
                 if (attendance == null)
                 {
@@ -143,6 +162,7 @@ namespace dotnet_api.Controllers
                         return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                     }
 
+                    // Ưu tiên tìm record chưa checkout
                     attendance = attendances.FirstOrDefault(a => 
                         a.CheckInDateTime.HasValue && 
                         a.CheckInDateTime.Value.Date == today &&
@@ -154,6 +174,7 @@ namespace dotnet_api.Controllers
                         return NotFound(new { message = "Không tìm thấy bản ghi chấm công hôm nay" });
                     }
 
+                    // Đảm bảo ShiftAssignment được load nếu có ShiftAssignmentID
                     if (attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
                     {
                         attendance = await _context.Attendances
@@ -163,6 +184,17 @@ namespace dotnet_api.Controllers
                                 .ThenInclude(sa => sa.WorkShift)
                             .FirstOrDefaultAsync(a => a.ID == attendance.ID);
                     }
+                }
+                
+                // Đảm bảo ShiftAssignment được load nếu có ShiftAssignmentID (fallback)
+                if (attendance != null && attendance.ShiftAssignment == null && attendance.ShiftAssignmentID.HasValue)
+                {
+                    attendance = await _context.Attendances
+                        .Include(a => a.Employee)
+                        .Include(a => a.AttendanceMachine)
+                        .Include(a => a.ShiftAssignment)
+                            .ThenInclude(sa => sa.WorkShift)
+                        .FirstOrDefaultAsync(a => a.ID == attendance.ID);
                 }
                 
                 if (attendance == null)
@@ -183,7 +215,8 @@ namespace dotnet_api.Controllers
                     checkOutLocation = attendance.CheckOutLocation,
                     status = attendance.Status,
                     notes = attendance.Notes,
-                    workShiftID = workShiftID
+                    workShiftID = workShiftID,
+                    shiftAssignmentID = attendance.ShiftAssignmentID // THÊM FIELD NÀY ĐỂ FRONTEND CÓ THỂ LẤY WorkShiftID
                 };
 
                 return Ok(responseData);

@@ -454,9 +454,11 @@ namespace dotnet_api.Services
                 };
             }
 
-            // Align with FaceRegistrationService similarity threshold (0.82)
-            // Using slightly lower threshold (0.80) here since confidence already passed face verification
-            const float REQUIRED_CONFIDENCE_THRESHOLD = 0.80f;
+            // Align with FaceRegistrationService similarity threshold (0.90)
+            // The REQUIRED_CONFIDENCE_THRESHOLD here should be consistent with the similarityThreshold
+            // used in FaceRegistrationService.VerifyFaceEmbeddingAsync.
+            // It's set to 0.90f to match the new, stricter face verification threshold.
+            const float REQUIRED_CONFIDENCE_THRESHOLD = 0.90f;
             if (!matchConfidence.HasValue || matchConfidence.Value < REQUIRED_CONFIDENCE_THRESHOLD)
             {
                 _logger.LogWarning("SECURITY: Insufficient confidence - EmployeeId: {EmployeeId}, Confidence: {Confidence}, Required: {Required}",

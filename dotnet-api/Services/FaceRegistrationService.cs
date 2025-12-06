@@ -181,10 +181,12 @@ namespace dotnet_api.Services
                     }
                 }
                 
-                // Updated thresholds based on FaceNet best practices:
-                // - Higher threshold (0.82) for better security and accuracy
+                // Updated thresholds based on FaceNet best practices and security requirements:
+                // - High threshold (0.90) for maximum security - significantly reduces false positives
                 // - Rejection threshold (0.75) to clearly distinguish between match and non-match
-                const float similarityThreshold = 0.82f;
+                // - Very strict threshold (0.92) when user has fewer face registrations (less data = need higher confidence)
+                const float baseSimilarityThreshold = 0.90f;  // Increased to 0.90 (90%) for maximum security
+                const float strictSimilarityThreshold = 0.92f;  // For users with < 3 face registrations - very strict
                 const float minSimilarityForRejection = 0.75f;
                 
                 if (bestSimilarity < minSimilarityForRejection)
@@ -202,25 +204,20 @@ namespace dotnet_api.Services
                     };
                 }
                 
-                var hasMultiplePoses = faceRegistrations.Count >= 3;
+                var registrationCount = faceRegistrations.Count;
+                
+                // SECURITY: Use stricter threshold when user has fewer face registrations
+                // Less data = need higher confidence to prevent false positives
+                float similarityThreshold = registrationCount < 3 ? strictSimilarityThreshold : baseSimilarityThreshold;
+                
                 var matchingPosesCount = similarityDetails.Count(d => d.Similarity >= similarityThreshold);
                 
-                bool isMatch;
-                if (hasMultiplePoses && matchingPosesCount >= 2)
-                {
-                    isMatch = true;
-                }
-                else if (hasMultiplePoses && matchingPosesCount == 0)
-                {
-                    isMatch = false;
-                }
-                else
-                {
-                    isMatch = bestSimilarity >= similarityThreshold;
-                }
+                // SECURITY: Only require 1 pose to match with similarity >= threshold
+                // With high threshold (0.90), even 1 match ensures security
+                bool isMatch = bestSimilarity >= similarityThreshold;
                 
-                _logger.LogInformation("Face verification result - EmployeeId: {EmployeeId}, Similarity: {Similarity:F3}, Threshold: {Threshold}, IsMatch: {IsMatch}, MatchedFaceId: {FaceId}, PosesMatched: {PosesMatched}",
-                    request.EmployeeId, bestSimilarity, similarityThreshold, isMatch, bestMatch?.FaceId, matchingPosesCount);
+                _logger.LogInformation("Face verification result - EmployeeId: {EmployeeId}, Similarity: {Similarity:F3}, Threshold: {Threshold}, IsMatch: {IsMatch}, MatchedFaceId: {FaceId}, PosesMatched: {PosesMatched}, RegistrationCount: {RegCount}",
+                    request.EmployeeId, bestSimilarity, similarityThreshold, isMatch, bestMatch?.FaceId, matchingPosesCount, registrationCount);
 
                 return new FaceVerificationResultDTO
                 {

@@ -69,10 +69,28 @@ namespace dotnet_api.Services
                 var employee = await _context.Users.FindAsync(request.EmployeeId);
                 if (employee == null)
                 {
+                    _logger.LogWarning("SECURITY: Check-in attempt with non-existent employee - EmployeeId: {EmployeeId}",
+                        request.EmployeeId);
                     return new AttendanceCheckInResult
                     {
                         Success = false,
                         Message = "Không tìm thấy thông tin nhân viên",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY CHECK: Verify user has at least one active face registration
+                var hasFaceRegistration = await _context.FaceRegistrations
+                    .AnyAsync(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive);
+                
+                if (!hasFaceRegistration)
+                {
+                    _logger.LogWarning("SECURITY: Check-in attempt without face registration - EmployeeId: {EmployeeId}, User: {UserName}",
+                        request.EmployeeId, employee.UserName ?? employee.Email);
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Bạn chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi chấm công.",
                         EmployeeId = request.EmployeeId
                     };
                 }
@@ -85,8 +103,8 @@ namespace dotnet_api.Services
                 
                 if (faceRegistration == null)
                 {
-                    _logger.LogWarning("Invalid or inactive FaceId - FaceId: {FaceId}, EmployeeId: {EmployeeId}",
-                        request.MatchedFaceId, request.EmployeeId);
+                    _logger.LogWarning("SECURITY: Invalid or inactive FaceId - FaceId: {FaceId}, EmployeeId: {EmployeeId}, User: {UserName}",
+                        request.MatchedFaceId, request.EmployeeId, employee.UserName ?? employee.Email);
                     return new AttendanceCheckInResult
                     {
                         Success = false,
@@ -198,10 +216,28 @@ namespace dotnet_api.Services
                 var employee = await _context.Users.FindAsync(request.EmployeeId);
                 if (employee == null)
                 {
+                    _logger.LogWarning("SECURITY: Check-out attempt with non-existent employee - EmployeeId: {EmployeeId}",
+                        request.EmployeeId);
                     return new AttendanceCheckInResult
                     {
                         Success = false,
                         Message = "Không tìm thấy thông tin nhân viên",
+                        EmployeeId = request.EmployeeId
+                    };
+                }
+
+                // SECURITY CHECK: Verify user has at least one active face registration
+                var hasFaceRegistration = await _context.FaceRegistrations
+                    .AnyAsync(fr => fr.EmployeeId == request.EmployeeId && fr.IsActive);
+                
+                if (!hasFaceRegistration)
+                {
+                    _logger.LogWarning("SECURITY: Check-out attempt without face registration - EmployeeId: {EmployeeId}, User: {UserName}",
+                        request.EmployeeId, employee.UserName ?? employee.Email);
+                    return new AttendanceCheckInResult
+                    {
+                        Success = false,
+                        Message = "Bạn chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi chấm công.",
                         EmployeeId = request.EmployeeId
                     };
                 }
@@ -214,8 +250,8 @@ namespace dotnet_api.Services
                 
                 if (faceRegistration == null)
                 {
-                    _logger.LogWarning("Invalid or inactive FaceId - FaceId: {FaceId}, EmployeeId: {EmployeeId}",
-                        request.MatchedFaceId, request.EmployeeId);
+                    _logger.LogWarning("SECURITY: Invalid or inactive FaceId - FaceId: {FaceId}, EmployeeId: {EmployeeId}, User: {UserName}",
+                        request.MatchedFaceId, request.EmployeeId, employee.UserName ?? employee.Email);
                     return new AttendanceCheckInResult
                     {
                         Success = false,
@@ -418,10 +454,12 @@ namespace dotnet_api.Services
                 };
             }
 
+            // Align with FaceRegistrationService similarity threshold (0.82)
+            // Using slightly lower threshold (0.80) here since confidence already passed face verification
             const float REQUIRED_CONFIDENCE_THRESHOLD = 0.80f;
             if (!matchConfidence.HasValue || matchConfidence.Value < REQUIRED_CONFIDENCE_THRESHOLD)
             {
-                _logger.LogWarning("Insufficient confidence - EmployeeId: {EmployeeId}, Confidence: {Confidence}, Required: {Required}",
+                _logger.LogWarning("SECURITY: Insufficient confidence - EmployeeId: {EmployeeId}, Confidence: {Confidence}, Required: {Required}",
                     employeeId, matchConfidence, REQUIRED_CONFIDENCE_THRESHOLD);
                 return new AttendanceCheckInResult
                 {

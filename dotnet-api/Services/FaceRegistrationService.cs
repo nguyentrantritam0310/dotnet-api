@@ -109,7 +109,8 @@ namespace dotnet_api.Services
                     {
                         Success = false,
                         Message = "Embedding không hợp lệ",
-                        IsMatch = false
+                        IsMatch = false,
+                        EmployeeId = request.EmployeeId
                     };
                 }
 
@@ -121,7 +122,8 @@ namespace dotnet_api.Services
                     {
                         Success = false,
                         Message = $"Embedding không đúng định dạng (Expected {EXPECTED_EMBEDDING_DIMENSION} dimensions, got {request.Embedding.Length})",
-                        IsMatch = false
+                        IsMatch = false,
+                        EmployeeId = request.EmployeeId
                     };
                 }
 
@@ -133,14 +135,15 @@ namespace dotnet_api.Services
                 {
                     _logger.LogWarning("SECURITY: Face verification attempt without any registrations - EmployeeId: {EmployeeId}",
                         request.EmployeeId);
-                    return new FaceVerificationResultDTO
-                    {
-                        Success = false,
-                        Message = "Người dùng chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi sử dụng tính năng này.",
-                        IsMatch = false,
-                        Confidence = 0f,
-                        EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
-                    };
+                return new FaceVerificationResultDTO
+                {
+                    Success = false,
+                    Message = "Người dùng chưa đăng ký khuôn mặt. Vui lòng đăng ký khuôn mặt trước khi sử dụng tính năng này.",
+                    IsMatch = false,
+                    Confidence = 0f,
+                    EmployeeId = request.EmployeeId,  // Return the employeeId being verified
+                    EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
+                };
                 }
 
                 float bestSimilarity = 0f;
@@ -194,6 +197,7 @@ namespace dotnet_api.Services
                         Message = $"Sai người! Khuôn mặt này không khớp với khuôn mặt đã đăng ký. (Độ tương đồng: {(bestSimilarity * 100):F1}%)",
                         Confidence = bestSimilarity,
                         IsMatch = false,
+                        EmployeeId = request.EmployeeId,  // Return the employeeId being verified
                         EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
                     };
                 }
@@ -225,13 +229,20 @@ namespace dotnet_api.Services
                     Confidence = bestSimilarity,
                     IsMatch = isMatch,
                     MatchedFaceId = isMatch ? bestMatch?.FaceId : null,
+                    EmployeeId = request.EmployeeId,  // CRITICAL: Return the employeeId being verified (must match logged-in user)
                     EmployeeName = user != null ? $"{user.FirstName} {user.LastName}" : string.Empty
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in VerifyFaceEmbeddingAsync");
-                return new FaceVerificationResultDTO { Success = false, Message = "Có lỗi xảy ra khi nhận diện khuôn mặt", IsMatch = false };
+                return new FaceVerificationResultDTO 
+                { 
+                    Success = false, 
+                    Message = "Có lỗi xảy ra khi nhận diện khuôn mặt", 
+                    IsMatch = false,
+                    EmployeeId = request?.EmployeeId ?? string.Empty
+                };
             }
         }
 

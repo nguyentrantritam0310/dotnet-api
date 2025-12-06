@@ -109,6 +109,7 @@ namespace dotnet_api.DTOs
         public float Confidence { get; set; }
         public bool IsMatch { get; set; }
         public string MatchedFaceId { get; set; }
+        public string EmployeeId { get; set; }  // CRITICAL: EmployeeId of the matched face registration
         public string EmployeeName { get; set; }
     }
 

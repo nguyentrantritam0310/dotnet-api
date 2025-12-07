@@ -159,7 +159,35 @@ namespace dotnet_api.Services
                     {
                         Console.WriteLine($"Inner database error: {dbEx.InnerException.Message}");
                         Console.WriteLine($"Stack trace: {dbEx.InnerException.StackTrace}");
-                }
+                        
+                        // Extract more detailed error message
+                        var innerMessage = dbEx.InnerException.Message;
+                        string detailedMessage = "Lỗi khi lưu dữ liệu công trình vào database.";
+                        
+                        // Check for common database errors
+                        if (innerMessage.Contains("FOREIGN KEY"))
+                        {
+                            detailedMessage = "Lỗi: Khóa ngoại không hợp lệ. Vui lòng kiểm tra lại ConstructionTypeID hoặc ConstructionStatusID.";
+                        }
+                        else if (innerMessage.Contains("UNIQUE") || innerMessage.Contains("duplicate"))
+                        {
+                            detailedMessage = "Lỗi: Dữ liệu trùng lặp. Vui lòng kiểm tra lại thông tin.";
+                        }
+                        else if (innerMessage.Contains("NOT NULL") || innerMessage.Contains("required"))
+                        {
+                            detailedMessage = "Lỗi: Thiếu thông tin bắt buộc. Vui lòng kiểm tra lại các trường bắt buộc.";
+                        }
+                        else if (innerMessage.Contains("String or binary data would be truncated"))
+                        {
+                            detailedMessage = "Lỗi: Dữ liệu quá dài. Vui lòng kiểm tra lại độ dài các trường.";
+                        }
+                        else
+                        {
+                            detailedMessage = $"Lỗi database: {innerMessage}";
+                        }
+                        
+                        throw new ApplicationException(detailedMessage, dbEx);
+                    }
                     throw new ApplicationException("Lỗi khi lưu dữ liệu công trình vào database. Vui lòng kiểm tra lại thông tin.", dbEx);
                 }
             }

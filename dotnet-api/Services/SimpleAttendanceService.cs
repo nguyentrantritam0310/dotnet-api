@@ -40,6 +40,50 @@ namespace dotnet_api.Services
             return dateTime;
         }
         
+        /// <summary>
+        /// Lấy ngày hôm nay theo timezone Việt Nam (UTC+7)
+        /// </summary>
+        private DateTime GetVietnamToday()
+        {
+            try
+            {
+                // Thử các timezone ID phổ biến cho Việt Nam
+                TimeZoneInfo vietnamTimeZone = null;
+                string[] timeZoneIds = { "SE Asia Standard Time", "Asia/Ho_Chi_Minh", "Asia/Saigon" };
+                
+                foreach (var tzId in timeZoneIds)
+                {
+                    try
+                    {
+                        vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzId);
+                        if (vietnamTimeZone != null) break;
+                    }
+                    catch { }
+                }
+                
+                if (vietnamTimeZone == null)
+                {
+                    // Fallback: tạo timezone UTC+7 manually
+                    vietnamTimeZone = TimeZoneInfo.CreateCustomTimeZone(
+                        "Vietnam Standard Time",
+                        TimeSpan.FromHours(7),
+                        "Vietnam Standard Time",
+                        "Vietnam Standard Time");
+                }
+                
+                var utcNow = DateTime.UtcNow;
+                var vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, vietnamTimeZone);
+                return vietnamNow.Date;
+            }
+            catch
+            {
+                // Fallback: dùng UTC+7 offset trực tiếp
+                var utcNow = DateTime.UtcNow;
+                var vietnamNow = utcNow.AddHours(7);
+                return vietnamNow.Date;
+            }
+        }
+        
         private void CleanupExpiredTokens()
         {
             var now = DateTime.UtcNow;
@@ -118,7 +162,7 @@ namespace dotnet_api.Services
 
                 if (request.WorkShiftID.HasValue && request.WorkShiftID.Value > 0)
                 {
-                    var today = DateTime.Today;
+                    var today = GetVietnamToday();
                     var existingShiftAttendance = await _context.Attendances
                         .Include(a => a.ShiftAssignment)
                         .FirstOrDefaultAsync(a => 
@@ -338,7 +382,7 @@ namespace dotnet_api.Services
         {
             try
             {
-                var today = DateTime.Today;
+                var today = GetVietnamToday();
                 return await _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
@@ -360,7 +404,7 @@ namespace dotnet_api.Services
         {
             try
             {
-                var today = DateTime.Today;
+                var today = GetVietnamToday();
                 var query = _context.Attendances
                     .Include(a => a.Employee)
                     .Include(a => a.AttendanceMachine)
@@ -421,7 +465,7 @@ namespace dotnet_api.Services
         {
             try
             {
-                var today = DateTime.Today;
+                var today = GetVietnamToday();
                 return await _context.Attendances
                     .Include(a => a.ShiftAssignment)
                     .Where(a => 
